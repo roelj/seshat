@@ -517,7 +517,7 @@ To ensure `seshat` receives the actual client IP address so it can log
 this information, one can set the `use-x-forwarded-for` option
 described in @sec-essential-options.
 
-== Running `seshat` with feature isolation
+== Running `seshat` with feature isolation <sec-feature-isolation>
 
 Some features are more prone to denial-of-service situations because they
 require more CPU, memory, or disk space to complete. To mitigate outages while

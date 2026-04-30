@@ -14,7 +14,7 @@
     leading: 0.52em
 )
 #set document(
-    title: [Documentation of Djehuty: a data and software repository system.],
+    title: [Documentation of Seshat: a data and software repository system.],
     author: "Roel Janssen <rrejanssen@gmail.com>",
     keywords: "",
     date: datetime.today(),
