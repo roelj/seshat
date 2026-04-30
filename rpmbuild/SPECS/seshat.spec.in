@@ -114,6 +114,8 @@ install -Dpm 0644 etc/%{name}/%{name}-example-config.xml \
 %systemd_postun_with_restart %{name}.service
 
 %changelog
+* Thu Apr 30 2026 Malaika Newman <symmetricbutterfly@proton.me> - 26.4-1
+- Release version 26.4.
 * Mon Apr 20 2026 Roel Janssen <rrejanssen@gmail.com> - 26.4-0.1.rc1
 - Ensure RPM builds work without internet connection by providing an
   alternative to the 'build' module.

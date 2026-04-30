@@ -2,22 +2,48 @@
 #let chapter_text = [
 #silent-chapter[News] <news-section>
 
-#silent-section[Release notes for `v25.12`.] <release-25-11>
+#silent-section[Release notes for `v26.4`.] <release-26-04>
 
-After a delay of 5 months, I am delighted to announce the
-December release of 2025. It consists of N commits made by 4 authors.
+After a delay of 10 months, we are delighted to announce the
+April release of 2026. It consists of 167 commits made by 4 authors.
+
+This is a special moment, because this is the first release under
+the new name: Seshat.  In Egyptian mythology, Seshat is the true keeper
+of wisdom; the "Mistress of the House of Books," goddess of writing,
+measurement, and record.  She was venerated long before Djehuty, and the
+scribal domains he is now celebrated for were hers first.  She measured
+the foundations of temples with her own cord and kept the archives of
+what was true.  Djehuty's later fame is largely inherited renown, built
+on what Seshat had already established.
 
 #silent-subsection[New features]
 
+- Add folder uploading via drag-and-drop in the depositor UI
+  (#commitLink("de693d0e484bc4b3baced1924c67dda62c124f90"),
+  #commitLink("41fa6d401022746b972ec1087cbbe68c926bc8c9")).
+- Bring collection private links on par with dataset private links
+  (#commitLink("6ec74fcc8bff0cbef2579fb53e8dd6ce7a5ff0d8"),
+  #commitLink("337dd990a6c517331dfd57ca12bd0ae29492d5fb"),
+  #commitLink("ce72a1fee5bac852f04ba8b3dd11765ecaa67810"),
+  #commitLink("8133eed8143e7bf142cb4fb7951d986094edab05"),
+  #commitLink("444fde680e30b91838f731d451453e1f7aa85f6c"),
+  #commitLink("3a1db7b31a62f495b36a56826281056866ebecda")).
+- Display banner automatically when database is down
+  (#commitLink("cfeec92cf2b83b9cd3064e47c90a84b4a61637bb")).
 - Add ability to build a Debian package.
   (#commitLink("9b240c39de77af338b855e78efe1afb8c4f8a9d8"),
   #commitLink("110bb308c712d465cd2c8ee4cc422de95026d33d"),
   #commitLink("339648c32abaaa8d3df347f7a081264dea66b5be"),
-  #commitLink("9951c0356869d69cbc49a9676584668b42027689")).
+  #commitLink("9951c0356869d69cbc49a9676584668b42027689"),
+  #commitLink("2d584f812cd329225aa8390dbfd77caa03fb4aae"),
+  #commitLink("fc1d3980484070f3524ff43c975e897effe6f2a8"),
+  #commitLink("4273b51d2a40516773642b6cc452d913a4b3a656")).
 - Make cloud-native deployments more convenient to implement
   (#commitLink("aa4633db2da9900deac0affb9709ae557e301780"),
   #commitLink("408de87dc7082ce0e933d28f4a97b6fd5ec9c965"),
   #commitLink("9981890cace3363455c851f9702c071a76bbdcb7")).
+- Document multi-instance and feature-isolation deployments
+  (#commitLink("63fe1a3954e5b7f0d8168f12148c0cd4a8db4660")).
 
 #silent-subsection[Security]
 
@@ -26,6 +52,18 @@ December release of 2025. It consists of N commits made by 4 authors.
 - Do not resolve symbolic links when producing a ZIP file
   (#commitLink("e27148dde2317d37669cf87b8b0c8af37f67302e"),
   #commitLink("96d7eed0bfc8be59a69efe5df4253c4c4b3b2321")).
+- Validate the value of the "Git-Protocol" HTTP header
+  (#commitLink("a0b63f501ad3021086badeca88f0551bd705c60a")).
+- Avoid creating Git repository directories before input validation
+  (#commitLink("0de6bba24ebf4551be72eedc3fdb51031d25a3b1")).
+- Strictly validate the "order" value in 'sparql_suffix'
+  (#commitLink("2bc0f0ac9167a18b037e9d7201d12da1eec7946e")).
+- Prevent SPARQL injection of key in search API
+  (#commitLink("42e48983c5d8c912c0df0e9d84df2fc56cf089ad")).
+- Prevent SPARQL injection of faking an operator in search API
+  (#commitLink("dc327f196693a58fd55f904846f186180cc39d4b")).
+- Add `SameSite=Strict` attribute when setting cookies
+  (#commitLink("8edd18b1141508fb84c9db9eff00d4ce1d90fdcb")).
 
 #silent-subsection[Bugfixes]
 
@@ -41,28 +79,113 @@ December release of 2025. It consists of N commits made by 4 authors.
   (#commitLink("811c5a95986cd64eed6e190c458e42a04cbeb140")).
 - Restore styling of the maintenance page
   (#commitLink("5d8aa1db947623399236ed499191da6166045fef")).
+- Always clean up the temporary directory when zipping a Git repo fails
+  (#commitLink("9b31d5f51d929e3c1633aeb9decb2d01bcdfd444")).
+- Repair ability to remove references with quotes and ampersands
+  (#commitLink("ab2bd85b29c6e218e3991466a3a326d287a5cd16")).
+- Avoid SPARQL FILTER bug in Virtuoso when querying private links
+  (#commitLink("b584dcbee0871242364e6b47b6ee145110d6f5fe")).
+- Avoid displaying error messages when querying an empty Git repository
+  (#commitLink("5523164c82e904345470a6d6f56ef0e013056202")).
+- Don't assume 'last_name' is set
+  (#commitLink("87cabf943b3140527f3f9505371836764fff61e4")).
+- Fix error message in 'api_v3_dataset_upload_file'
+  (#commitLink("345c3dc657207a98b058d69410c8761ac2254e48")).
+- Produce valid HTML on the dataset page
+  (#commitLink("332345080fac02b740e2111eeb064227c75ceb5a")).
 
 #silent-subsection[Incremental improvements]
 
-- Reduce size of the documentation's HTML output
-  (#commitLink("0afae34c1b979228ac8e8e35c155c14fc5c664ac")).
-- Require less LaTeX dependencies to build the documentation
-  (#commitLink("f9ed7f64416fdb006a270a92c517d51053143962"),
-  #commitLink("968bd8cdb096ced2a543e36498108a33ef16be7e")).
-- Reduce steps to install Djehuty
+- Simplify steps to install `seshat`
   (#commitLink("0a6cf96856eee63559ba8a2a8537e65d946a8db6")).
-- Start phasing out the use of jQuery
-  (#commitLink("e187225618ce0ae0dd22e9d10659f9c564b27ed3")).
+- Rename project to `seshat`
+  (#commitLink("5b12bf64e494779e8fe0577c6d037a0dcac80359"),
+  #commitLink("d3c2d88c030fb61f8dc7988266933e854b0b6c01"),
+  #commitLink("b2901d8628cac34f2e1bb07492c9b2a517289348"),
+  #commitLink("68b2cf0737f6c6b30edcb99cd021ba9373736157"),
+  #commitLink("defdb8c2576df772b81a7492348ef4afae6abd15"),
+  #commitLink("0abcac39d9fd66c606302f647180bbfc34b7dfb1"),
+  #commitLink("379aad157a44a58b10c69aa109b15c1c6082f276"),
+  #commitLink("f5bf0b6a0cb87453951fe1a98a2b680bfa72de01"),
+  #commitLink("998414a456267cc290dafb7d4d8d2ab8c2020d5a"),
+  #commitLink("c71577a2a608cb7f7e0193d10fe86b2b0c309dff")).
+- Add a manpage
+  (#commitLink("542a053d5348943ca8e4d4b9bdaa688a769092b4")).
+- Migrate documentation from LaTeX to Typst
+  (#commitLink("a0194d0451b6611c74c3b4fd0084ceac718b616c"),
+  #commitLink("7629ff826f939e0612cf772ac1111ee4af98cc72"),
+  #commitLink("932b85cc16432f7b40453d78432c8827a7fce261"),
+  #commitLink("f6164b16fbad3246914c8f6de856f62c44afd31b")).
+- Improve documentation theming and navigation
+  (#commitLink("cbdae4306e30a2b3c67aa4fbca6e917fc33baf07"),
+  #commitLink("b162e054b1d56315b6af82d95d7f14245e81ffbc"),
+  #commitLink("c0ec49b47b7df4e2fb92bdc5fc40458ed84e2f34"),
+  #commitLink("6890793cb8580d6a97ec225699aef32b356cd5bf"),
+  #commitLink("b74da37f6fe9efb0f3031662fe90c1658adc8429"),
+  #commitLink("b585cadaf63e763d8a8fc87bde51d20681c257c5"),
+  #commitLink("09755468dc3a670593db00aa768e066766df5349"),
+  #commitLink("1e325628bdc2941cc19d760a1aec92a4fd51d972"),
+  #commitLink("fdbbdc337d5ae30ec89bcdc697c3ae6f4b16939b")).
+- Update Quill to 2.0.3
+  (#commitLink("86bdc5c5fa4703d2d7f7847b1007fb55f3d5b44e"),
+  #commitLink("03136bed4e35c1b60b3e4133b2410b8fd4a31309")).
+- Make deleting datasets and collections HTTP `DELETE` operations.
+  (#commitLink("f36ae865a1b0edff393aeff93456858f68c000fd"),
+  #commitLink("239b851393d19e2035c9a84b6fd3961ae69f8935")).
+- Refactor inline JavaScript on the My Datasets page
+  (#commitLink("0a706e3ed9d92af7a48075ae988fe60b72e9b898")).
+- Reduce duplicated code for 'new_author' and 'new_funding'
+  (#commitLink("83e63483466eb2b0fcc273151c8e8f492729739e"),
+  #commitLink("8e7a3626425454b3106838c2b2894ccb98ebb73d")).
+- Various small JavaScript cleanups
+  (#commitLink("d5322b5767650c370104013c4ecfa7a848e641d0"),
+  #commitLink("1928b5a52d189b718cf79fbd58da9f8b1e234a77"),
+  #commitLink("ec8f82a20d57ba2496a93e687378c1c531b06b19"),
+  #commitLink("72ffe9c19f89e36f5eb6dfa7787372a742d13a47"),
+  #commitLink("14516add8332889a65ddf424bdf06ff54bcd9dc6")).
+- Clean up HTML templates
+  (#commitLink("b284b938d94a2626739313c44dc2c7a9feb20c1f"),
+  #commitLink("65d9a8b68ab06ca8d1df379ad14b1c02695bfa10"),
+  #commitLink("0bdf999c9b82f7f51b6d123dcde0935da5b4c940"),
+  #commitLink("89065c2f0dfa810d63c7655c6d37b10517310396"),
+  #commitLink("b0aca1801863b9625f542c0abd4bca2b14e41940"),
+  #commitLink("2cf6823578326da3caba70cce991474059fd82d8")).
+- Unify timestamp format in the WSGI layer
+  (#commitLink("0e9c5cd76f16bd657750b787e7ff11f87d346e69")).
+- Avoid implicit variable use in a 'map' call inside a loop
+  (#commitLink("a67bf3aa5bf414b797f13f5e6c968c81282fbf9c")).
+- Apply minor Python and linter cleanups
+  (#commitLink("0ce3563cbb08f21f26530230229e41662a220b5f"),
+  #commitLink("57a7798fdd5a01fd17b088547f7b223b039a2a5a"),
+  #commitLink("13c52e8851b3164a5703ed83476ec0ae35f05437"),
+  #commitLink("652c9f1d4a96376b662ffa32f9a38327275992dd")).
+- Include "python-pip" in the Windows installation instructions
+  (#commitLink("cc603327a94d980c5cc371b4da11909069a40c5d")).
+- Directly refer to the documentation for API usage
+  (#commitLink("51860bfbd735dbe7f304244b44af22a79461db27")).
+- Improve the build system for RPM packaging
+  (#commitLink("54ff3755079fd5e1c085986c7ffb5b4d93588482"),
+  #commitLink("a476312f9d5e62c280a7bacba7d5df9e18ee8595"),
+  #commitLink("1630171799519be962e71ba7de22072d299d84d7"),
+  #commitLink("b95c123140eadcdb65ef2556638eab6c3236c7ec"),
+  #commitLink("34f7c789fec05a99f16529c35bcab50fd8389784")).
+- Improve the build system in general
+  (#commitLink("6c74d8e4bee21c74cf30aaabbf59deed1a27ee13"),
+  #commitLink("4ee1e78728271f92d68dc99001a27441b47836d4"),
+  #commitLink("c3c52f2533108dc9e04aa8b10f96559a0e25c353"),
+  #commitLink("3914b5d57d1e3166c33c9791e8aeed7f10d9f8df")).
 
 #silent-subsection[Technical debt]
 
 - Remove the "backup" subcommand
   (#commitLink("e688f1cd70df2928c7124fb2dea5593447786e04")).
-- Remove some hard-coded 4TU.ResearchData-isms
+- Remove hard-coded 4TU.ResearchData-isms
   (#commitLink("18e3e79f267c0d71bc4da59b827e5d7f0e5b5cb4"),
   #commitLink("b0bd9d974f5d8347fdb70fc989d7469361d26377"),
   #commitLink("e08c1f0197c7ed66e1013928a5ccd26d5d1eae61"),
   #commitLink("1edd40f52e83d920aa03a8545918e37aed8bd18e")).
+- Link to `choosealicense.com` in help text
+  (#commitLink("404f713f601276ab31b8e05991f90e6c49a8b6f3")).
 
 #silent-section[Release notes for `v25.6`.] <release-25-6>
 

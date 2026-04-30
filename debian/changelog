@@ -1,8 +1,14 @@
+seshat (26.4-1) stable; urgency=low
+
+  * Release of seshat 26.4.
+
+ -- Malaika Newman <symmetricbutterfly@proton.me>  Thu, 30 Apr 2026 23:09:36 +0200
+
 seshat (26.4~rc4-1) stable; urgency=low
 
   * Release candidate 4 of seshat 26.4.
 
- -- Roel Janssen <rrejanssen@gmail.com>  Mon, 29 Apr 2026 21:21:53 +0200
+ -- Roel Janssen <rrejanssen@gmail.com>  Wed, 29 Apr 2026 21:21:53 +0200
 
 seshat (26.4~rc3-1) stable; urgency=low
 
