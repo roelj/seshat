@@ -123,4 +123,4 @@ install -Dpm 0644 etc/%{name}/%{name}-example-config.xml \
 - Clean-up LaTeX legacy
 * Fri Jan 31 2025 Roel Janssen <r.r.e.janssen@tudelft.nl> 25.1-1
 - Initial RPM creation.
-- See https://djehuty.roelj.com/#news-section for the full release notes.
+- See https://seshat.software/#news-section for the full release notes.
