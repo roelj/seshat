@@ -7868,8 +7868,8 @@ class WebServer:
                     account_uuid  = account_uuid)
 
             if file_uuid is None:
-                self.error_500 (("Failed to create file metadata for "
-                                 f"{dataset_id}: {error}."))
+                return self.error_500 (("Failed to create file metadata for "
+                                        f"{dataset_id}: {error}."))
 
             output_filename = os.path.join (config.storage, f"{dataset_id}_{file_uuid}")
 
