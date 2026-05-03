@@ -1429,7 +1429,7 @@ class WebServer:
         session['samlSessionIndex']          = saml_auth.get_session_index()
 
         ## Gather attributes from user.
-        record               = {}
+        record               = { "email": None, "domain": None, "group_uuid": None }
         attributes           = saml_auth.get_attributes()
         record["session"]    = session
         try:
@@ -1437,8 +1437,6 @@ class WebServer:
             record["first_name"] = attributes[config.saml_attribute_first_name][0]
             record["last_name"]  = attributes[config.saml_attribute_last_name][0]
             record["common_name"] = attributes[config.saml_attribute_common_name][0]
-            record["domain"] = None
-            record["group_uuid"] = None
 
             if config.saml_attribute_groups is not None:
                 groups = attributes[config.saml_attribute_groups]
