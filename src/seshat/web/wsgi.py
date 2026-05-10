@@ -3474,11 +3474,11 @@ class WebServer:
             return redirect ("/doc/", code=302)
 
         mimetype = "text/html"
-        documentation_file_path = f"{DOCUMENTATION_DIRECTORY}/index.html"
+        documentation_file_path = os.path.join (DOCUMENTATION_DIRECTORY, "index.html")
         expects_pdf = self.accepts_content_type (request, "application/pdf", strict=True)
         if expects_pdf or request.path == "/doc/seshat.pdf":
             mimetype = "application/pdf"
-            documentation_file_path = f"{DOCUMENTATION_DIRECTORY}/seshat.pdf"
+            documentation_file_path = os.path.join (DOCUMENTATION_DIRECTORY, "seshat.pdf")
         elif not self.accepts_html (request):
             return self.error_406 (["text/html", "application/pdf"])
 

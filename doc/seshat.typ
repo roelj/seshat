@@ -76,7 +76,7 @@
         .table-of-contents p { padding: 0em 0em 0em 1em; margin-bottom: 0em; }
         .table-of-contents ol { margin: 0em; padding: 1em 0em 1em 0em; line-height: 1.3em; }
         .table-of-contents ol ol { margin: 0em; padding: 0em 1em 0em 1em; }
-        .table-of-contents h2 { background: var(-\-toc-header-color); color: var(-\-toc-header-text-color); padding: .75em; margin: 0em; }
+        .table-of-contents h2 { background: var(-\-toc-header-color); color: var(-\-toc-header-text-color); padding: .75em; margin: 0em; border-radius: .25em .25em 0 0; }
         nav > ol { margin-top: 0em; }
         nav > ol > li { margin: 0em; }
         nav > ol > li > div > span > a,
