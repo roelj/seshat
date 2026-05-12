@@ -1700,7 +1700,7 @@ class WebServer:
 
         return self.response (json.dumps({
             "in-maintenance": config.maintenance_mode,
-            "database-is-up": self.db.sparql_is_up
+            "database-is-up": config.sparql_is_up
         }))
 
     def robots_txt (self, request):  # pylint: disable=unused-argument
