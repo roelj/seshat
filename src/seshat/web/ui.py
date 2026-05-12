@@ -1299,7 +1299,7 @@ def main (config_file=None, run_internal_server=True, initialize=True,
 
             if initialize:
                 is_initialized = server.db.state_graph_is_initialized ()
-                if not server.db.sparql_is_up:
+                if not config.sparql_is_up:
                     wait_time = 0
                     while wait_time < config.sparql_wait_for_online:
                         is_initialized = server.db.state_graph_is_initialized ()
@@ -1307,7 +1307,7 @@ def main (config_file=None, run_internal_server=True, initialize=True,
                                      wait_time + 1, config.sparql_wait_for_online)
                         wait_time += 1
                         sleep(1)
-                    if not server.db.sparql_is_up:
+                    if not config.sparql_is_up:
                         logger.error ("Cannot initialize because the SPARQL endpoint is down.")
                         return None
 
