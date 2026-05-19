@@ -121,7 +121,6 @@ class WebServer:
             R("/my/collections/new",                                             self.ui_new_collection),
             R("/my/collections/<collection_id>/new-version-draft",               self.ui_new_version_draft_collection),
             R("/my/sessions/<session_uuid>/edit",                                self.ui_edit_session),
-            R("/my/sessions/<session_uuid>/delete",                              self.ui_delete_session),
             R("/my/sessions/<session_uuid>/activate",                            self.ui_activate_session),
             R("/my/sessions/new",                                                self.ui_new_session),
             R("/my/profile",                                                     self.ui_profile),
@@ -2698,22 +2697,6 @@ class WebServer:
                 return redirect ("/my/dashboard", code=302)
 
         return self.error_405 (["GET", "POST"])
-
-    def ui_delete_session (self, request, session_uuid):
-        """Implements /my/sessions/<id>/delete."""
-        if not self.accepts_html (request):
-            return self.error_406 ("text/html")
-
-        if not validator.is_valid_uuid (session_uuid):
-            return self.error_404 (request)
-
-        account_uuid = self.account_uuid_from_request (request)
-        if account_uuid is None:
-            return self.error_authorization_failed(request)
-
-        response   = redirect (request.referrer, code=302)
-        self.db.delete_session_by_uuid (account_uuid, session_uuid)
-        return response
 
     def api_v3_dataset_collaborators (self, request, dataset_uuid):
         """Implements /v3/datasets/<dataset_uuid>/collaborators."""
