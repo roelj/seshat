@@ -116,7 +116,6 @@ class WebServer:
             R("/my/collections",                                                 self.ui_my_collections),
             R("/my/collections/<collection_id>/edit",                            self.ui_edit_collection),
             R("/my/collections/<collection_uuid>/private_links",                 self.ui_collection_private_links),
-            R("/my/collections/<collection_uuid>/private_link/<link_id>/delete", self.ui_collection_delete_private_link),
             R("/my/collections/<collection_uuid>/private_link/new",              self.ui_collection_new_private_link),
             R("/my/collections/new",                                             self.ui_new_collection),
             R("/my/collections/<collection_id>/new-version-draft",               self.ui_new_version_draft_collection),
@@ -2930,40 +2929,6 @@ class WebServer:
     def ui_collection_new_private_link (self, request, collection_uuid):
         """Implements /my/collections/<uuid>/private_link/new."""
         return self.__ui_item_new_private_link (request, collection_uuid, "collection")
-
-    def __delete_private_link (self, request, item, account_uuid, private_link_id):
-        """Deletes the private link for ITEM and responds appropriately."""
-        if not item:
-            return self.error_403 (request)
-
-        response = redirect (request.referrer, code=302)
-        with self.locks.locked (locks.LockTypes.PRIVATE_LINKS):
-            if self.db.delete_private_links (item["container_uuid"],
-                                             account_uuid,
-                                             private_link_id) is None:
-                return self.error_500()
-
-        return response
-
-    def ui_collection_delete_private_link (self, request, collection_uuid, link_id):
-        """Implements /my/collections/<id>/private_link/<pid>/delete."""
-        if not self.accepts_html (request):
-            return self.error_406 ("text/html")
-
-        account_uuid = self.account_uuid_from_request (request)
-        if account_uuid is None:
-            return self.error_authorization_failed (request)
-
-        if not validator.is_valid_uuid (collection_uuid):
-            return self.error_404 (request)
-
-        collection = self.db.collections (collection_uuid = collection_uuid,
-                                          account_uuid = account_uuid,
-                                          is_published = None,
-                                          is_latest    = None,
-                                          limit        = 1)[0]
-
-        return self.__delete_private_link (request, collection, account_uuid, link_id)
 
     def ui_profile (self, request):
         """Implements /my/profile."""
