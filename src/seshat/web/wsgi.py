@@ -148,7 +148,6 @@ class WebServer:
             R("/categories/<category_id>",                                       self.ui_categories),
             R("/category",                                                       self.ui_category),
             R("/institutions/<institution_name>",                                self.ui_institution),
-            R("/opendap_to_doi",                                                 self.ui_opendap_to_doi),
             R("/datasets/<dataset_id>",                                          self.ui_dataset),
             R("/datasets/<dataset_id>/<version>",                                self.ui_dataset),
             R("/private_datasets/<private_link_id>",                             self.ui_private_dataset),
@@ -3918,45 +3917,6 @@ class WebServer:
 
         return self.__render_template (request, "category.html",
                                        categories=categories)
-
-    def ui_opendap_to_doi(self, request):
-        """
-        Establish back-links from opendap by matching http referrer with triple store
-        and list datasets in repository, or redirect if there is exactly one.
-        """
-        if self.accepts_html (request):
-            referrer = request.referrer
-            catalog = ""
-            dois = []
-            if referrer is None:
-                referrer = ""
-            else:
-                catalog = referrer.split('.nl/thredds/', 1)[-1].split('?')[0]
-                if catalog.startswith('catalog/data2/IDRA'):
-                    # IDRA is available at two places. Use the one in the triple store.
-                    catalog = catalog.replace('catalog/data2/IDRA', 'catalog/IDRA')
-            catalog_parts = catalog.split('/')
-            # start with this catalog and go broader until something found
-            for end_index in range(len(catalog_parts[:-1]), 0, -1):
-                catalog_end = '/'.join(catalog_parts[:end_index] + [catalog_parts[-1]])
-                dois = self.db.opendap_to_doi(endswith=catalog_end)
-                if dois:
-                    break
-            if not dois:
-                # search narrower catalogs (either opendap.4tu.nl or opendap.tudelft.nl)
-                catalog_start = [f"https://opendap.4tu.nl/thredds/{ '/'.join(catalog_parts[:-1]) }/",
-                                 f"https://opendap.tudelft.nl/thredds/{ '/'.join(catalog_parts[:-1]) }/"]
-                dois = self.db.opendap_to_doi(startswith=catalog_start)
-            if len(dois) == 1:
-                return redirect(f"https://doi.org/{ dois[0]['doi'] }")
-
-            dois.sort(key=lambda x: x["title"])
-
-            return self.__render_template (request, "opendap_to_doi.html",
-                                           dois=dois,
-                                           referrer=referrer)
-
-        return self.error_406 ("text/html")
 
     def __dataset_by_referer (self, request):
         dataset = None

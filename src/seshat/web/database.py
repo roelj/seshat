@@ -2993,36 +2993,6 @@ class SparqlInterface:
 
         return 0
 
-    def opendap_to_doi(self, startswith=None, endswith=None):
-        """Procedure to return DOI corresponding to opendap catalog url"""
-
-        filters = ""
-
-        if startswith is not None:
-            if isinstance(startswith, list):
-                escaped_startswith = rdf.escape_string_value (startswith[0])
-                filters += f"FILTER ((STRSTARTS(STR(?data_url), {escaped_startswith}))"
-                for filter_item in startswith[1:]:
-                    escaped_item = rdf.escape_string_value (filter_item)
-                    filters += f" || (STRSTARTS(STR(?data_url), {escaped_item}))"
-                filters += ")\n"
-            elif isinstance(startswith, str):
-                escaped_startswith = rdf.escape_string_value (startswith)
-                filters += f"FILTER (STRSTARTS(STR(?data_url), {escaped_startswith}))\n"
-            else:
-                self.log.error ("startswith of type %s is not supported", type(startswith))
-
-        if endswith is not None:
-            escaped_endswith = rdf.escape_string_value (endswith)
-            filters += f"FILTER (STRENDS(STR(?data_url), {escaped_endswith}))\n"
-
-        query = self.__query_from_template ("opendap_to_doi", {
-            "filters": filters
-        })
-
-        results = self.__run_query (query)
-        return results
-
     ## ------------------------------------------------------------------------
     ## REVIEWS
     ## ------------------------------------------------------------------------

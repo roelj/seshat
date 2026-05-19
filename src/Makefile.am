@@ -85,7 +85,6 @@ EXTRA_RESOURCES =                                                             \
     seshat/web/resources/html_templates/layout.html                           \
     seshat/web/resources/html_templates/loader.svg                            \
     seshat/web/resources/html_templates/maintenance.html                      \
-    seshat/web/resources/html_templates/opendap_to_doi.html                   \
     seshat/web/resources/html_templates/portal.html                           \
     seshat/web/resources/html_templates/private_link_is_expired.html          \
     seshat/web/resources/html_templates/public_metadata.html                  \
@@ -168,7 +167,6 @@ EXTRA_RESOURCES =                                                             \
     seshat/web/resources/sparql_templates/members.sparql                      \
     seshat/web/resources/sparql_templates/missing_checksummed_files_for_container.sparql \
     seshat/web/resources/sparql_templates/missing_dois.sparql                 \
-    seshat/web/resources/sparql_templates/opendap_to_doi.sparql               \
     seshat/web/resources/sparql_templates/prefixes.sparql                     \
     seshat/web/resources/sparql_templates/private_links.sparql                \
     seshat/web/resources/sparql_templates/publish_draft_collection.sparql     \
