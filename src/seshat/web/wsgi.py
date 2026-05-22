@@ -101,7 +101,6 @@ class WebServer:
             R("/theme/colors.css",                                               self.colors_css),
             R("/theme/loader.svg",                                               self.loader_svg),
             R("/login",                                                          self.ui_login),
-            R("/account/home",                                                   self.ui_account_home),
             R("/logout",                                                         self.ui_logout),
             R("/my/dashboard",                                                   self.ui_dashboard),
             R("/my/datasets",                                                    self.ui_my_data),
@@ -1758,27 +1757,6 @@ class WebServer:
                        sandbox_message_css      = config.sandbox_message_css)
 
         return self.response (json.dumps({ "status": "maintenance" }))
-
-    def ui_account_home (self, request):
-        """Implements /account/home."""
-        handler = self.default_error_handling (request, "GET", "text/html")
-        if handler is not None:
-            return handler
-
-        account_uuid = self.account_uuid_from_request (request)
-        if account_uuid is not None:
-            return redirect ("/my/dashboard", code=302)
-
-        if config.identity_provider == "saml":
-            return redirect ("/login", code=302)
-
-        if config.identity_provider == "orcid":
-            return redirect ((f"{config.orcid_endpoint}/authorize?client_id="
-                              f"{config.orcid_client_id}&response_type=code"
-                              "&scope=/authenticate&redirect_uri="
-                              f"{config.base_url}/login"), 302)
-
-        return self.error_403 (request)
 
     def __send_sram_collaboration_invite (self, saml_record):
 
