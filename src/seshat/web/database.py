@@ -163,9 +163,7 @@ class SparqlInterface:
         if args is None:
             args = {}
 
-        result = template.render ({ **args, **parameters })
-        self.__log_query (result)
-        return result
+        return template.render ({ **args, **parameters })
 
     def __run_logged_query (self, query):
         """Passthrough for '__run_query' that handles the audit log feature."""
