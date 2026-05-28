@@ -55,7 +55,7 @@ function remove_profile_image () {
     jQuery.ajax({
         url:         "/v3/profile/picture",
         type:        "DELETE",
-        accepts      { json: "application/json" }
+        accepts:     { json: "application/json" }
     }).done (function () {
         jQuery("#upload-profile-image").removeClass("profile-image");
         jQuery(".dz-button").show();
