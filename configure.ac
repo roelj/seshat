@@ -52,6 +52,21 @@ AC_CACHE_CHECK([for python build module], [ac_cv_have_python_build],
     [ac_cv_have_python_build=yes], [ac_cv_have_python_build=no])])
 AM_CONDITIONAL([HAVE_PYTHON_BUILD], [test "x$ac_cv_have_python_build" = "xyes"])
 
+dnl systemd integration
+dnl ---------------------------------------------------------------------------
+PKG_PROG_PKG_CONFIG
+AC_ARG_WITH([systemdsystemunitdir],
+    [AS_HELP_STRING([--with-systemdsystemunitdir=DIR],
+        [Directory for systemd service files])],
+    [systemdsystemunitdir="$withval"],
+    [systemdsystemunitdir="$($PKG_CONFIG --variable=systemdsystemunitdir systemd)"])
+
+AS_IF([test -z "$systemdsystemunitdir"],
+  [systemdsystemunitdir="\${prefix}/lib/systemd/system"])
+
+AC_SUBST([systemdsystemunitdir])
+AM_CONDITIONAL([HAVE_SYSTEMD], [test -n "$systemdsystemunitdir"])
+
 dnl Package-specific configurable options
 dnl ---------------------------------------------------------------------------
 

@@ -9,6 +9,10 @@ if HAVE_DOCS
 SUBDIRS                += doc
 endif
 
+if HAVE_SYSTEMD
+systemdsystemunit_DATA = etc/seshat.service
+endif
+
 sysconf_DATA = etc/seshat.xml
 
 EXTRA_DIST              =                   \
