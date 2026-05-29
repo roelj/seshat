@@ -1,6 +1,6 @@
 #import "config.typ": *
 #let chapter_text = [
-#silent-chapter[News] <news-section>
+#silent-chapter[News] <news>
 
 #silent-section[Release notes for `v26.4`.] <release-26-04>
 

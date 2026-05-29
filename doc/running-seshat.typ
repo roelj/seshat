@@ -1,7 +1,7 @@
 #import "config.typ": *
 
 #let chapter_text = [
-= Configuring `seshat` <chap-configuring-seshat>
+= Configuring `seshat` <configuring-seshat>
 
 Now that `seshat` is installed, it's a good moment to look into its
 run-time configuration options. All configuration can be done through a
@@ -481,9 +481,9 @@ to `1`. Privileges are disabled by default, except for
 #pagebreak-when-paged()
 
 #let chapter_text = [
-= Running `seshat` <chap-running-seshat>
+= Running `seshat` <running-seshat>
 
-Before running `seshat`, consider @chap-configuring-seshat which provides
+Before running `seshat`, consider @configuring-seshat which provides
 the configuration options to enable or disable features, where data will be
 stored and a way to adapt `seshat` to your organization's style.
 

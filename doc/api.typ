@@ -99,7 +99,7 @@
 )
 
 #let chapter_text = [
-= Application Programming Interface <api-section>
+= Application Programming Interface <api>
 
 The application programming interface (API) provided by `seshat` allows
 for automating tasks otherwise done through the user interface. In addition

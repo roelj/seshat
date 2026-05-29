@@ -1,7 +1,7 @@
 #import "config.typ": *
 
 #let chapter_text = [
-= Introduction
+= Introduction <introduction>
 
 `seshat` is a data and software repository system. The name finds its
 inspiration in #link("https://en.wikipedia.org/wiki/Thoth")[Thoth], the Egyptian

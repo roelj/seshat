@@ -1,7 +1,7 @@
 #import "config.typ": *
 
 #let chapter_text = [
-= Contributing
+= Contributing <contributing>
 
 This chapter outlines how to set up an instance of `seshat` with the goal
 of modifying its source code. Or in other words: this is the developer setup.
@@ -53,7 +53,7 @@ In the remainder of the chapter we will assume a value of `127.0.0.1` for
 
 === Modifications to the example configuration for developers
 
-@chap-configuring-seshat describes each configuration option for `seshat`.
+@configuring-seshat describes each configuration option for `seshat`.
 The remainder of sections here contain a fast-path through configuring
 `seshat` for use in a development setup.
 

@@ -1,7 +1,7 @@
 #import "config.typ": *
 
 #let chapter_text = [
-= Knowledge graph
+= Knowledge graph <knowledge-graph>
 
 Seshat processes its information using the Resource Description
 Framework @Lassila-99-RDF. This chapter describes the parts that
