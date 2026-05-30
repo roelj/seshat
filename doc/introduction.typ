@@ -94,32 +94,6 @@ needing super user privileges.
 
 After installation, the `seshat` program will be available.
 
-== Pre-built containers
-
-Docker container images are provided as a convenience service
-for each monthly `seshat` release. The following table outlines the
-meaning of each image provided. The images are published to
-#link("https://hub.docker.com/r/4turesearchdata/seshat")[Docker Hub]#footnote("https://hub.docker.com/r/4turesearchdata/seshat").
-
-#table(
-  columns: (auto, 1fr),
-  table.header([*Image tag*], [*Description*]),
-  [`devel`],
-  [Image meant for development purposes. Before it executes the `seshat`
-   command it checks out the latest codebase. So re-running the same container
-   image may result in running a different version of `seshat`.],
-  [`latest`],
-  [This image points to the latest `seshat` release. It does not automatically
-   update the `seshat` codebase.],
-  [`XX.X`],
-  [Release number where the number before the dot refers to the year and the
-   number after the dot refers to the month. Use a specific version image when
-   you want to upgrade at your own pace.],
-)
-
-To build the container images for yourself, see the build instructions in
-the `docker/Dockerfile` file.
-
 == RPM packages
 
 RPM packages are provided and built for Enterprise Linux 10. This
