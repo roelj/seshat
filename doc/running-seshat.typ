@@ -393,7 +393,7 @@ configuration options are available:
 #table(
   columns: (auto, 1fr),
   table.header([*Option*], [*Description*]),
-  [`enable-oci-registry`], [Enable support for the built-in OCI registry (defaults to `0`.],
+  [`enable-oci-registry`], [Enable the built-in OCI registry (defaults to `0`).],
   [`oci-registry-root`],   [The directory to store the container images in.],
 )
 
