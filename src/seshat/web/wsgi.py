@@ -9775,6 +9775,10 @@ class WebServer:
 
     def api_oci_registry_token (self, request):
         """Implements GET /oci/token."""
+
+        if not config.enable_oci_registry:
+            return self.error_404 (request)
+
         if request.method != "GET":
             return self.error_405 (["GET"])
 
