@@ -154,6 +154,16 @@ A Debian package is provided and built for Debian 13.
     [Binary DEB, to install and run `seshat`.],
 )
 
-]
+== Container images <container-images>
 
+Container images are provided through the `seshat.software` registry.  The image
+is built using the Dockerfile in `docker/Dockerfile` with the `PURPOSE=release`
+build argument.
+
+The OCI image can be `pull`ed using:
+```bash
+docker pull seshat.software/seshat:latest
+```
+
+]
 #render_chapter(chapter_text, "Introduction")
