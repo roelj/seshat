@@ -8,7 +8,19 @@ from rdflib import Literal, Namespace, URIRef, XSD
 
 BLANK = Namespace("blank:")
 
-## Pre-compiled patterns for determining the SPARQL query type.
+# Short UUID global values
+# -----------------------------------------------------------------------------
+
+# The alphabet is designed to avoid visually ambiguous characters.
+# Therefore there are no 0, 1, I, l, and O.
+_SUUID_ALPHABET = sorted(set("23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"))
+_SUUID_ALPHABET_INDEX = { char: idx for idx, char in enumerate(_SUUID_ALPHABET) }
+_SUUID_ALPHABET_LEN = 57 #len(_SUUID_ALPHABET)
+_PAD_LENGTH = 22  # int(math.ceil(math.log(2 ** 128, _SUUID_ALPHABET_LEN)))
+
+# SPARQL query pattern regexps
+# -----------------------------------------------------------------------------
+
 COMMENTS_PATTERN = re.compile(r"(^|\n)\s*#.*?\n")
 PREFIX_PATTERN   = re.compile(
     r"((?P<base>(\s*BASE\s*<.*?>)\s*)|(?P<prefixes>(\s*PREFIX\s+.+:\s*<.*?>)\s*))*"
@@ -228,3 +240,35 @@ def uris_from_records (records, prefix, uuid_index=None):
 
     return list(map (lambda record: URIRef(
         uuid_to_uri (record, prefix)), records))
+
+def uuid_short_encode (uuid_object):
+    """Returns a short string encoding the uuid_object."""
+
+    if not isinstance (uuid_object, uuid.UUID):
+        raise ValueError("Input `uuid_object` must be a UUID object.")
+
+    number = uuid_object.int
+    output = ""
+    while number:
+        number, digit = divmod(number, _SUUID_ALPHABET_LEN)
+        output += _SUUID_ALPHABET[digit]
+
+    # Left-pad (after reversal) so every encoding has length _PAD_LENGTH.
+    remainder = max(_PAD_LENGTH - len(output), 0)
+    output = output + _SUUID_ALPHABET[0] * remainder
+    return output[::-1]
+
+def uuid_short_decode (short_encoded_uuid):
+    """Returns a uuid.UUID representing the UUID for 'short_encoded_uuid'."""
+
+    if not isinstance(short_encoded_uuid, str):
+        raise ValueError("Input 'short_encoded_uuid' must be a str.")
+
+    number = 0
+    for char in short_encoded_uuid:
+        try:
+            number = number * _SUUID_ALPHABET_LEN + _SUUID_ALPHABET_INDEX[char]
+        except KeyError:
+            raise ValueError("'{}' is not in alphabet".format(char))
+
+    return uuid.UUID(int=number)
