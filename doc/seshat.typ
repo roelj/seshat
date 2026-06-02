@@ -131,6 +131,7 @@
         .chapter h3 { font-size: 1.25em; padding: .25em 1em .25em 1em; background: var(-\-h3-bg-color); }
         .chapter h4 { font-size: 1.10em; padding: .25em 1em .25em 1em; background: var(-\-h4-bg-color); }
         .chapter h5 { font-size: 1.0em; padding: .25em 1em .25em 1em; background: var(-\-h4-bg-color); }
+        .chapter h6 { font-size: 1.0em; padding: .25em 1em .25em 1em; background: var(-\-h4-bg-color); }
         .chapter pre { background: var(-\-code-bg-color); margin: 0pt 10pt 0pt 10pt; padding: 10pt; border-radius: 5pt; border: solid 1pt var(-\-code-border-color); }
         table { width: 100%; margin: 0em 1em 0em 0em; border-collapse: separate; border-spacing: 0em; border-radius: .5em;}
         table tbody tr td { border: solid 1pt var(-\-table-header-bg-color); padding: .25em; border-top: none; border-left: 0; }
