@@ -156,14 +156,31 @@ A Debian package is provided and built for Debian 13.
 
 == Container images <container-images>
 
+=== Production-grade containers
+
+Container images are published based on the Debian distribution and the
+`seshat` package for Debian.  This means that the dependencies of `seshat` are
+installed through Debian's distribution instead of PyPI.
+
 Container images are provided through the `seshat.software` registry.  The image
-is built using the Dockerfile in `docker/Dockerfile` with the `PURPOSE=release`
-build argument.
+is built using the Dockerfile in `docker/release-build`.
 
 The OCI image can be `pull`ed using:
 ```bash
 docker pull seshat.software/seshat:latest
 ```
+
+=== Development containers
+
+A container image that tracks the latest Git commit and installs dependencies
+directly from PyPI can be built using:
+```
+make dist-docker-dev
+```
+
+The image will be built using the Dockerfile in `docker/development-build`.
+To customize more, including changing the upstream Git URL, look at the
+`dist-docker-dev` in `Makefile.am`.
 
 ]
 #render_chapter(chapter_text, "Introduction")

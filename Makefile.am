@@ -27,8 +27,8 @@ EXTRA_DIST              =                   \
   debian/rules                              \
   debian/source/format                      \
   debian/source/include-binaries            \
-  docker/Dockerfile                         \
-  docker/docker-compose.yaml                \
+  docker/development-build                  \
+  docker/release-build                      \
   pyproject.toml                            \
   tests/admin_panel.py                      \
   tests/create_article.py                   \
@@ -54,12 +54,15 @@ dist-deb: dist
 
 if HAVE_DOCKER
 dist-docker: dist
-	@DOCKER@ image build --no-cache                         \
-           --build-arg="PURPOSE=release"                  \
-           --build-arg="BRANCH=main"                      \
-           --build-arg="VERSION=@VERSION@"                \
-           -t docker.io/4turesearchdata/djehuty:@VERSION@ \
-           docker/
+	@DOCKER@ image build --no-cache --squash \
+           -t seshat.software/seshat:@VERSION_FOR_PYTHON@   \
+           -f docker/release-build .
+
+dist-docker-dev: dist
+	@DOCKER@ image build --no-cache --squash        \
+           --build-arg="BRANCH=main"                    \
+           -t localhost/seshat:@VERSION_FOR_PYTHON@-dev \
+           -f docker/development-build .
 
 publish-docker: dist-docker
 	@DOCKER@ push docker.io/4turesearchdata/djehuty:@VERSION@

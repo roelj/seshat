@@ -30,6 +30,7 @@ doc/config.typ
 doc/index.html
 doc/seshat.pdf
 doc/seshat.1
+docker/release-build
 pylint.log
 *.bak
 *.BAK

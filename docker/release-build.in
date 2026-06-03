@@ -1,0 +1,23 @@
+FROM debian:trixie-slim
+
+# A pre-requisite step is to build the Debian image.  An easy way on GNU/Linux
+# is to use distrobox.  Otherwise, use a Debian container.
+COPY debbuild/seshat_@VERSION@-1_all.deb .
+
+# ProTip: Build the image with --squash to reduce the layers created by
+# multiple RUN commands.
+
+# Install seshat and its dependencies from Debian. Include SAML and S3 support.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+     ./seshat_@VERSION@-1_all.deb python3-boto3 python3-onelogin-saml2
+
+# Seshat only calls boto3.client("s3", ...), so we strip all other profiles
+# except "sts", which may be called from "s3".  This reduces the image size
+# by ~100MB.
+RUN find /usr/lib/python3/dist-packages/botocore/data -mindepth 1 -maxdepth 1 \
+        -type d ! -name s3 ! -name sts -exec rm -rf {} +
+
+# Remove apt caches. This reduces the image size by ~24MB.
+RUN rm -rf seshat_@VERSION@-1_all.deb /var/lib/dpkg/info/*.list /var/lib/apt/lists/*
+
+CMD ["/bin/seshat"]

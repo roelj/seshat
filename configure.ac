@@ -8,6 +8,7 @@ AC_CONFIG_FILES([
   pyproject.toml
   rpmbuild/SPECS/seshat.spec
   doc/seshat.1
+  docker/release-build
 ])
 
 dnl Make building pre-releases work seemlessly
