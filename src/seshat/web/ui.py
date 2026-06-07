@@ -799,37 +799,37 @@ def read_configuration_file (server, config_file, logger, config_files):
                 config.clear_cache_on_start = False
             except TypeError:
                 config.clear_cache_on_start = False
-        elif server.db.cache.storage is None:
+        elif config.storage is not None and server.db.cache.storage is None:
             server.db.cache.storage = os.path.join (config.storage, "cache")
 
         profile_images_root = xml_root.find ("profile-images-root")
         if profile_images_root is not None:
             config.profile_images_storage = profile_images_root.text
-        elif config.profile_images_storage is None:
+        elif config.storage is not None and config.profile_images_storage is None:
             config.profile_images_storage = os.path.join (config.storage, "profile-images")
 
         thumbnails_root = xml_root.find ("thumbnails-root")
         if thumbnails_root is not None:
             config.thumbnail_storage = thumbnails_root.text
-        elif config.thumbnail_storage is None:
+        elif config.storage is not None and config.thumbnail_storage is None:
             config.thumbnail_storage = os.path.join (config.storage, "thumbnails")
 
         iiif_cache = xml_root.find ("iiif-cache-root")
         if iiif_cache is not None:
             config.iiif_cache_storage = iiif_cache.text
-        elif config.iiif_cache_storage is None:
+        elif config.storage is not None and config.iiif_cache_storage is None:
             config.iiif_cache_storage = os.path.join (config.storage, "iiif")
 
         oci_registry_root = xml_root.find ("oci-registry-root")
         if oci_registry_root is not None:
             config.oci_registry_storage = oci_registry_root.text
-        elif config.oci_registry_storage is None:
+        elif config.storage is not None and config.oci_registry_storage is None:
             config.oci_registry_storage = os.path.join (config.storage, "oci-registry")
 
         s3_cache = xml_root.find ("s3-cache-root")
         if s3_cache is not None:
             config.s3_cache_storage = s3_cache.text
-        elif config.s3_cache_storage is None:
+        elif config.storage is not None and config.s3_cache_storage is None:
             config.s3_cache_storage = os.path.join (config.storage, "s3")
 
         static_resources_cache = xml_root.find ("static-resources-cache")
@@ -1150,6 +1150,10 @@ def main (config_file=None, run_internal_server=True, initialize=True,
         config_files = set()
         read_configuration_file (server, config_file, logger, config_files)
 
+        if config.storage is None:
+            logger.error ("Missing required 'storage-root' configuration.")
+            raise MissingConfigurationError
+
         ## Handle extracting Query Audit Logs early on.
         if extract_transactions_from_log is not None:
             return extract_transactions (since_datetime, delayed=False)
@@ -1256,7 +1260,9 @@ def main (config_file=None, run_internal_server=True, initialize=True,
             if config.storage_locations:
                 for location in config.storage_locations:
                     logger.info ("Storage path:            %s", location["path"])
-            logger.info ("Secondary storage path:  %s", config.secondary_storage)
+
+            if config.secondary_storage is not None:
+                logger.info ("Secondary storage path:  %s", config.secondary_storage)
             logger.info ("Cache storage path:      %s", server.db.cache.storage)
             logger.info ("Static pages loaded:     %s", len(server.static_pages))
             if config.handle_url is None:
