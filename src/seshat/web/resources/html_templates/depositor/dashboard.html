@@ -63,7 +63,6 @@ jQuery(document).ready(function (){
 {% block submenu %}
 <ul>
   <li class="active corporate-identity-submenu-active">My Dashboard
-  <li class="create-button"><a href="/my/sessions/new">Create API token</a>
   <li><a href="/my/datasets">My Datasets</a>
   <li><a href="/my/collections">My Collections</a>
 </ul>
@@ -89,8 +88,7 @@ jQuery(document).ready(function (){
     <div id="submit-storage-request" class="button corporate-identity-standard-button">Send request for more storage</div>
   </div>
 </div>
-<h2>Sessions and API tokens</h2>
-
+<h2>Sessions and API tokens <a id="create-new-session" href="/my/sessions/new" class="inline-button inline-heading-button create">Create API token</a></h2>
 <table id="session-table" class="corporate-identity-table">
   <thead><tr><th>Name</th><th>Created at</th><th>Actions</th></tr></thead>
   <tbody>

@@ -112,12 +112,23 @@ a.inline-button.open:active { background: #44aa44; }
 a.inline-button.close { background: #cc6666; }
 a.inline-button.close:hover { background: #bb5555; }
 a.inline-button.close:active { background: #aa4444; }
+a.inline-button.create { background: #925713; color: #ffffff; }
+a.inline-button.create:hover { background: #b76d18; }
+a.inline-button.create:active { background: #7a4810; }
 .inline-button {
     text-decoration: none;
     padding: .25em .5em .25em .5em;
     border-radius: .5em;
     cursor: pointer;
 }
+a.inline-heading-button {
+    display: inline-block;
+    font-size: .65em;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+a.inline-heading-button:hover { text-decoration: none; }
+a.inline-heading-button:active { text-decoration: none; }
 .button {
     margin: 25px auto auto auto;
     display: inline-block;
