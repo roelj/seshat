@@ -1,13 +1,8 @@
 AUTOMAKE_OPTIONS        = subdir-objects
-SUBDIRS                 = src
+SUBDIRS                 = src doc helm
 
 # Help make tarballs more reproducible.
 export TAR_OPTIONS      = --owner=0 --group=0 --numeric-owner
-
-# Only attempt to build the documentation when Typst is available.
-if HAVE_DOCS
-SUBDIRS                += doc
-endif
 
 if HAVE_SYSTEMD
 systemdsystemunit_DATA = etc/seshat.service
@@ -29,13 +24,6 @@ EXTRA_DIST              =                   \
   debian/source/include-binaries            \
   docker/development-build                  \
   docker/release-build                      \
-  helm/seshat/Chart.yaml                    \
-  helm/seshat/values.yaml                   \
-  helm/seshat/templates/cert-manager.yaml   \
-  helm/seshat/templates/deployment.yaml     \
-  helm/seshat/templates/secrets.yaml        \
-  helm/seshat/templates/service.yaml        \
-  helm/seshat/templates/volumes.yaml        \
   pyproject.toml                            \
   tests/admin_panel.py                      \
   tests/create_article.py                   \
@@ -58,9 +46,6 @@ dist-deb: dist
 	ln -s $(abs_top_srcdir)/seshat-@VERSION@.tar.gz debbuild/seshat_@VERSION@.orig.tar.gz
 	cd debbuild && tar -zxf seshat_@VERSION@.orig.tar.gz && \
         cd seshat-@VERSION@/ && debuild -us -uc
-
-dist-helm:
-	cd $(abs_top_srcdir)/helm && helm dependency build seshat && helm package seshat
 
 if HAVE_DOCKER
 dist-docker: dist

@@ -13,25 +13,7 @@ doc_HTML                = index.html
 doc_TYPST               = $(doc_NAME).typ
 dist_doc_DATA           =
 
-if HAVE_TYPST
-dist_doc_DATA           += $(doc_PDF) $(doc_HTML)
-
-$(doc_PDF):
-	@$(TYPST) compile $(doc_TYPST) $(doc_PDF)
-	@printf "Generated $(doc_PDF).\n"
-
-$(doc_HTML):
-	@$(TYPST) compile --features html --format=html $(doc_TYPST) $(doc_HTML)
-	@printf "Generated $(doc_HTML).\n"
-
-all: $(doc_PDF) $(doc_HTML)
-else
-if HAVE_PREBUILT_DOCS
-dist_doc_DATA           += $(doc_PDF) $(doc_HTML)
-endif
-endif
-
-EXTRA_DIST              = $(doc_TYPST) $(doc_HTML) $(doc_PDF)      \
+EXTRA_DIST              = $(doc_TYPST)                             \
                           api.typ                                  \
                           config.typ.in                            \
                           contact.typ                              \
@@ -60,6 +42,24 @@ EXTRA_DIST              = $(doc_TYPST) $(doc_HTML) $(doc_PDF)      \
                           figures/typed-notation.svg               \
                           figures/favicon.png
 
+
+if HAVE_TYPST
+dist_doc_DATA           += $(doc_PDF) $(doc_HTML)
+
+$(doc_PDF):
+	@$(TYPST) compile $(doc_TYPST) $(doc_PDF)
+	@printf "Generated $(doc_PDF).\n"
+
+$(doc_HTML):
+	@$(TYPST) compile --features html --format=html $(doc_TYPST) $(doc_HTML)
+	@printf "Generated $(doc_HTML).\n"
+
+all: $(doc_PDF) $(doc_HTML)
+else
+if HAVE_PREBUILT_DOCS
+dist_doc_DATA           += $(doc_PDF) $(doc_HTML)
+endif
+endif
 
 docs-clean:
 	$(RM) -rf $(doc_PDF) $(doc_HTML)

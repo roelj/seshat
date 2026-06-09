@@ -4,6 +4,8 @@ AM_PATH_PYTHON([3.9])
 AC_CONFIG_FILES([
   guix.scm
   Makefile
+  doc/Makefile
+  helm/Makefile
   src/Makefile
   pyproject.toml
   rpmbuild/SPECS/seshat.spec
@@ -31,7 +33,7 @@ AS_IF([test "x$have_typst" = "xno"],
     [AC_MSG_WARN([Unable to create the user manual.])])])
 
 AS_IF([test "x$have_typst" = "xyes" || test "x$have_prebuilt_docs" = "xyes"],
-  [AC_CONFIG_FILES([doc/Makefile doc/config.typ src/seshat/config.py])])
+  [AC_CONFIG_FILES([doc/config.typ src/seshat/config.py])])
 
 AM_CONDITIONAL([HAVE_TYPST], [test "x$have_typst" = "xyes"])
 AM_CONDITIONAL([HAVE_PREBUILT_DOCS], [test "x$have_prebuilt_docs" = "xyes"])
@@ -45,6 +47,14 @@ if test "x$DOCKER" = "x"; then
 fi
 
 AM_CONDITIONAL([HAVE_DOCKER], [test -n "$DOCKER"])
+
+dnl Check for the presence of 'helm'.
+dnl ---------------------------------------------------------------------------
+AC_CHECK_PROG(HELM, helm, helm)
+AM_CONDITIONAL([HAVE_HELM], [test -n "$HELM"])
+
+AS_IF([test -z "$HELM"],
+  [AC_MSG_WARN([Unable to (re)build Helm repository.])])
 
 dnl Check for the Python 'build' module.
 dnl ---------------------------------------------------------------------------
