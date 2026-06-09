@@ -1,0 +1,28 @@
+{{- if .Values.hostnames }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seshat-ingress
+spec:
+  {{- if index .Values "cert-manager" "enabled" }}
+  tls:
+  {{- range .Values.hostnames }}
+    - hosts:
+        - {{ .host }}
+      secretName: {{ .host }}-https-cert
+  {{- end }}
+  {{- end }}
+  rules:
+  {{- range .Values.hostnames }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: seshat-service
+                port:
+                  number: 8080
+  {{- end }}
+{{- end }}

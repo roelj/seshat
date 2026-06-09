@@ -1,0 +1,160 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seshat-deployment
+  labels:
+    app: seshat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seshat
+  template:
+    metadata:
+      labels:
+        app: seshat
+    spec:
+      containers:
+        - name: seshat
+          image: {{ .Values.containerImages.seshat }}
+          command: ["/bin/seshat"]
+          args: ["web", "--initialize", "--config-file", "/data/config.xml"]
+          volumeMounts:
+            - mountPath: /data
+              name: seshat-volume
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "1000m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
+          ports:
+            - name: http-endpoint
+              containerPort: 8080
+              protocol: TCP
+      volumes:
+        - name: seshat-volume
+          persistentVolumeClaim:
+            claimName: seshat-data-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: virtuoso-deployment
+  labels:
+    app: virtuoso-ose
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: virtuoso-ose
+  template:
+    metadata:
+      labels:
+        app: virtuoso-ose
+    spec:
+      containers:
+        - name: virtuoso-ose
+          image: {{ .Values.containerImages.virtuoso }}
+          command:
+            - "sh"
+            - "-c"
+            - |
+              cd /opt/virtuoso-opensource/database || exit 1
+              if [ ! -f 'virtuoso.ini' ]; then
+                  cp ../installer/virtuoso.ini.sample virtuoso.ini
+              fi
+              printenv | { grep -i '^VIRT_' || true; } | while read -r a
+              do
+                  setting=$(echo "$a" | cut -d'=' -f 1)
+                  value=$(echo "$a" | cut -d'=' -f 2-)
+                  section=$(echo "$setting" | cut -d'_' -f 2)
+                  key=$(echo "$setting" | cut -d'_' -f 3-) #'
+                  ../bin/inifile +inifile virtuoso.ini +section "$section" +key "$key" +value "$value"
+              done
+              exec ../bin/virtuoso-t +foreground +configfile virtuoso.ini
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "sh"
+                  - "-c"
+                  - |
+                    until nc -z localhost 1111 >/dev/null 2>&1; do sleep 1; done
+                    isql 1111 -U dba -P dba VERBOSE=OFF 'EXEC=status();' >/dev/null 2>&1
+                    [ $? -eq 3 ] && exit 0 # When password has been set, assume configured.
+                    isql 1111 -U dba -P dba VERBOSE=OFF 'EXEC=GRANT execute ON DB.DBA.SPARQL_INSERT_DICT_CONTENT TO "SPARQL";' || true
+                    isql 1111 -U dba -P dba VERBOSE=OFF 'EXEC=GRANT execute ON DB.DBA.L_O_LOOK TO "SPARQL";' || true
+                    isql 1111 -U dba -P dba VERBOSE=OFF 'EXEC=GRANT SPARQL_UPDATE to "SPARQL";' || true
+                    isql 1111 -U dba -P dba VERBOSE=OFF "EXEC=DB.DBA.RDF_DEFAULT_USER_PERMS_SET ('nobody', 7);" || true
+                    isql 1111 -U dba -P dba VERBOSE=OFF "EXEC=SET PASSWORD dba \"$DBA_PASSWORD\";" || true
+          resources:
+            requests:
+              memory: "16Gi"
+              cpu: "4000m"
+            limits:
+              memory: "18Gi"
+              cpu: "4000m"
+          volumeMounts:
+            - mountPath: /opt/virtuoso-opensource/database
+              name: virtuoso-volume
+          env:
+            - name: DBA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: virtuoso-dba-credentials
+                  key: dba-password
+            - name: VIRT_Database_ErrorLogFile
+              value: "/opt/virtuoso-opensource/database/virtuoso.log"
+            - name: VIRT_Database_DatabaseFile
+              value: "/opt/virtuoso-opensource/database/virtuoso.db"
+            - name: VIRT_Database_TransactionFile
+              value: "/opt/virtuoso-opensource/database/virtuoso.trx"
+            - name: VIRT_Database_LockFile
+              value: "/opt/virtuoso-opensource/database/virtuoso.lock"
+            - name: VIRT_Database_xa_persistent_file
+              value: "/opt/virtuoso-opensource/database/virtuoso.pxa"
+            - name: VIRT_Database_TempStorage
+              value: "TempDatabase"
+            - name: VIRT_TempDatabase_DatabaseFile
+              value: "/opt/virtuoso-opensource/database/virtuoso-temp.db"
+            - name: VIRT_TempDatabase_TransactionFile
+              value: "/opt/virtuoso-opensource/database/virtuoso-temp.trx"
+            - name: VIRT_HTTPServer_ServerPort
+              value: "8890"
+            - name: VIRT_HTTPServer_EnabledDavVSP
+              value: "0"
+            - name: VIRT_HTTPServer_MaxClientConnections
+              value: "100"
+            - name: VIRT_Parameters_ServerPort
+              value: "1111"
+            - name: VIRT_Parameters_IndexTreeMaps
+              value: "256"
+            - name: VIRT_Parameters_NumberOfBuffers
+              value: "680000"
+            - name: VIRT_Parameters_MaxDirtyBuffers
+              value: "500000"
+            - name: VIRT_Parameters_MaxMemPoolSize
+              value: "20000000"
+            - name: VIRT_Parameters_MaxQueryMem
+              value: "4G"
+            - name: VIRT_SPARQL_ResultSetMaxRows
+              value: "100000"
+            - name: VIRT_SPARQL_MaxQueryExecutionTime
+              value: "360000000"
+            - name: VIRT_SPARQL_MaxQueryCostEstimationTime
+              value: "0"
+            - name: PATH
+              value: "/opt/virtuoso-opensource/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            - name: VIRTUOSO_HOME
+              value: "/opt/virtuoso-opensource"
+          ports:
+            - name: sparql-endpoint
+              containerPort: 8890
+              protocol: TCP
+      volumes:
+        - name: virtuoso-volume
+          persistentVolumeClaim:
+            claimName: virtuoso-data-volume

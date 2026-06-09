@@ -1,0 +1,16 @@
+apiVersion: v2
+type: application
+name: seshat
+version: 1.0.0
+appVersion: "26.5.0"
+description: A Helm chart for deploying a Seshat instance on Kubernetes.
+maintainers:
+  - name: Roel Janssen
+    email: project@seshat.software
+icon: https://seshat.software/logo.png
+dependencies:
+  - name: cert-manager
+    version: v1.19.1
+    repository: oci://quay.io/jetstack/charts
+    alias: cert-manager
+    condition: cert-manager.enabled

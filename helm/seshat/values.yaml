@@ -1,0 +1,17 @@
+hostnames:
+  - host: seshat.local
+cert-manager:
+  enabled: false
+persistentVolumes:
+  - name: virtuoso-data-volume
+    storageClass: virtuoso-data
+    size: 32Gi
+    hostPath: /var/lib/seshat/virtuoso
+  - name: seshat-data-volume
+    storageClass: seshat-data
+    size: 32Gi
+    hostPath: /var/lib/seshat/seshat
+containerImages:
+  virtuoso: openlink/virtuoso-opensource-7:latest
+  seshat: seshat.software/seshat:latest
+contactEmail: project@seshat.software

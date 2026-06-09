@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: virtuoso-service
+spec:
+  selector:
+    app: virtuoso-ose
+  ports:
+    - name: sparql-endpoint
+      protocol: TCP
+      port: 8890
+      targetPort: 8890
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seshat-service
+spec:
+  selector:
+    app: seshat
+  ports:
+    - name: http-endpoint
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
