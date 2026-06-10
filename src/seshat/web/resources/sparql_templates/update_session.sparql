@@ -13,7 +13,7 @@ DELETE {
 INSERT {
   GRAPH <{{state_graph}}> {
     {%- if name is not none: %}
-    ?session shst:name       "{{name | safe}}"^^xsd:string .
+    ?session shst:name       {{name | safe}} .
     {%- endif %}{% if active is not none: %}
     ?session shst:active     {{active | safe}} .
     {%- endif %}
