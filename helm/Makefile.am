@@ -18,7 +18,7 @@ EXTRA_DIST            =                \
   seshat/templates/volumes.yaml
 
 if HAVE_HELM
-dist_helm_DATA        = index.yaml seshat-1.0.0.tgz
+dist_helm_DATA       += index.yaml seshat-1.0.0.tgz
 
 index.yaml: seshat-1.0.0.tgz
 	$(HELM) repo index . --url @BASE_URL@
