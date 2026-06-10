@@ -1843,17 +1843,17 @@ class SparqlInterface:
         query   = self.__query_from_template ("update_file", {
             "account_uuid":  account_uuid,
             "file_uuid":     file_uuid,
-            "filesystem_location": filesystem_location,
-            "download_url":  download_url,
-            "computed_md5":  computed_md5,
-            "viewer_type":   viewer_type,
-            "preview_state": preview_state,
+            "filesystem_location": rdf.escape_string_value (filesystem_location),
+            "download_url":  rdf.escape_string_value (download_url),
+            "computed_md5":  rdf.escape_string_value (computed_md5),
+            "viewer_type":   rdf.escape_string_value (viewer_type),
+            "preview_state": rdf.escape_string_value (preview_state),
             "file_size":     file_size,
-            "is_incomplete": is_incomplete,
+            "is_incomplete": rdf.escape_boolean_value (is_incomplete),
             "is_image":      rdf.escape_boolean_value (is_image),
-            "modified_date": modified_date,
-            "status":        status,
-            "handle":        handle
+            "modified_date": rdf.escape_datetime_value (modified_date),
+            "status":        rdf.escape_string_value (status),
+            "handle":        rdf.escape_string_value (handle)
         })
 
         self.cache.invalidate_by_prefix (f"{account_uuid}_storage")

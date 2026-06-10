@@ -29,27 +29,27 @@ DELETE {
 INSERT {
   GRAPH <{{state_graph}}> {
     {%- if download_url is not none %}
-    ?file              shst:download_url        "{{download_url | safe}}"^^xsd:string .
+    ?file              shst:download_url        {{download_url | safe}} .
     {%- endif%}{% if computed_md5 is not none %}
-    ?file              shst:computed_md5        "{{computed_md5 | safe}}"^^xsd:string .
+    ?file              shst:computed_md5        {{computed_md5 | safe}} .
     {%- endif%}{% if is_incomplete is not none %}
-    ?file              shst:is_incomplete       {{is_incomplete}} .
+    ?file              shst:is_incomplete       {{is_incomplete | safe}} .
     {%- endif%}{% if is_image is not none %}
     ?file              shst:is_image            {{is_image | safe}} .
     {%- endif%}{% if viewer_type is not none %}
-    ?file              shst:viewer_type         "{{viewer_type | safe}}"^^xsd:string .
+    ?file              shst:viewer_type         {{viewer_type | safe}} .
     {%- endif%}{% if preview_state is not none %}
-    ?file              shst:preview_state       "{{preview_state | safe}}"^^xsd:string .
+    ?file              shst:preview_state       {{preview_state | safe}} .
     {%- endif%}{% if file_size is not none %}
     ?file              shst:size                {{file_size | safe}} .
     {%- endif%}{% if status is not none %}
-    ?file              shst:status              "{{status | safe}}"^^xsd:string .
+    ?file              shst:status              {{status | safe}} .
     {%- endif%}{% if handle is not none %}
-    ?file              shst:handle              "{{handle | safe}}"^^xsd:string .
+    ?file              shst:handle              {{handle | safe}} .
     {%- endif%}{% if filesystem_location is not none %}
-    ?file              shst:filesystem_location "{{filesystem_location | safe}}"^^xsd:string .
+    ?file              shst:filesystem_location {{filesystem_location | safe}} .
     {%- endif%}
-    ?file              shst:modified_date        "{{modified_date | safe}}"^^xsd:dateTime .
+    ?file              shst:modified_date        {{modified_date | safe}} .
   }
 }
 WHERE {
