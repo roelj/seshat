@@ -135,25 +135,28 @@ def decimal_coord(raw_input, axis, digits=5):
     5 digits is accuracy (RMS) of 40 cm.
     '''
     pattern = r"""^(-?\d+)[º°]\s*(\d+)[’']\s*((\d+)(\.\d?)?)((’’)|('')|"|”)\s*([NESW]?)$"""
-    if raw_input is not None:
-        try:
-            deg = float(raw_input)
-        except ValueError:
-            raw_input = str(raw_input).strip()
-            match = re.search(pattern, raw_input)
-            if match:
-                components = match.groups()
-                deg = int(components[0]) + int(components[1])/60 + float(components[2])/3600
-                direction = components[-1] #direction may be N,E,S,W, axis N,E.
-                if (direction == 'S' and axis == 'N') or (direction == 'W' and axis == 'E'):
-                    deg = -deg
-                elif direction not in (axis, ''):
-                    return None #something is wrong, probably mixed up lat and lon
-            else:
-                return None #something is wrong, undecipherable gibberish
-        arc_rel = deg/90 if axis == 'N' else deg/180
-        if abs(arc_rel) <= 1.:
-            return f'{deg:.{digits}f}'
+    if raw_input is None:
+        return None
+
+    try:
+        deg = float(raw_input)
+    except ValueError:
+        raw_input = str(raw_input).strip()
+        pattern_match = re.search(pattern, raw_input)
+        if not pattern_match:
+            return None # Undecipherable gibberish
+
+        components = pattern_match.groups()
+        deg = int(components[0]) + int(components[1])/60 + float(components[2])/3600
+        direction = components[-1] #direction may be N,E,S,W, axis N,E.
+        if (direction == 'S' and axis == 'N') or (direction == 'W' and axis == 'E'):
+            deg = -deg
+        elif direction not in (axis, ''):
+            return None # Probably mixed up lat and lon
+
+    max_deg = 90 if axis == 'N' else 180
+    if abs(deg) <= max_deg:
+        return f'{deg:.{digits}f}'
 
     return None
 
