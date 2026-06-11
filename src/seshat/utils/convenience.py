@@ -193,7 +193,7 @@ def deduplicate_list (alist):
     based on first occurrence of duplicates.
     """
     try:
-        return list({item[1]:item[0] for item in list(enumerate(alist))})
+        return list(dict.fromkeys(alist))
     except TypeError:
         logging.error('Wrong type of %s in deduplicate_list', alist)
         return None
