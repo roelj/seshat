@@ -19,6 +19,16 @@ from seshat.utils import rdf, convenience as conv
 from seshat.utils.constants import datetime_format
 from seshat.web.config import config
 
+# XSD terms used by '__normalize_binding', resolved once at import time.
+# RDFLib routes every XSD.foo access through a metaclass __getattr__, which is
+# ~20x the cost of reading a module-level name. Here we cache those lookups.
+_XSD_INTEGER    = XSD.integer
+_XSD_DECIMAL    = XSD.decimal
+_XSD_BOOLEAN    = XSD.boolean
+_XSD_DATE_TIME  = XSD.dateTime
+_XSD_DATE       = XSD.date
+_XSD_STRING     = XSD.string
+
 def rdflib_network_audit_hook (name, arguments):
     """Event handler to audit making unexpected network connections."""
 
@@ -125,23 +135,23 @@ class SparqlInterface:
                 continue
 
             xsd_type = value.datatype
-            if xsd_type in (XSD.integer, XSD.decimal):
+            if xsd_type in (_XSD_INTEGER, _XSD_DECIMAL):
                 output[key] = int(float(value))
-            elif xsd_type == XSD.boolean:
+            elif xsd_type == _XSD_BOOLEAN:
                 try:
                     output[key] = bool(int(value))
                 except ValueError:
                     output[key] = str(value).lower() == "true"
-            elif xsd_type == XSD.dateTime:
+            elif xsd_type == _XSD_DATE_TIME:
                 time_value = value.partition(".")[0]
                 if time_value[-1] == 'Z':
                     time_value = time_value[:-1]
                 if time_value.endswith("+00:00"):
                     time_value = time_value[:-6]
                 output[key] = time_value
-            elif xsd_type == XSD.date:
+            elif xsd_type == _XSD_DATE:
                 output[key] = value
-            elif xsd_type == XSD.string:
+            elif xsd_type == _XSD_STRING:
                 output[key] = None if value == "NULL" else str(value)
             # bindings that were produced with BIND() on Virtuoso
             # have no XSD type.
