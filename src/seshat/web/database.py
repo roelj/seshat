@@ -117,39 +117,36 @@ class SparqlInterface:
     def __normalize_binding (self, row):
         output = {}
         for name in row.keys():
-            if isinstance(row[name], Literal):
-                xsd_type = row[name].datatype
-                if xsd_type == XSD.integer:
-                    output[str(name)] = int(float(row[name]))
-                elif xsd_type == XSD.decimal:
-                    output[str(name)] = int(float(row[name]))
-                elif xsd_type == XSD.boolean:
-                    try:
-                        output[str(name)] = bool(int(row[name]))
-                    except ValueError:
-                        output[str(name)] = str(row[name]).lower() == "true"
-                elif xsd_type == XSD.dateTime:
-                    time_value = row[name].partition(".")[0]
-                    if time_value[-1] == 'Z':
-                        time_value = time_value[:-1]
-                    if time_value.endswith("+00:00"):
-                        time_value = time_value[:-6]
-                    output[str(name)] = time_value
-                elif xsd_type == XSD.date:
-                    output[str(name)] = row[name]
-                elif xsd_type == XSD.string:
-                    if row[name] == "NULL":
-                        output[str(name)] = None
-                    else:
-                        output[str(name)] = str(row[name])
-                # bindings that were produced with BIND() on Virtuoso
-                # have no XSD type.
-                elif xsd_type is None:
-                    output[str(name)] = str(row[name])
-            elif row[name] is None:
-                output[str(name)] = None
-            else:
-                output[str(name)] = str(row[name])
+            key   = str(name)
+            value = row[name]
+
+            if not isinstance(value, Literal):
+                output[key] = None if value is None else str(value)
+                continue
+
+            xsd_type = value.datatype
+            if xsd_type in (XSD.integer, XSD.decimal):
+                output[key] = int(float(value))
+            elif xsd_type == XSD.boolean:
+                try:
+                    output[key] = bool(int(value))
+                except ValueError:
+                    output[key] = str(value).lower() == "true"
+            elif xsd_type == XSD.dateTime:
+                time_value = value.partition(".")[0]
+                if time_value[-1] == 'Z':
+                    time_value = time_value[:-1]
+                if time_value.endswith("+00:00"):
+                    time_value = time_value[:-6]
+                output[key] = time_value
+            elif xsd_type == XSD.date:
+                output[key] = value
+            elif xsd_type == XSD.string:
+                output[key] = None if value == "NULL" else str(value)
+            # bindings that were produced with BIND() on Virtuoso
+            # have no XSD type.
+            elif xsd_type is None:
+                output[key] = str(value)
 
         return output
 
