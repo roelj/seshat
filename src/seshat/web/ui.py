@@ -56,6 +56,16 @@ try:
 except (ImportError, ModuleNotFoundError):
     BOTO3_DEPENDENCY_LOADED = False
 
+# The 'waitress' module provides a production-grade WSGI server for the
+# built-in serving mode.  It is optional: when it isn't installed, or when
+# a development feature (debugger, live-reload) is enabled, the werkzeug
+# development server is used instead.
+try:
+    from waitress import serve as waitress_serve
+    WAITRESS_DEPENDENCY_LOADED = True
+except (ImportError, ModuleNotFoundError):
+    WAITRESS_DEPENDENCY_LOADED = False
+
 class ConfigFileNotFound(Exception):
     """Raised when the database is not queryable."""
 
@@ -1305,6 +1315,9 @@ def main (config_file=None, run_internal_server=True, initialize=True,
                 logger.error ("An account with 'may-process-feedback' privileges must be configured.")
                 raise MissingConfigurationError
 
+            if config.in_production and not WAITRESS_DEPENDENCY_LOADED:
+                logger.warning ("Installing 'waitress' for HTTP handling is recommended.")
+
             for email_address in config.privileges:  # pylint: disable=consider-using-dict-items
                 if config.privileges[email_address.lower()]["needs_2fa"]:
                     logger.info ("Enabled 2FA for %s.", email_address)
@@ -1360,12 +1373,28 @@ def main (config_file=None, run_internal_server=True, initialize=True,
             if config.static_cache_root is not None:
                 server.create_static_error_pages()
 
-        run_simple (config.address, config.port, server,
-                    threaded=(config.maximum_workers <= 1),
-                    processes=config.maximum_workers,
-                    extra_files=list(config_files),
-                    use_debugger=config.use_debugger,
-                    use_reloader=config.use_reloader)
+        # The debugger and live-reload are development features that only
+        # werkzeug's development server provides.  Use it when either is
+        # enabled, and as a fallback when 'waitress' isn't installed.
+        use_development_server = (config.use_debugger or config.use_reloader
+                                  or not WAITRESS_DEPENDENCY_LOADED)
+
+        if use_development_server:
+            if not (config.use_debugger or config.use_reloader):
+                logger.warning ("Falling back to werkzeug's development "
+                                "server because 'waitress' is not installed.")
+            run_simple (config.address, config.port, server,
+                        threaded=(config.maximum_workers <= 1),
+                        processes=config.maximum_workers,
+                        extra_files=list(config_files),
+                        use_debugger=config.use_debugger,
+                        use_reloader=config.use_reloader)
+        else:
+            logging.info ("Using Waitress to serve HTTP requests.")
+            waitress_serve (server,
+                            host    = config.address,
+                            port    = config.port,
+                            threads = max(config.maximum_workers, 8))
 
     except (FileNotFoundError, DependencyNotAvailable, MissingConfigurationError):
         pass

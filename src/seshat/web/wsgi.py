@@ -389,6 +389,7 @@ class WebServer:
         ## Disable werkzeug logging.
         ## --------------------------------------------------------------------
         logging.getLogger('werkzeug').setLevel(logging.ERROR)
+        logging.getLogger('waitress').setLevel(logging.WARNING)
 
     ## WSGI AND WERKZEUG SETUP.
     ## ------------------------------------------------------------------------
