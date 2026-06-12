@@ -24,6 +24,6 @@ Depends: ${misc:Depends},
  python3-defusedxml,
  python3-pil,
  git
-Suggests: python3-boto3, python3-onelogin-saml2
+Suggests: python3-boto3, python3-onelogin-saml2, python3-waitress
 Description: Data repository system
  A data and software repository system.
