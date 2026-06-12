@@ -86,7 +86,7 @@ function activate () {
             show_message ("failure", `<p>${response.message}</p>`);
         },
         success: function (file, response) {
-            save_profile (notify=false, function () { location.reload(); });
+            save_profile (false, function () { location.reload(); });
         },
         accept: function(file, done) {
             done();
