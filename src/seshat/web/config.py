@@ -76,6 +76,7 @@ class RuntimeConfiguration:  # pylint: disable=too-few-public-methods
         self.handle_url                  = None
         self.handle_prefix               = None
         self.handle_index                = None
+        self.portal_html                 = None
         self.small_footer                = (
             '<div id="footer-wrapper2"><p>This repository is powered by '
             '<a href="https://codeberg.org/seshat/seshat">seshat</a>.'

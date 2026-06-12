@@ -887,6 +887,10 @@ def read_configuration_file (server, config_file, logger, config_files):
         if small_footer:
             config.small_footer = small_footer
 
+        portal_html, _ = read_raw_xml (xml_root, "portal-html")
+        if portal_html:
+            config.portal_html = portal_html
+
         site_name = xml_root.find ("site-name")
         if site_name is not None:
             config.site_name = site_name.text
