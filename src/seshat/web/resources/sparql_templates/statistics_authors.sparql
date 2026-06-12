@@ -5,6 +5,11 @@ WHERE {
   GRAPH <{{state_graph}}> {
     ?author         rdf:type            shst:Author .
     ?author         shst:is_public      "true"^^xsd:boolean .
+    {%- if published_only %}
+    ?container   rdf:type/rdfs:subClassOf shst:Container .
+    ?container   shst:published_versions/rdf:rest*/rdf:first ?item .
+    ?item        shst:authors/rdf:rest*/rdf:first ?author .
+    {%- endif %}
   }
 {%- if filters is not none %}{{ filters | safe }}{% endif %}
 }

@@ -8,6 +8,9 @@ SELECT DISTINCT ?file ?bytes
 WHERE {
   GRAPH <{{state_graph}}> {
     ?dataset        rdf:type            shst:Dataset .
+    {%- if published_only %}
+    ?dataset        shst:published_date ?published_date .
+    {%- endif %}
     ?dataset        shst:files/rdf:rest*/rdf:first ?file .
     ?file           rdf:type            shst:File .
     ?file           shst:size           ?bytes .
