@@ -2553,24 +2553,20 @@ class SparqlInterface:
         self.cache.invalidate_by_prefix ("datasets")
 
         results = self.__run_logged_query (query)
-        if results:
-            if categories and isinstance (categories, list):
-                items = rdf.uris_from_records (categories, "category", "uuid")
-                self.update_item_list (dataset_uuid, account_uuid, items, "categories")
-            if authors and isinstance (authors, list):
-                items = rdf.uris_from_records (authors, "author")
-                self.update_item_list (dataset_uuid, account_uuid, items, "authors")
-            if references and isinstance (references, list):
-                items = list(map(lambda reference: reference["url"], references))
-                self.update_item_list (dataset_uuid, account_uuid, items, "references")
-            if tags and isinstance (tags, list):
-                items = list(map(lambda tag: tag["tag"], tags))
-                self.update_item_list (dataset_uuid, account_uuid, items, "tags")
-            if funding_list and isinstance (funding_list, list):
-                items = rdf.uris_from_records (funding_list, "funding", "uuid")
-                self.update_item_list (dataset_uuid, account_uuid, items, "funding_list")
-        else:
+        if not results:
             return False
+
+        updates = [
+            (categories,   "categories",   lambda records: rdf.uris_from_records (records, "category", "uuid")),
+            (authors,      "authors",      lambda records: rdf.uris_from_records (records, "author")),
+            (references,   "references",   lambda records: [record["url"] for record in records]),
+            (tags,         "tags",         lambda records: [record["tag"] for record in records]),
+            (funding_list, "funding_list", lambda records: rdf.uris_from_records (records, "funding", "uuid"))
+        ]
+
+        for records, key, transform in updates:
+            if records and isinstance (records, list):
+                self.update_item_list (dataset_uuid, account_uuid, transform (records), key)
 
         return True
 
