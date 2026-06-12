@@ -1,19 +1,23 @@
-function shorthand_uri (value) {
-    if (typeof ontology_url === 'undefined') {
-	ontology_url = "https://seshat.software/ontology/latest/";
-    }
-    return value.replace(ontology_url, "shst:")
-                .replace("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdf:")
-                .replace("http://www.w3.org/2000/01/rdf-schema#", "rdfs:");
+function uri_prefix_map () {
+    return [ [resolve_ontology_url (),                       "shst:"],
+             ["http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdf:"],
+             ["http://www.w3.org/2000/01/rdf-schema#",       "rdfs:"] ];
 }
 
+function resolve_ontology_url () {
+    if (typeof ontology_url !== 'undefined') { return ontology_url; }
+    return "https://seshat.software/ontology/latest/";
+}
+
+function apply_replacements (value, pairs) {
+    for (const [from, to] of pairs) { value = value.replace(from, to); }
+    return value;
+}
+
+function shorthand_uri (value) { return apply_replacements (value, uri_prefix_map()); }
+
 function longform_uri (value) {
-    if (typeof ontology_url === 'undefined') {
-	ontology_url = "https://seshat.software/ontology/latest/";
-    }
-    return value.replace("shst:", ontology_url)
-                .replace("rdf:", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-                .replace("rdfs:", "http://www.w3.org/2000/01/rdf-schema#");
+    return apply_replacements (value, uri_prefix_map().map(([uri, prefix]) => [prefix, uri]));
 }
 
 function draw_grid () {
