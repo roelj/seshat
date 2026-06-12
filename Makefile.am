@@ -14,6 +14,7 @@ EXTRA_DIST              =                   \
   LICENSE                                   \
   MANIFEST.in                               \
   README.md                                 \
+  SECURITY.md                               \
   etc/seshat.service                        \
   etc/seshat.xml                            \
   debian/changelog                          \
