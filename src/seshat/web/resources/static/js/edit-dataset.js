@@ -1425,7 +1425,6 @@ function activate (dataset_uuid, permissions=null, callback=jQuery.noop) {
 
         jQuery("#delete").on("click", function (event) { delete_dataset (dataset_uuid, event); });
         jQuery("#save").on("click", function (event)   { save_dataset (dataset_uuid, event); });
-        jQuery("#save_bottom").on("click", function (event)   { save_dataset (dataset_uuid, event); });
         jQuery("#submit").on("click", function (event) { submit_dataset (dataset_uuid, event); });
         jQuery("#publish").on("click", function (event) { publish_dataset (dataset_uuid, event); });
         jQuery("#decline").on("click", function (event) { decline_dataset (dataset_uuid, event); });
