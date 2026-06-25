@@ -6,28 +6,32 @@
 The `seshat` project implements a data and software repository system.  With
 this software you can publish data and create citeable objects from it.
 
-Data isn't fully described by its bytes.  Data has provenance, authors, usage
-conditions, and multiple ways of working with it.  For example, a photograph
-was taken with an intent, by a person, with a photocamera, with a specific lense,
-and a specific focus-point.  Furthermore, when sharing the photograph, its
-viewers may want to view it in a specific format, or in a specific size.  The
-`seshat` data repository attempts to provide the means to capture the story behind
-the bytes, and attempts to provide the means to re-use the data in a way its users
-wish.
+In the eyes of a data repository, data isn't fully described by its bytes.
+Data has provenance, authors, usage conditions, and multiple ways of working
+with it.  For example, a photograph was taken with an intent, by a person,
+with a photocamera, with a specific lense, and a specific focus-point.
+Furthermore, when sharing the photograph, its viewers may want to view it
+in a specific format, or in a specific size.  And the author of the photo
+may want to specify the conditions under which it may be (re)used. The
+`seshat` data repository attempts to provide the means to capture the story
+behind the bytes, and attempts to provide the means to re-use the data in a
+way its author(s) and user(s) wish.
 
-Software can be viewed through the lense of of bytes-to-be-reused, but in
-`seshat` it is treated as a special case.  We implemented Git and the OCI
-registry API in `seshat` to preserve software in its full shape: including
-version control history, and including the means to run it.
+One example of providing the means to capture the story behind the data
+can be found in the case of software.  Software that runs on a computer is
+the product of its developmental history, and the product of its runtime
+environment.  So in `seshat` we implemented Git to capture the development
+history of the software. Moreover, in `seshat` we implemented the OCI
+registry API so that container-based workflows have a good starting point
+to run software.
 
 == The structure of this document
 
-There is only one manual provides by `seshat`.  It describes both the
-technicalities of getting an instance up and running, as well as how to use it
-thereafter.  This is part of the Free Software philosophy at the core of `seshat`:
-As a user of this software you have the rights to run your own instance of it,
-to study its workings, to modify it, and to redistribute your modified version
-of it.
+This manual describes both the technicalities of getting an instance up and
+running, as well as how to use it thereafter.  This is part of the Free
+Software philosophy at the core of `seshat`: As a user of this software you
+have the rights to run your own instance of it, to study its workings, to
+modify it, and to redistribute your modified version of it.
 
 == Installing `seshat` from its source code
 
