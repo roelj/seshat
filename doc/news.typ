@@ -2,6 +2,56 @@
 #let chapter_text = [
 #silent-chapter[News] <news>
 
+#silent-section[Release notes for `v26.6`.] <release-26-06>
+
+Due to holidays and hand injuries the release slipped by a week.
+It is nevertheless a solid incremental improvement over `26.5`.
+
+The June release of 2026 consists of 40 commits made by 3 authors.
+
+#silent-subsection[New features]
+
+- Add Helm chart for Kubernetes deployments
+  (#commitLink("412111ae736e3050e6a6073827ec1762ae447fd8")).
+- Add ability to run using Waitress
+  (#commitLink("9d989f58c919587d8929f80a157f356d4ca9db5d")).
+- Enable configuring custom HTML on the the portal page
+  (#commitLink("a2bc0f89fd9850324c4166eb12a49d029021adb6").
+
+#silent-subsection[Bugfixes]
+
+- Fix bug in saving profile information
+  (#commitLink("a12cabbf0039f13256f61d6a8d9e54ae0dfb4bc1")).
+- Limit summary statistics to published work
+  (#commitLink("f0a6b75b19962ac67445e68396a8816c379c15ed")).
+
+#silent-subsection[Security]
+
+- Fix path-traversal bug in OCI registry endpoints
+  (#commitLink("f60f945fc1edb693c3765917925dd79a1d7f5e33")).
+- Fix missing input validation in `/v3/datasets/<uuid>/authors/<uuid>`
+  (#commitLink("88f8df7738e6df43b9e3002366da5de43f118063")).
+
+#silent-subsection[Incremental improvements]
+
+- Improve performance of reading SPARQL responses
+  (#commitLink("bbf9b2de8dfee897f937cd05aacec30f6b6cd98f")).
+- Refactoring
+  (#commitLink("0f5cbf9a155349f8e5e92019bf6516db943edbe8"),
+  #commitLink("6f41a1c4f01e59988a40ab4ba979761ac6db913b"),
+  #commitLink("ed6306f278bcbb8d7b959ed2a99de5322fb92ca4"),
+  #commitLink("ba7595683c1928f82c5d96728b313d2b6c762b6c"),
+  #commitLink("29f83365b9d608f3f32e2b1c2ca115330722a2ac"),
+  #commitLink("98ce370b5e0efc3309dc2ef165612761e7f4cb43"))
+- Documentation improvements
+  (#commitLink("228371c95934466b8294517185ed1622791e22f5"),
+  #commitLink("29f150cc68ba6d55310027fa67e69d2fbe4a0391"),
+  #commitLink("600c302b72f8b9c9b9c3b2f32c38999d82fff79b"),
+  #commitLink("5dabc2d28441d8626751979a9d13f02f090bbc96"),
+  #commitLink("cb86ee985ee06a591d4d04c3f4a39cd6ae1de403"),
+  #commitLink("9113dbd21e17b1ed78bdedf347591c975e9dd963"),
+  #commitLink("7d8132ea7ccb6e8f6a612fc96b13e879c4140156")).
+
 #silent-section[Release notes for `v26.5`.] <release-26-05>
 
 The May release of 2026 consists of 39 commits made by 3 authors.

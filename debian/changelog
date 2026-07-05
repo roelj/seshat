@@ -1,3 +1,9 @@
+seshat (26.6-1) unstable; urgency=low
+
+  * Release of seshat 26.6.
+
+ -- Roel Janssen <rrejanssen@gmail.com>  Sun, 5 Jul 2026 11:30:27 +0200
+
 seshat (26.5-1) stable; urgency=low
 
   * Release of seshat 26.5.
