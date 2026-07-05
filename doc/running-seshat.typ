@@ -1,13 +1,171 @@
 #import "config.typ": *
 
 #let chapter_text = [
-= Configuring `seshat` <configuring-seshat>
+= Running your own instance <running-your-own-instance>
+
+== Building from the source code
+
+Building software from its source code makes it easier to modify it afterwards.
+The remainder of this section will go over this process.  If you prefer pre-built
+packages, skip ahead to @pre-built-packages.
+
+=== Obtaining the source code <sec-obtaining-tarball>
+
+The source code can be downloaded at the
+#link(seshatgiturl + "/releases")[Releases]#footnote(seshatgiturl + "/releases")
+page. Make sure to download the #raw("seshat-" + seshatversion + ".tar.gz") file.
+
+Or, directly download the tarball using the command-line:
+
+#let output = ```bash
+curl -LO <seshatgiturl>/releases/download/v<seshatversion>/seshat-<seshatversion>.tar.gz
+```
+#render_code_output(output)
+
+After obtaining the tarball, it can be unpacked using the `tar` command:
+
+#let output = ```bash
+tar zxvf seshat-<seshatversion>.tar.gz
+```
+#render_code_output(output)
+
+=== Installing the prerequisites <sec-prerequisites>
+
+The `seshat` program needs Python (version 3.9 or higher) and
+Git to be installed. Additionally, a couple of Python packages need
+to be installed. The following sections describe installing the
+prerequisites on various GNU/Linux distributions. To put the software in
+the context of its environment, @fig-references-graph displays
+the complete run-time dependencies from `seshat` to `glibc`.
+
+#figure(
+  image("figures/references-graph.svg"),
+  caption: [Run-time references when constructed with the packages from GNU Guix.],
+) <fig-references-graph>
+
+The web service of `seshat` stores its information in a SPARQL 1.1
+@sparql-11 endpoint. We recommend either
+#link("https://blazegraph.com/")[Blazegraph]#footnote("https://blazegraph.com/")
+or #link("http://vos.openlinksw.com/owiki/wiki/VOS")[Virtuoso open-source edition]#footnote("http://vos.openlinksw.com/owiki/wiki/VOS").
+
+==== Optional installation requirements depending on configuration
+
+For specific features `seshat` may require additional packages to be
+installed. Whether this is the case depends on the run-time configuration.
+When an optional package is required `seshat` will report which one in
+its logs. There are three configuration scenarios that require the
+additional packages: SAML, S3 and IIIF.
+
+===== SAML
+
+When configuring the use of an identity provider via SAML `seshat`
+requires the `python3-saml` Python package to be installed. This
+package provides the implementation of the SAML protocol.
+
+===== S3
+
+When configuring file access in S3 buckets `seshat` requires the
+`boto3` Python package to be installed. This package is used to
+authenticate to the S3 endpoints and to download (or stream) data.
+
+===== IIIF
+
+When enabling the IIIF functionality `seshat` requires the
+`pyvips` Python package to be installed. This package is used to
+perform image transformations.
+
+=== Installation instructions
+
+After obtaining the source code (see @sec-obtaining-tarball)
+and installing the required tools (see @sec-prerequisites),
+building involves running the following commands:
+
+#let output = ```bash
+cd seshat-<seshatversion>
+autoreconf -vif # Only needed if the "./configure" step does not work.
+./configure
+make
+make install
+```
+#render_code_output(output)
+
+To run the `make install` command, super user privileges may be
+required. Specify a `--prefix` to the `configure`
+script to install the tools to a user-writeable location to avoid
+needing super user privileges.
+
+After installation, the `seshat` program will be available.
+
+
+== Using pre-compiled packages <pre-built-packages>
+
+=== RPM packages
+
+RPM packages are provided and built for Enterprise Linux 10. This
+RPM depends on packages in the
+#link("https://docs.fedoraproject.org/en-US/epel")[Extra Packages for Enterprise Linux (EPEL)]
+repository.
+
+#table(
+  columns: (auto, 1fr),
+  table.header([*Filename*], [*Description*]),
+    [#link(seshatgiturl + "/releases/download/v" + seshatversion + "/seshat-" +
+           seshatversion + "-1.el10.noarch.rpm")[seshat-#(seshatversion)-1.el10.noarch.rpm]],
+  [Binary RPM, to install and run `seshat`.],
+    [#link(seshatgiturl + "/releases/download/v" + seshatversion + "/seshat-" +
+           seshatversion + "-1.el10.src.rpm")[seshat-#(seshatversion)-1.el10.src.rpm]],
+  [Source RPM, to (re)build from source code.],
+)
+
+RPM packages for more distributions, including Enterprise Linux 9, are
+#link("https://copr.fedorainfracloud.org/coprs/seshat/seshat")[built via Copr].
+
+=== Debian packages
+
+A Debian package is provided and built for Debian 13.
+#table(
+  columns: (auto, 1fr),
+  table.header([*Filename*], [*Description*]),
+    [#link(seshatgiturl + "/releases/download/v" + seshatversion + "/seshat_" +
+           seshatversion + "-1_all.deb")[seshat\_#(seshatversion)-1\_all\.deb]],
+    [Binary DEB, to install and run `seshat`.],
+)
+
+== Using container images <container-images>
+
+=== Production-grade containers
+
+Container images are published based on the Debian distribution and the
+`seshat` package for Debian.  This means that the dependencies of `seshat` are
+installed through Debian's distribution instead of PyPI.
+
+Container images are provided through the `seshat.software` registry.  The image
+is built using the Dockerfile in `docker/release-build`.
+
+The OCI image can be `pull`ed using:
+```bash
+docker pull seshat.software/seshat:latest
+```
+
+=== Development containers
+
+A container image that tracks the latest Git commit and installs dependencies
+directly from PyPI can be built using:
+```
+make dist-docker-dev
+```
+
+The image will be built using the Dockerfile in `docker/development-build`.
+To customize more, including changing the upstream Git URL, look at the
+`dist-docker-dev` in `Makefile.am`.
+
+== Configuring `seshat` <configuring-seshat>
 
 Now that `seshat` is installed, it's a good moment to look into its
 run-time configuration options. All configuration can be done through a
 configuration file, for which an example is available at `etc/seshat.xml`.
 
-== Essential options <sec-essential-options>
+=== Essential options <sec-essential-options>
 
 #table(
   columns: (auto, 1fr),
@@ -35,7 +193,7 @@ configuration file, for which an example is available at `etc/seshat.xml`.
   [`maintenance-mode`],       [When set to 1, all HTTP requests result in the displayment of a maintenance message. Use this option while backing up the database, or when performing major updates.],
 )
 
-== Configuring the Database
+=== Configuring the Database
 
 The `seshat` program stores its state in a SPARQL 1.1 compliant
 RDF store. Configuring the connection details is done in the
@@ -55,7 +213,7 @@ RDF store. Configuring the connection details is done in the
   [`read-only-mode`], [When set to `1`, no queries that change the state of the database shall be made. This is useful for running secondary instances to balance the load of specific endpoints. Defaults to `0`.],
 )
 
-== Audit trails and database reconstruction
+=== Audit trails and database reconstruction
 
 The `seshat` program can keep an audit log of all database modifications
 made by itself from which a database state can be reconstructed. Whether
@@ -75,7 +233,7 @@ log entry queries must be replayed in due time.
   [`enable-query-audit-log`], [When set to 1, it writes every SPARQL query that modifies the database in the web logs. This can be replayed to reconstruct the database at a later time. Setting this option to 0 disables this feature. This element takes an attribute `transactions-directory` that should specify an empty directory to which transactions can be written that are extracted from the audit log.],
 )
 
-=== Reconstructing the database from the query audit log
+==== Reconstructing the database from the query audit log
 
 Each query that modifies the database state while the query audit logs
 are enabled can be extracted from the query audit log using the
@@ -106,7 +264,7 @@ use the `--extract-delayed-transactions-from-log` command-line option to
 write the log entries queries to the transactions-directory. Then
 re-run `--apply-transactions` to apply the log entries queries.
 
-== Configuring storage
+=== Configuring storage
 
 Storage locations can be configured with the `storage` node.
 When configuring multiple locations, `seshat` attempts to find a
@@ -129,7 +287,7 @@ less costly storage.
   [`s3-bucket`], [An S3 bucket configuration. See @sec-s3-buckets. This is a repeatable property.],
 )
 
-=== Configuring S3 buckets <sec-s3-buckets>
+==== Configuring S3 buckets <sec-s3-buckets>
 
 Other than configuring storage locations on a POSIX filesystem,
 `seshat` can be configured to serve files from an S3 bucket.
@@ -171,7 +329,7 @@ the `s3-cache-root` can be configured.
   [`s3-cache-root`], [The directory to store the S3 objects while performing some operation on the objects. This option can only be configured globally and applies to all S3 buckets.],
 )
 
-== Configuring an identity provider
+=== Configuring an identity provider
 
 Ideally, `seshat` makes use of an external identity provider.
 `seshat` can use SAML2.0, ORCID, or an internal identity provider
@@ -180,7 +338,7 @@ Ideally, `seshat` makes use of an external identity provider.
 This section will outline the configuration options for each
 identity provision mechanism.
 
-=== SAML2.0
+==== SAML2.0
 
 For SAML 2.0, the configuration can be placed in the `saml`
 section under `authentication`. That looks as following:
@@ -207,7 +365,7 @@ where the example shows `<!-- Configuration goes here. -->`.
   [`sram`],              [In this section, SURF Research Access Management-specific attributes can be configured.],
 )
 
-==== The `attributes` configuration
+===== The `attributes` configuration
 
 To create account and author records and to authenticate a user, `seshat`
 stores information provided by the identity provider. Each identity provider
@@ -252,7 +410,7 @@ looks like this:
 </attributes>
 ```
 
-==== The `sram` configuration
+===== The `sram` configuration
 
 When using SURF Research Access Management (SRAM),
 `seshat` can persuade SRAM to send an invitation to anyone
@@ -267,7 +425,7 @@ the following attributes must be configured.
   [`collaboration-id`],       [The UUID of the collaboration to invite users to.],
 )
 
-==== The `service-provider` configuration
+===== The `service-provider` configuration
 
 #table(
   columns: (auto, 1fr),
@@ -287,7 +445,7 @@ the following attributes must be configured.
   [`    email`],               [The e-mail address of the contact person. Note that some identity providers prefer functional e-mail addresses (e.g. support\@... instead of jdoe\@...).],
 )
 
-=== ORCID
+==== ORCID
 
 #link("https://orcid.org")[ORCID.org] plays a key role in making researchers
 findable. Its identity provider service can be used by `seshat` in two ways:
@@ -320,7 +478,7 @@ Then the following parameters can be configured:
   [`endpoint`],      [The URL to the ORCID endpoint to use.],
 )
 
-== Configuring an e-mail server
+=== Configuring an e-mail server
 
 On various occassions, `seshat` will attempt to send an e-mail to either
 an author, a reviewer or an administrator. To be able to do so, an e-mail
@@ -341,7 +499,7 @@ items can be configured:
   [`subject-prefix`],  [Text to prefix in the subject of all e-mails sent from the instance of `seshat`. This can be used to distinguish a test instance from a production instance.],
 )
 
-== Configuring DOI registration
+=== Configuring DOI registration
 
 When publishing a dataset or collection, `seshat` can register a
 persistent identifier with DataCite. To enable this feature, configure it
@@ -356,7 +514,7 @@ under the `datacite` node. The following parameters can be configured:
   [`prefix`],         [The DOI prefix to use when registering a DOI.],
 )
 
-== Configuring Handle registration
+=== Configuring Handle registration
 
 Each uploaded file can be assigned a persistent identifier using the Handle
 system. To enable this feature, configure it under the `handle` node.
@@ -372,7 +530,7 @@ The following parameters can be configured:
   [`index`],        [The index to use when registering a handle.],
 )
 
-== Configuring IIIF support
+=== Configuring IIIF support
 
 When publishing images, `seshat` can enable the IIIF Image API for the
 images. It uses `libvips` and `pyvips` under the hood to perform image
@@ -385,7 +543,7 @@ manipulation. The following parameters can be configured:
   [`iiif-cache-root`],  [The directory to store the output of IIIF Image API requests to avoid re-computing the image.],
 )
 
-== Configuring OCI registry support
+=== Configuring OCI registry support
 
 `seshat` has built-in support for the OCI registry v2 API.  The following
 configuration options are available:
@@ -397,7 +555,7 @@ configuration options are available:
   [`oci-registry-root`],   [The directory to store the container images in.],
 )
 
-== Customizing looks
+=== Customizing looks
 
 With the following options, the instance can be branded as necessary.
 
@@ -418,7 +576,7 @@ With the following options, the instance can be branded as necessary.
   [`colors`],                  [Colors used in the HTML output. See @sec-customize-colors.],
 )
 
-=== Customizing colors <sec-customize-colors>
+==== Customizing colors <sec-customize-colors>
 
 The following options can be configured in the `colors` section.
 
@@ -434,7 +592,7 @@ The following options can be configured in the `colors` section.
   [`background-color`],         [Background color for the content section.],
 )
 
-== Configuring privileged users
+=== Configuring privileged users
 
 By default an authenticated user may deposit data. But users can have
 additional roles; for example: a dataset reviewer, a technical
@@ -475,19 +633,14 @@ to `1`. Privileges are disabled by default, except for
     </account>
   </privileges>
 ```
-]
 
-#render_chapter(chapter_text, "Configuring `seshat`")
-#pagebreak-when-paged()
-
-#let chapter_text = [
-= Running `seshat` <running-seshat>
+== Running `seshat` <running-seshat>
 
 Before running `seshat`, consider @configuring-seshat which provides
 the configuration options to enable or disable features, where data will be
 stored and a way to adapt `seshat` to your organization's style.
 
-== Running `seshat`
+=== Running `seshat`
 
 Invoking `seshat web` starts the web interface of `seshat`. On what
 port it makes itself available can be configured in its configuration file.
@@ -496,7 +649,7 @@ port it makes itself available can be configured in its configuration file.
 seshat web --config-file=your-seshat-config.xml
 ```
 
-== Running `seshat` behind an `nginx` reverse-proxy
+=== Running `seshat` behind an `nginx` reverse-proxy
 
 While `seshat` itself does not support SSL/TLS, it is designed to
 work together with a reverse-proxy HTTP server like `nginx`. When
@@ -529,7 +682,7 @@ To ensure `seshat` receives the actual client IP address so it can log
 this information, one can set the `use-x-forwarded-for` option
 described in @sec-essential-options.
 
-== Running `seshat` with feature isolation <sec-feature-isolation>
+=== Running `seshat` with feature isolation <sec-feature-isolation>
 
 Some features are more prone to denial-of-service situations because they
 require more CPU, memory, or disk space to complete. To mitigate outages while
@@ -543,7 +696,7 @@ to handle specific endpoints (like IIIF image processing or Git operations). The
 write to it. They can run on completely different machines, as long as a database
 connection can be established.
 
-=== Isolating Git operations <sec-isolating-git-ops>
+==== Isolating Git operations <sec-isolating-git-ops>
 
 To take advantage of the multi-instance deployment, we are going to use the `nginx`
 configuration file to let a second instance of `seshat` handle all Git operations
@@ -596,7 +749,7 @@ server {
 }
 ```
 
-=== Isolating IIIF operations
+==== Isolating IIIF operations
 
 The IIIF endpoints can be captured by the following regular expression for
 the `location` block in `nginx`:
@@ -609,4 +762,4 @@ The rest of the instructions are identical to isolating Git requests (see
 @sec-isolating-git-ops).
 ]
 
-#render_chapter(chapter_text, "Running `seshat`")
+#render_chapter(chapter_text, "Running your own instance")
