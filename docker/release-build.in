@@ -9,7 +9,8 @@ COPY debbuild/seshat_@VERSION@-1_all.deb .
 
 # Install seshat and its dependencies from Debian. Include SAML and S3 support.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-     ./seshat_@VERSION@-1_all.deb python3-boto3 python3-onelogin-saml2
+     ./seshat_@VERSION@-1_all.deb python3-boto3 python3-onelogin-saml2 \
+     python3-waitress
 
 # Seshat only calls boto3.client("s3", ...), so we strip all other profiles
 # except "sts", which may be called from "s3".  This reduces the image size
