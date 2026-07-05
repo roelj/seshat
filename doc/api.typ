@@ -2,7 +2,7 @@
 #let categoryDescription = [
   Categories are a controlled vocabulary and can be used to make the collection
   findable in the categorical overviews. The `string` values expected here
-  can be found under the `uuid` property with a call to `\/v2/categories`.
+  can be found under the `uuid` property with a call to `/v2/categories`.
   For more details, see @sec-v2-categories.
 ]
 
@@ -46,7 +46,7 @@
 #let licenseDescription(item) = [
   Licences communicate under which conditions the #item can be
   re-used. The `integer` value to submit here can be found as
-  the `value` property in a call to `\/v2/licences`. For more
+  the `value` property in a call to `/v2/licenses`. For more
   details, see @sec-v2-licenses.
 ]
 
@@ -1725,7 +1725,7 @@ This API endpoint can be used to publish the dataset identified by
   fill: luma(230),
   inset: 8pt,
   radius: 4pt,
-  [*Note:* Only users with the "review" privilege can succesfully use this API call.]
+  [*Note:* Only users with the "review" privilege can successfully use this API call.]
 )
 
 Example usage:
@@ -2068,7 +2068,7 @@ Example usage:
 #let output = ```bash
 curl --request DELETE \
      --header "Authorization: token YOUR_TOKEN_HERE" \
-     <seshatbaseurl>/v2/account/collections/fc03...eb6d//authors/5c75...94aa
+     <seshatbaseurl>/v2/account/collections/fc03...eb6d/authors/5c75...94aa
 ```
 #render_code_output(output)
 

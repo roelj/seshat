@@ -571,7 +571,7 @@ depends on packages in the
   (#commitLink("c86dcf85bee8af42988346cc12511341f1d3c6fc")).
 - Fixed building RPM packages (#commitLink("1f629fa0d0ea5acbb45b1ea5652f9cfe8bc431f3"),
   #commitLink("e4c10571a8da9c6b5c63e48d3bd1bce700ab0311")).
-- Fixed HTTP `PUT` behavior for `\/v2\/account\/collections\/<id>\/articles`
+- Fixed HTTP `PUT` behavior for `/v2/account/collections/<id>/articles`
   (#commitLink("107ea693e170689b83213e668f9e75b59f9348c3")).
 
 #silent-subsection[Technical debt]

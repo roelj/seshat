@@ -200,7 +200,7 @@ stored on a filesystem. The location of the file data is tracked via the
 
 == Private links
 
-Before a `shst:Dataset` or a `shst:Collection` is made publically
+Before a `shst:Dataset` or a `shst:Collection` is made publicly
 available, it can be shared using a private link.
 
 #figure(

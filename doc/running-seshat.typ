@@ -179,7 +179,7 @@ configuration file, for which an example is available at `etc/seshat.xml`.
   [`allow-crawlers`],         [Set to 1 to allow crawlers in the `robots.txt`, otherwise set to 0.],
   [`production`],             [Performs extra checks before starting. Enable this when running a production instance.],
   [`live-reload`],            [When set to 1, it reloads Python code on-the-fly. We recommend to set it to 0 when running in production.],
-  [`debug-mode`],             [When set to 1, it will display backtraces and error messages in the web browser. When set to 0, it will only show backtraces and error messages in the web browser.],
+  [`debug-mode`],             [When set to 1, it will display backtraces and error messages in the web browser. When set to 0, it won't.],
   [`use-x-forwarded-for`],    [When running `seshat` behind a reverse-proxy server, use the HTTP header `X-Forwarded-For` to log IP address information. Set to 1 when `seshat` should use the `X-Forwarded-For` HTTP header.],
   [`static-resources-cache`], [When running `seshat` behind a reverse-proxy server, it can write images, fonts, stylesheets and JavaScript resources to a folder so it can be served by the reverse-proxy server. Specify a filesystem directory to store the resources at.],
   [`disable-collaboration`],  [When set to 1, it disables the "collaborators" feature.],
@@ -311,7 +311,7 @@ as storage locations looks as following:
   <location>/data</location>
   <s3-bucket>
     <endpoint>https://some.example</endpoint>
-    <n>example-bucket</n>
+    <name>example-bucket</name>
     <key-id>...</key-id>
     <secret-key>...</secret-key>
   </s3-bucket>
@@ -480,7 +480,7 @@ Then the following parameters can be configured:
 
 === Configuring an e-mail server
 
-On various occassions, `seshat` will attempt to send an e-mail to either
+On various occasions, `seshat` will attempt to send an e-mail to either
 an author, a reviewer or an administrator. To be able to do so, an e-mail
 server must be configured from which the instance may send e-mails.
 

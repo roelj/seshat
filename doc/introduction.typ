@@ -9,7 +9,7 @@ this software you can publish data and create citeable objects from it.
 In the eyes of a data repository, data isn't fully described by its bytes.
 Data has provenance, authors, usage conditions, and multiple ways of working
 with it.  For example, a photograph was taken with an intent, by a person,
-with a photocamera, with a specific lense, and a specific focus-point.
+with a camera, with a specific lens, and a specific focus-point.
 Furthermore, when sharing the photograph, its viewers may want to view it
 in a specific format, or in a specific size.  And the author of the photo
 may want to specify the conditions under which it may be (re)used. The
