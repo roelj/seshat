@@ -100,6 +100,10 @@ install -Dpm 0644 etc/%{name}.xml %{buildroot}%{_sysconfdir}/%{name}.xml
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/%{name}.pdf
 %{_datadir}/%{name}/index.html
+%if @WITH_HELM@
+%{_datadir}/%{name}/index.yaml
+%{_datadir}/%{name}/seshat-1.0.0.tgz
+%endif
 %{_mandir}/man1/seshat.1*
 
 %post

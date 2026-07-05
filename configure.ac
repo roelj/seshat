@@ -56,6 +56,9 @@ AM_CONDITIONAL([HAVE_HELM], [test -n "$HELM"])
 AS_IF([test -z "$HELM"],
   [AC_MSG_WARN([Unable to (re)build Helm repository.])])
 
+AS_IF([test -n "$HELM"], [WITH_HELM=1], [WITH_HELM=0])
+AC_SUBST([WITH_HELM])
+
 dnl Check for the Python 'build' module.
 dnl ---------------------------------------------------------------------------
 AC_CACHE_CHECK([for python build module], [ac_cv_have_python_build],
