@@ -16,7 +16,7 @@ The June release of 2026 consists of 40 commits made by 3 authors.
 - Add ability to run using Waitress
   (#commitLink("9d989f58c919587d8929f80a157f356d4ca9db5d")).
 - Enable configuring custom HTML on the the portal page
-  (#commitLink("a2bc0f89fd9850324c4166eb12a49d029021adb6").
+  (#commitLink("a2bc0f89fd9850324c4166eb12a49d029021adb6")).
 
 #silent-subsection[Bugfixes]
 
@@ -42,7 +42,7 @@ The June release of 2026 consists of 40 commits made by 3 authors.
   #commitLink("ed6306f278bcbb8d7b959ed2a99de5322fb92ca4"),
   #commitLink("ba7595683c1928f82c5d96728b313d2b6c762b6c"),
   #commitLink("29f83365b9d608f3f32e2b1c2ca115330722a2ac"),
-  #commitLink("98ce370b5e0efc3309dc2ef165612761e7f4cb43"))
+  #commitLink("98ce370b5e0efc3309dc2ef165612761e7f4cb43")).
 - Documentation improvements
   (#commitLink("228371c95934466b8294517185ed1622791e22f5"),
   #commitLink("29f150cc68ba6d55310027fa67e69d2fbe4a0391"),
