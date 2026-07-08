@@ -891,6 +891,10 @@ def read_configuration_file (server, config_file, logger, config_files):
         if portal_html:
             config.portal_html = portal_html
 
+        custom_css = xml_root.find ("custom-css")
+        if custom_css:
+            config.custom_css = custom_css
+
         site_name = xml_root.find ("site-name")
         if site_name is not None:
             config.site_name = site_name.text

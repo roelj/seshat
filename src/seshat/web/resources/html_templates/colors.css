@@ -54,3 +54,4 @@ ul.latest-datasets li a:active { color: {{primary_color_active}}; }
 {%- if sandbox_message_css %}
 .sandbox-message-css { {{sandbox_message_css | safe}} }
 {%- endif %}
+{{- custom_css | default('', true) | safe }}
