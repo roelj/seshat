@@ -11,7 +11,7 @@
 #set heading(numbering: "1.1")
 #set page(numbering: "1", paper: "a4", margin: (x: 2.0cm, y: 2.0cm))
 #set document(
-    title: [Documentation of Seshat: a data and software repository system.],
+    title: [Seshat: a data and software repository system.],
     author: "Roel Janssen <rrejanssen@gmail.com>",
     date: datetime.today(),
 )
@@ -22,7 +22,7 @@
         #set smartquote(enabled: false)
         :root {
           -\-text-color: \#111;
-          -\-background-color: \#f9f8fd;
+          -\-background-color: \#ebeaf2;
 	  -\-block-background: \#fff;
           -\-chapter-header-color: \#312b63;
           -\-sidebar-chapter-color: \#b6b0dd;
@@ -46,7 +46,7 @@
           -\-text-anchor-color: \#7c2c5e;
           -\-nav-sub-hover-text-color: \#a86687;
           -\-nav-sub-sub-hover-text-color: \#6678a8;
-	  -\-background-pattern-color: \#f3f3f3;
+	  -\-background-pattern-color: \#dedde9;
         }
 	\@media (prefers-color-scheme: dark) {
 	:root {
@@ -88,12 +88,12 @@
 	code { font-family: 'Fira Code', monospace; }
         \@media (max-width: 1099pt) {
           .table-of-contents { margin: auto auto 1em auto; max-width: 1099pt; min-width: 720pt; width: 820pt; background: var(-\-block-background); color: var(-\-text-color); padding: 0em; border: solid 1pt var(-\-chapter-border-color); border-radius: 1em 1em .5em .5em; }
-          .chapter { margin: auto auto 1em auto; }
+          .chapter { margin: auto auto 1em auto; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
           section[role=doc-endnotes] { margin-left: auto; color: var(-\-text-color); }
         }
         \@media (min-width: 1099pt) {
-          .chapter { margin-left: 279pt !important; }
-          .table-of-contents { position: fixed; height: auto; overflow-y: auto; width: 265pt; min-width: 265pt; max-width: 265pt; display: inline-block; border: solid 1pt var(-\-chapter-border-color); padding: 0em; margin: 0em; background: var(-\-block-background); color: var(-\-text-color); border-radius: .5em; }
+          .chapter { margin-left: 279pt !important; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
+          .table-of-contents { position: fixed; height: auto; overflow-y: auto; width: 265pt; min-width: 265pt; max-width: 265pt; display: inline-block; border: solid 1pt var(-\-chapter-border-color); padding: 0em; margin: 0em; background: var(-\-block-background); color: var(-\-text-color); border-radius: .5em; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
           nav > ol > li > ol > li > ol > li > span > a,
           nav > ol > li > ol > li > ol > li > div > span { display: none; }
           nav > ol > li > ol > li > span >a,
