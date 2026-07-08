@@ -899,11 +899,7 @@ function trim_single_word(word) {
 }
 
 function _corporate_background_color() {
-    let rgb = jQuery(".corporate-identity-background").css("background");
-    if (rgb === undefined) {
-        return "#000000";
-    }
-    return `#${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\).*$/).slice(1).map(n => Number.parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`;
+    return jQuery(".corporate-identity-background").css("background-color") ?? "#000000";
 }
 
 function _split_comma_separated_string(value) {
