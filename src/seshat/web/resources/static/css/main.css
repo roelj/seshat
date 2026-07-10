@@ -270,47 +270,6 @@ pre {
     padding: 1em;
     border-radius: 5pt;
 }
-#login-panel {
-    display: block;
-    position: relative;
-}
-
-.logos { display: block; height: 40px; }
-
-#whitelogos {
-    max-width: 880pt;
-    margin: 0 auto;
-    padding: 0;
-    text-align: right;
-    user-select: none;
-}
-
-#whitelogos img { margin: 10px; }
-
-#footer-wrapper2 a { text-decoration: none; color: #fff; }
-#footer-wrapper2 p { line-height: 60px; color: #aaa; }
-#footer-wrapper2 {
-    height: 77px;
-    max-width: 880pt;
-    margin: 0 auto;
-    padding: 0;
-}
-#footer-wrapper {
-    height: 420px;
-    column-count: 3;
-    column-gap: 0em;
-    max-width: 880pt;
-    margin: 0 auto;
-    padding: 0;
-}
-.footer-column {
-    page-break-inside: avoid;
-    border: solid 1pt rgba(128,128,128,0);
-    height: 400px;
-    margin: auto;
-    padding: 0mm 0mm 0mm 5mm;
-    text-align: left;
-}
 p.cts { text-align: right; }
 img.cts { width: 120px; }
 
@@ -420,7 +379,6 @@ a.far, a.fab, a.fas { text-decoration: none; }
 .fa-angle-up::before { content: "\f106"; }
 .fa-angle-down::before { content: "\f107"; }
 .fa-circle-exclamation::before { content: "\f06a"; }
-.fa-empty::before {}
 
 .latest-item { background: #fff; margin-bottom: .5em; padding: 1em; border-radius: 4pt; border: solid 1pt #ccc; }
 #latest-datasets ul { list-style: none; margin-left: 0pt; padding: 0pt; font-size: 14pt; }
@@ -466,7 +424,6 @@ table {
 }
 #submenu li a:hover { background: #606060; cursor: pointer; }
 #submenu li a:active { background: #000000; }
-#submenu li.spacer { padding: 0pt; background: none; border: none; margin: 0pt; }
 #submenu li a {
     display: inline-block;
     color: #ffffff;
