@@ -1334,25 +1334,28 @@ class WebServer:
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded"
         }
-        response = requests.post(f"{config.orcid_endpoint}/token",
-                                 params  = url_parameters,
-                                 headers = headers,
-                                 timeout = 10)
+        try:
+            response = requests.post(f"{config.orcid_endpoint}/token",
+                                     params  = url_parameters,
+                                     headers = headers,
+                                     timeout = 10)
 
-        if response.status_code != 200:
-            self.log.error ("Failed to obtain read-public token from ORCID (%d).",
-                            response.status_code)
+            if response.status_code != 200:
+                self.log.error ("Failed to obtain read-public token from ORCID (%d).",
+                                response.status_code)
+                return False
+
+            record = response.json()
+            token = value_or_none (record, "access_token")
+            if token is not None:
+                config.orcid_read_public_token = token
+                return True
+
+            self.log.error ("Unexpected response for read-public token from ORCID.")
+            self.log.error ("Response was:\n---\n%s\n---", json.dumps(record))
             return False
-
-        record = response.json()
-        token = value_or_none (record, "access_token")
-        if token is not None:
-            config.orcid_read_public_token = token
-            return True
-
-        self.log.error ("Unexpected response for read-public token from ORCID.")
-        self.log.error ("Response was:\n---\n%s\n---", json.dumps(record))
-        return False
+        except requests.exceptions.ConnectionError:
+            self.log.warning ("Failed to obtain read-public token from ORCID due to a connection error.")
 
     def authenticate_using_orcid (self, request, redirect_path="/login"):
         """Returns a record upon success, None upon failure."""
