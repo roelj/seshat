@@ -1,0 +1,28 @@
+{% extends "prefixes.sparql" %}
+{% block query %}
+SELECT DISTINCT ?uuid ?created_by ?name ?namespace ?created_date ?active
+WHERE {
+  GRAPH <{{state_graph}}> {
+    ?project    rdf:type           shst:Project .
+    ?project    shst:name          ?name .
+    ?project    shst:created_by    ?created_by .
+    ?created_by rdf:type shst:Account .
+
+    OPTIONAL { ?project   shst:namespace     ?namespace . }
+    OPTIONAL { ?project   shst:created_date  ?created_date . }
+    OPTIONAL { ?project   shst:active        ?active . }
+
+    BIND(STRAFTER(STR(?project), "project:") AS ?uuid)
+  }
+{%- if created_by is not none: %}
+FILTER (?created_by = <account:{{created_by}}>)
+{%- endif %}
+{%- if namespace is not none: %}
+FILTER (?namespace = {{namespace | safe }})
+{%- endif %}
+{%- if uuid is not none: %}
+FILTER (?project = <project:{{uuid}}>)
+{%- endif %}
+{% if filters is not none %}{{ filters | safe }}{% endif %}
+}
+{% endblock %}

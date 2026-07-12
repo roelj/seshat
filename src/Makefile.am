@@ -169,6 +169,7 @@ EXTRA_RESOURCES =                                                             \
     seshat/web/resources/sparql_templates/missing_dois.sparql                 \
     seshat/web/resources/sparql_templates/prefixes.sparql                     \
     seshat/web/resources/sparql_templates/private_links.sparql                \
+    seshat/web/resources/sparql_templates/projects.sparql                     \
     seshat/web/resources/sparql_templates/publish_draft_collection.sparql     \
     seshat/web/resources/sparql_templates/publish_draft_dataset.sparql        \
     seshat/web/resources/sparql_templates/quota_requests.sparql               \

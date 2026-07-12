@@ -3783,3 +3783,54 @@ class SparqlInterface:
             self.insert_category(store, category)
 
         return self.add_triples_from_graph (store)
+
+    def projects (self, uuid=None, created_by=None, namespace=None, limit=None,
+                  offset=None, order=None, order_direction=None, use_cache=True):
+        """Procedure to retrieve projects for a user."""
+
+        query = self.__query_from_template ("projects", {
+            "uuid":       uuid,
+            "namespace":  rdf.escape_string_value (namespace),
+            "created_by": created_by
+        })
+
+        if limit is None:
+            limit = 10
+
+        if use_cache:
+            cache_prefix = f"projects_{created_by}" if created_by is not None else "projects"
+            return self.__run_query (query, query, cache_prefix)
+
+        return self.__run_query (query)
+
+    def insert_project (self, account_uuid, name=None, namespace=None):
+        """Procedure to add a session token for an account_uuid."""
+
+        if account_uuid is None:
+            return None
+
+        account = self.account_by_uuid (account_uuid)
+        if account is None:
+            return None
+
+        current_time = datetime.strftime (datetime.now(), datetime_format)
+        graph        = Graph()
+        uri          = rdf.unique_node ("project")
+        account_uri  = URIRef(rdf.uuid_to_uri (account_uuid, "account"))
+
+        rdf.add (graph, uri, RDF.type, self.ontology["Project"], "uri")
+        rdf.add (graph, uri, self.ontology["created_by"],   account_uri, "uri")
+        rdf.add (graph, uri, self.ontology["created_date"], current_time, XSD.dateTime)
+        rdf.add (graph, uri, self.ontology["name"],         name,         XSD.string)
+        rdf.add (graph, uri, self.ontology["namespace"],    namespace,    XSD.string)
+        rdf.add (graph, uri, self.ontology["active"],       True,         XSD.boolean)
+
+        if not self.add_triples_from_graph (graph):
+            return None
+
+        return {
+            "uuid": rdf.uri_to_uuid (uri),
+            "name": name,
+            "namespace": namespace,
+            "created_date": current_time
+        }
