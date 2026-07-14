@@ -86,6 +86,12 @@ autoreconf -if && ./configure
 pip install --editable .
 ```
 
+Tip: On Windows, prefer `127.0.0.1` over `localhost` in the `sparql-uri`
+and `sparql-update-uri` configuration. Windows resolves `localhost` to
+IPv6 (`::1`) first, and when the SPARQL endpoint only listens on IPv4, every
+request waits for the failed IPv6 connection attempt before falling back,
+adding a second or more to each query.
+
 #### Keeping your development environment up-to-date
 
 The dependencies for `seshat` are installed via `pacman`, so to update those
