@@ -16,6 +16,23 @@ For security-related matters, please e-mail
 (going to be) running an instance of this project and would like to be part of
 the security mailing list, then please write the mailing list.
 
+## Production-ready containers and packages
+
+### [Container-based](https://seshat.software/#container-images)
+
+Pull the latest image using:
+```
+docker pull seshat.software/seshat:latest
+```
+
+### [Package managers](https://seshat.software/#pre-built-packages)
+
+RPM packages for Enterprise Linux and Fedora can be obtained from
+[COPR](https://copr.fedorainfracloud.org/coprs/seshat/seshat).
+
+Debian packages can be obtained from the
+[Codeberg releases](https://codeberg.org/seshat/seshat/releases) page.
+
 ## Creating a development environment
 
 This project uses the GNU autotools build system.
