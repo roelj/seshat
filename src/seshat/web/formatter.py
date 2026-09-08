@@ -24,8 +24,8 @@ def format_collaborator_record (record):
         "is_inferred":    conv.value_or(record, "is_inferred", False)
     }
 
-def format_account_record (record):
-    """Record formatter for accounts."""
+def _format_account_base(record):
+    """ Base formatter for accounts """
     return {
         "id":             conv.value_or_none(record, "account_id"),
         "uuid":           conv.value_or_none(record, "uuid"),
@@ -38,20 +38,15 @@ def format_account_record (record):
         "orcid_id":       conv.value_or (record, "orcid_id", ""),
     }
 
+def format_account_record (record):
+    """Record formatter for accounts."""
+    return _format_account_base(record)
+
 def format_account_details_record (record):
     """Record formatter for accounts."""
-    return {
-        "id":             conv.value_or_none(record, "account_id"),
-        "uuid":           conv.value_or_none(record, "uuid"),
-        "first_name":     conv.value_or_none(record, "first_name"),
-        "last_name":      conv.value_or_none(record, "last_name"),
-        "full_name":      conv.value_or_none(record, "full_name"),
-        "email":          conv.value_or_none(record, "email"),
-        "is_active":      bool(conv.value_or_none(record, "active")),
-        "is_public":      bool(conv.value_or_none(record, "public")),
-        "job_title":      conv.value_or_none(record, "job_title"),
-        "orcid_id":       conv.value_or (record, "orcid_id", ""),
-    }
+    details          = _format_account_base(record)
+    details["email"] = conv.value_or_none(record, "email")
+    return details
 
 def _object_urls (record, api_type, html_type):
     """Returns generated variants of public-facing URLs."""
@@ -313,33 +308,31 @@ def format_author_record_v3 (record):
         "is_editable": conv.value_or (record, "is_editable", False)
     }
 
+def _format_author_base (record):
+    """ Base record formatter for authors """
+    return {
+        "id":        conv.value_or_none(record, "id"),
+        "uuid":      conv.value_or_none(record, "uuid"),
+        "full_name": conv.value_or_none(record, "full_name"),
+        "is_active": bool(conv.value_or_none(record, "is_active")),
+        "url_name":  conv.value_or_none(record, "url_name"),
+        "orcid_id":  conv.value_or(record, "orcid_id", "")
+    }
+
 def format_author_record (record):
     """Record formatter for authors."""
-    return {
-      "id":        conv.value_or_none(record, "id"),
-      "uuid":      conv.value_or_none(record, "uuid"),
-      "full_name": conv.value_or_none(record, "full_name"),
-      "is_active": bool(conv.value_or_none(record, "is_active")),
-      "url_name":  conv.value_or_none(record, "url_name"),
-      "orcid_id":  conv.value_or(record, "orcid_id", "")
-    }
+    return _format_author_base(record)
 
 def format_author_details_record (record):
     """Detailed record formatter for authors."""
-    return {
-      "first_name":     conv.value_or_none(record, "first_name"),
-      "full_name":      conv.value_or_none(record, "full_name"),
-      "group_id":       conv.value_or_none(record, "group_id"),
-      "id":             conv.value_or_none(record, "id"),
-      "uuid":           conv.value_or_none(record, "uuid"),
-      "institution_id": conv.value_or_none(record, "institution_id"),
-      "is_active":      bool(conv.value_or_none(record, "is_active")),
-      "is_public":      bool(conv.value_or_none(record, "is_public")),
-      "job_title":      conv.value_or_none(record, "job_title"),
-      "last_name":      conv.value_or_none(record, "last_name"),
-      "orcid_id":       conv.value_or (record, "orcid_id", ""),
-      "url_name":       conv.value_or_none(record, "url_name")
-    }
+    details                   = _format_author_base(record)
+    details["first_name"]     = conv.value_or_none(record, "first_name")
+    details["last_name"]      = conv.value_or_none(record, "last_name")
+    details["job_title"]      = conv.value_or_none(record, "job_title")
+    details["group_id"]       = conv.value_or_none(record, "group_id")
+    details["institution_id"] = conv.value_or_none(record, "institution_id")
+    details["is_public"]      = bool(conv.value_or_none(record, "is_public"))
+    return details
 
 def file_download_url (record):
     """Returns a generated download_url or its default."""
@@ -349,20 +342,25 @@ def file_download_url (record):
 
     return conv.value_or_none(record, "download_url")
 
+def _format_file_base(record):
+    """ Base record formatter """
+    download_url = file_download_url (record)
+    return {
+        "id":            conv.value_or_none(record, "id"),
+        "uuid":          conv.value_or_none(record, "uuid"),
+        "name":          conv.value_or_none(record, "name"),
+        "size":          conv.value_or_none(record, "size"),
+        "is_link_only":  bool(conv.value_or_none(record, "is_link_only")),
+        "download_url":  download_url,
+        "supplied_md5":  conv.value_or_none(record, "supplied_md5"),
+        "computed_md5":  conv.value_or_none(record, "computed_md5"),
+    }
+
 def format_file_for_dataset_record (record):
     """Record formatter for files."""
-    download_url = file_download_url (record)
-    output = {
-      "id":            conv.value_or_none(record, "id"),
-      "uuid":          conv.value_or_none(record, "uuid"),
-      "name":          conv.value_or_none(record, "name"),
-      "size":          conv.value_or_none(record, "size"),
-      "is_link_only":  bool(conv.value_or_none(record, "is_link_only")),
-      "is_incomplete": bool(conv.value_or_none(record, "is_incomplete")),
-      "download_url":  download_url,
-      "supplied_md5":  conv.value_or_none(record, "supplied_md5"),
-      "computed_md5":  conv.value_or_none(record, "computed_md5"),
-    }
+    output                  = _format_file_base(record)
+    output["is_incomplete"] = bool(conv.value_or_none(record, "is_incomplete"))
+
     if "handle" in record:
         output["handle"] = record["handle"]
 
@@ -370,22 +368,13 @@ def format_file_for_dataset_record (record):
 
 def format_file_details_record (record):
     """Detailed record formatter for files."""
-    download_url = file_download_url (record)
-    return {
-      "status":        conv.value_or_none(record, "status"),
-      "viewer_type":   conv.value_or_none(record, "viewer_type"),
-      "preview_state": conv.value_or_none(record, "preview_state"),
-      "upload_url":    conv.value_or_none(record, "upload_url"),
-      "upload_token":  conv.value_or_none(record, "upload_token"),
-      "uuid":          conv.value_or_none(record, "uuid"),
-      "id":            conv.value_or_none(record, "id"),
-      "name":          conv.value_or_none(record, "name"),
-      "size":          conv.value_or_none(record, "size"),
-      "is_link_only":  conv.value_or_none(record, "is_link_only"),
-      "download_url":  download_url,
-      "supplied_md5":  conv.value_or_none(record, "supplied_md5"),
-      "computed_md5":  conv.value_or_none(record, "computed_md5")
-    }
+    details                  = _format_file_base(record)
+    details["status"]        = conv.value_or_none(record, "status")
+    details["viewer_type"]   = conv.value_or_none(record, "viewer_type")
+    details["preview_state"] = conv.value_or_none(record, "preview_state")
+    details["upload_url"]    = conv.value_or_none(record, "upload_url")
+    details["upload_token"]  = conv.value_or_none(record, "upload_token")
+    return details
 
 def format_custom_field_record (record):
     """Record formatter for custom fields."""
