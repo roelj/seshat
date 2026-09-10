@@ -6975,7 +6975,7 @@ class WebServer:
             if record["licenses"] is not None:
                 validator.array_value    (record, "licenses")
                 for index, _ in enumerate(record["licenses"]):
-                    record["licenses"][index] = validator.string_value (record["licenses"], index, maximum_length=255)
+                    record["licenses"][index] = validator.integer_value (record["licenses"], index)
 
             if record["categories"] is not None:
                 validator.array_value    (record, "categories")
