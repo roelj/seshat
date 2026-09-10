@@ -6116,7 +6116,7 @@ class WebServer:
         versions = []
         if parses_to_int (collection_id):
             versions = self.db.collection_versions (collection_id=collection_id)
-        elif isinstance (collection_id, str):
+        elif validator.is_valid_uuid (collection_id):
             uri      = uuid_to_uri (collection_id, "container")
             versions = self.db.collection_versions (container_uri = uri)
 
