@@ -4569,7 +4569,7 @@ class WebServer:
         if extension is None:
             return self.error_500 ()
 
-        if not self.db.dataset_update_thumb (dataset_id, account_uuid,
+        if not self.db.dataset_update_thumb (dataset["uuid"], account_uuid,
                                              metadata["uuid"], extension, version):
             return self.error_500()
 
