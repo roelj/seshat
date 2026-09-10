@@ -9339,6 +9339,9 @@ class WebServer:
         if item_type not in ["dataset", "collection"]:
             return self.error_404 (request)
 
+        if version is not None and not parses_to_int (version):
+            return self.error_404 (request)
+
         if citation_format in ["datacite", "refworks", "nlm", "dc"]:
             if not self.accepts_xml (request):
                 return self.error_406 ("application/xml")
