@@ -7362,6 +7362,8 @@ class WebServer:
             may_review_institution = self.db.may_review_institution (submitter_token)
             if not may_review_all and not may_review_institution:
                 return self.error_403 (request)
+            # In case the submitter has reviewer privileges and uses the API.
+            reviewer_token = submitter_token
 
         dataset = self.__dataset_by_id_or_uri (dataset_id,
                                                account_uuid = account_uuid,
