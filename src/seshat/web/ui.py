@@ -461,8 +461,8 @@ def refresh_group_configuration (server, logger, config_files):
                     logger.info("Account %s does not exist.", email)
                     first_name = member.attrib.get("first_name")
                     last_name  = member.attrib.get("last_name")
-                    common_name = f"{first_name} {convenience.value_or (member.attrib, 'last_name', '')}"
-                    if first_name is None and last_name is None:
+                    common_name = " ".join ([part for part in (first_name, last_name) if part])
+                    if not common_name:
                         logger.warning ("Adding account %s without name.", email)
                         common_name = None
                     account_uuid = server.db.insert_account (
