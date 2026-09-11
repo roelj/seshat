@@ -2049,7 +2049,6 @@ class SparqlInterface:
         })
 
         result = self.__run_logged_query (query)
-        self.cache.invalidate_by_prefix(f"datasets_{dataset_uuid}")
         self.cache.invalidate_by_prefix("datasets")
         return result
 
@@ -2893,7 +2892,6 @@ class SparqlInterface:
             items = rdf.uris_from_records (datasets, "dataset")
             self.update_item_list (collection_uuid, account_uuid, items, "datasets")
 
-        self.cache.invalidate_by_prefix (f"{collection_uuid}_collection")
         self.cache.invalidate_by_prefix (f"collections_{account_uuid}")
         self.cache.invalidate_by_prefix ("collections")
 
