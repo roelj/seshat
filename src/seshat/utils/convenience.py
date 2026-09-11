@@ -124,8 +124,8 @@ def pretty_print_size (num_bytes):
     for num, suffix in units:
         if num_bytes >= num:
             value = num_bytes / num
-            if suffix == 'B':
-                return f"{value}B"
+            if value.is_integer():
+                return f"{int(value)}{suffix}"
             return f"{value:.2f}{suffix}"
 
     return f"{num_bytes}B"
