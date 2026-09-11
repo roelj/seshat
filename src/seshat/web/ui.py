@@ -257,6 +257,7 @@ def read_saml_configuration (xml_root, logger):
     service_provider     = saml.find ("service-provider")
     if service_provider is None:
         logger.error ("Missing service-provider information for SAML.")
+        raise MissingConfigurationError
 
     saml_sp_x509         = config_value (service_provider, "x509-certificate")
     saml_sp_private_key  = config_value (service_provider, "private-key")
@@ -265,6 +266,7 @@ def read_saml_configuration (xml_root, logger):
     sp_metadata          = service_provider.find ("metadata")
     if sp_metadata is None:
         logger.error ("Missing service provider's metadata for SAML.")
+        raise MissingConfigurationError
 
     organization_name    = config_value (sp_metadata, "display-name")
     organization_url     = config_value (sp_metadata, "url")
@@ -294,6 +296,7 @@ def read_saml_configuration (xml_root, logger):
     identity_provider    = saml.find ("identity-provider")
     if identity_provider is None:
         logger.error ("Missing identity-provider information for SAML.")
+        raise MissingConfigurationError
 
     saml_idp_entity_id   = config_value (identity_provider, "entity-id")
     saml_idp_x509        = config_value (identity_provider, "x509-certificate")
@@ -301,6 +304,7 @@ def read_saml_configuration (xml_root, logger):
     sso_service          = identity_provider.find ("single-signon-service")
     if sso_service is None:
         logger.error ("Missing SSO information of the identity-provider for SAML.")
+        raise MissingConfigurationError
 
     saml_idp_sso_url     = config_value (sso_service, "url")
     saml_idp_sso_binding = config_value (sso_service, "binding")
