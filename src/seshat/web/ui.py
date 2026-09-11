@@ -165,10 +165,16 @@ def read_storage_configuration (xml_root, logger):
                 "secret-key": config_value (item, "secret-key"),
                 "endpoint":   config_value (item, "endpoint")
             }
+            is_complete = True
             for key in ("name", "key-id", "secret-key", "endpoint"):
                 if convenience.value_or_none (bucket, key) is None:
                     logger.warning ("Missing '%s' for S3 bucket.", key)
+                    is_complete = False
                     break
+
+            if not is_complete:
+                logger.warning ("Ignoring the incomplete S3 bucket.")
+                continue
 
             config.s3_buckets[bucket["name"]] = bucket
     return None
