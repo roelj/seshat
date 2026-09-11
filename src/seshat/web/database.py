@@ -1235,10 +1235,9 @@ class SparqlInterface:
             "git_uuid":     rdf.escape_string_value (new_git_uuid)
         })
 
-        self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
-        self.cache.invalidate_by_prefix ("datasets")
-
         if self.__run_logged_query (query):
+            self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
+            self.cache.invalidate_by_prefix ("datasets")
             return True, new_git_uuid
 
         return False, None
@@ -1461,8 +1460,9 @@ class SparqlInterface:
             "assign_to_account": status == "approved"
         })
 
+        result = self.__run_logged_query (query)
         self.cache.invalidate_by_prefix ("accounts")
-        return self.__run_logged_query (query)
+        return result
 
     def quota_requests (self, status=None, quota_request_uuid=None, account_uuid=None):
         """Procedure to return a list of quota requests."""
@@ -1515,9 +1515,6 @@ class SparqlInterface:
             "created_date":          created_date
         })
 
-        self.cache.invalidate_by_prefix ("group")
-        self.cache.invalidate_by_prefix ("accounts")
-
         results = self.__run_logged_query (query)
         if results and categories:
             graph = Graph()
@@ -1532,6 +1529,9 @@ class SparqlInterface:
                 self.log.error ("Updating categories for account %s failed.",
                                 account_uuid)
                 return None
+
+        self.cache.invalidate_by_prefix ("group")
+        self.cache.invalidate_by_prefix ("accounts")
 
         return results
 
@@ -1693,8 +1693,9 @@ class SparqlInterface:
             "account_uuid":  account_uuid,
         })
 
+        result = self.__run_logged_query (query)
         self.cache.invalidate_by_prefix ("accounts")
-        return self.__run_logged_query (query)
+        return result
 
     def insert_funding (self, title=None, grant_code=None, funder_name=None,
                         account_uuid=None, url=None, funding_id=None):
@@ -1865,10 +1866,12 @@ class SparqlInterface:
             "handle":        rdf.escape_string_value (handle)
         })
 
+        result = self.__run_logged_query (query)
+
         self.cache.invalidate_by_prefix (f"{account_uuid}_storage")
         self.cache.invalidate_by_prefix (f"{dataset_uuid}_dataset_storage")
 
-        return self.__run_logged_query (query)
+        return result
 
     def insert_log_entry (self, created_date, ip_address, item_uuid,
                           item_type="dataset", event_type="view"):
@@ -2045,9 +2048,10 @@ class SparqlInterface:
             "collaborator_uuid": collaborator_uuid
         })
 
+        result = self.__run_logged_query (query)
         self.cache.invalidate_by_prefix(f"datasets_{dataset_uuid}")
         self.cache.invalidate_by_prefix("datasets")
-        return self.__run_logged_query (query)
+        return result
 
     def insert_private_link (self, item_uuid, account_uuid, whom=None,
                              purpose=None, item_type=None, anonymize=False,
@@ -2166,11 +2170,6 @@ class SparqlInterface:
     def publish_collection (self, container_uuid, account_uuid):
         """Procedure to publish a collection."""
 
-        # Prevent caches from playing a role.
-        self.cache.invalidate_by_prefix (f"collections_{account_uuid}")
-        self.cache.invalidate_by_prefix ("collections")
-        self.cache.invalidate_by_prefix ("repository_statistics")
-
         draft = None
         try:
             draft = self.collections (container_uuid = container_uuid,
@@ -2205,7 +2204,13 @@ class SparqlInterface:
             "first_publication": not latest
         })
 
-        return bool(self.__run_logged_query (query))
+        if not self.__run_logged_query (query):
+            return False
+
+        self.cache.invalidate_by_prefix (f"collections_{account_uuid}")
+        self.cache.invalidate_by_prefix ("collections")
+        self.cache.invalidate_by_prefix ("repository_statistics")
+        return True
 
     def create_draft_from_published_collection (self, container_uuid):
         """Procedure to copy a published collection as draft in its container."""
@@ -2548,11 +2553,6 @@ class SparqlInterface:
         })
 
         collaborators = self.collaborators(dataset_uuid)
-        for collaborator in collaborators:
-            self.cache.invalidate_by_prefix(f"datasets_{collaborator['account_uuid']}")
-
-        self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
-        self.cache.invalidate_by_prefix ("datasets")
 
         results = self.__run_logged_query (query)
         if not results:
@@ -2569,6 +2569,12 @@ class SparqlInterface:
         for records, key, transform in updates:
             if records and isinstance (records, list):
                 self.update_item_list (dataset_uuid, account_uuid, transform (records), key)
+
+        for collaborator in collaborators:
+            self.cache.invalidate_by_prefix(f"datasets_{collaborator['account_uuid']}")
+
+        self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
+        self.cache.invalidate_by_prefix ("datasets")
 
         return True
 
@@ -2591,10 +2597,12 @@ class SparqlInterface:
             "dataset_uri":  dataset_uri
         })
 
+        result = self.__run_logged_query (query)
+
         self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
         self.cache.invalidate_by_prefix ("datasets")
 
-        return self.__run_logged_query (query)
+        return result
 
     def delete_private_links (self, container_uuid, account_uuid, link_id):
         """Procedure to remove private links to a dataset."""
@@ -2605,10 +2613,12 @@ class SparqlInterface:
             "id_string":      link_id
         })
 
+        result = self.__run_logged_query (query)
+
         self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
         self.cache.invalidate_by_prefix ("datasets")
 
-        return self.__run_logged_query (query)
+        return result
 
     def update_private_link (self, item_uri, account_uuid, link_id,
                              is_active=None, expires_date=None,
@@ -2624,10 +2634,12 @@ class SparqlInterface:
             "read_only":    read_only
         })
 
+        result = self.__run_logged_query (query)
+
         self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
         self.cache.invalidate_by_prefix ("datasets")
 
-        return self.__run_logged_query (query)
+        return result
 
     def dataset_update_thumb (self, dataset_uuid, account_uuid, file_uuid,
                               extension, version=None):
@@ -2644,9 +2656,10 @@ class SparqlInterface:
             "version":      version
         })
 
+        result = self.__run_query(query)
         self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
         self.cache.invalidate_by_prefix ("datasets")
-        return self.__run_query(query)
+        return result
 
     def update_doi_after_publishing (self, item_uuid, item_type, doi):
         """Procedure to update a DOI after it has been published."""
@@ -2830,10 +2843,12 @@ class SparqlInterface:
             "container_uri":  rdf.uuid_to_uri (container_uuid, "container")
         })
 
+        result = self.__run_logged_query (query)
+
         self.cache.invalidate_by_prefix (f"collections_{account_uuid}")
         self.cache.invalidate_by_prefix ("collections")
 
-        return self.__run_logged_query (query)
+        return result
 
     def update_collection (self, collection_uuid, account_uuid, title=None,
                            description=None, resource_doi=None, doi=None,
@@ -2869,10 +2884,6 @@ class SparqlInterface:
             "first_online_date": first_online_date_str
         })
 
-        self.cache.invalidate_by_prefix (f"{collection_uuid}_collection")
-        self.cache.invalidate_by_prefix (f"collections_{account_uuid}")
-        self.cache.invalidate_by_prefix ("collections")
-
         results = self.__run_logged_query (query)
         if results and categories:
             items = rdf.uris_from_records (categories, "category")
@@ -2881,6 +2892,10 @@ class SparqlInterface:
         if results and datasets:
             items = rdf.uris_from_records (datasets, "dataset")
             self.update_item_list (collection_uuid, account_uuid, items, "datasets")
+
+        self.cache.invalidate_by_prefix (f"{collection_uuid}_collection")
+        self.cache.invalidate_by_prefix (f"collections_{account_uuid}")
+        self.cache.invalidate_by_prefix ("collections")
 
         return results
 
@@ -3068,10 +3083,12 @@ class SparqlInterface:
             "reminder_date":         reminder_date
         })
 
+        result = self.__run_logged_query (query)
+
         self.cache.invalidate_by_prefix (f"datasets_{author_account_uuid}")
         self.cache.invalidate_by_prefix ("reviews")
 
-        return self.__run_logged_query (query)
+        return result
 
     def account_uuid_by_orcid (self, orcid):
         """Returns the account ID belonging to an ORCID."""
@@ -3847,7 +3864,9 @@ class SparqlInterface:
             "namespace":    rdf.escape_string_value (namespace)
         })
 
+        result = self.__run_logged_query (query)
+
         self.cache.invalidate_by_prefix (f"projects_{account_uuid}")
         self.cache.invalidate_by_prefix ("projects")
 
-        return self.__run_logged_query (query)
+        return result
