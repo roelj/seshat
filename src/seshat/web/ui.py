@@ -641,7 +641,7 @@ def read_colors_configuration (xml_root):
                           "primary-color-active", "primary-foreground-color",
                           "privilege-button-color", "footer-background-color",
                           "background-color"]:
-                variable[color] = config_value (colors, color, fallback=config.colors[color])
+                variable[color] = config_value (colors, color, fallback=variable[color])
 
 def read_datacite_configuration (xml_root):
     """Procedure to parse and set the DataCite API configuration."""
