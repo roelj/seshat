@@ -686,7 +686,7 @@ def read_email_configuration (server, xml_root, logger):
             server.email.smtp_password = config_value (email, "password")
             server.email.subject_prefix = config_value (email, "subject-prefix", None, None)
             server.email.do_starttls = bool(int(config_value (email, "starttls", None, 0)))
-        except ValueError:
+        except (ValueError, TypeError):
             logger.error ("Could not configure the email subsystem:")
             logger.error ("The email port should be a numeric value.")
 
