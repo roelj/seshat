@@ -6961,8 +6961,9 @@ class WebServer:
             if search_operator is not None:
                 search_operator = validator.search_filters({"operator": search_operator})
 
-            if search_scope is not None:
-                search_scope = validator.search_filters({"scope": search_scope})
+            ## An omitted scope means "search everywhere": passing it on
+            ## unconditionally lets the validator supply the default set.
+            search_scope = validator.search_filters({"scope": search_scope})
 
             if record["search_for"] is not None:
                 record["search_for_raw"] = html_to_plaintext (record["search_for"])
