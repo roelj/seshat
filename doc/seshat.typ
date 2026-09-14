@@ -1,6 +1,5 @@
 #import "config.typ": *
-#show link: underline
-#show link: set text(fill: rgb("#000"))
+#show link: it => context if target() == "paged" { underline(text(fill: black, it)) } else { it }
 #show outline.entry.where(level: 1): set text(fill: rgb("#000"), weight: "bold")
 #show outline.entry.where(level: 2): set text(fill: rgb("#111"))
 #show outline.entry.where(level: 3): set text(fill: rgb("#222"))
@@ -9,7 +8,6 @@
 #set text(lang: "en", font: "New Computer Modern")
 #set par(justify: true, leading: 0.52em)
 #set heading(numbering: "1.1")
-#set page(numbering: "1", paper: "a4", margin: (x: 2.0cm, y: 2.0cm))
 #set document(
     title: [Seshat: a data and software repository system.],
     author: "Roel Janssen <rrejanssen@gmail.com>",
@@ -17,6 +15,10 @@
 )
 
 #let target = dictionary(std).at("target", default: () => "paged")
+#show: body => context if target() == "html" { body } else {
+    set page(numbering: "1", paper: "a4", margin: (x: 2.0cm, y: 2.0cm))
+    body
+}
 #context if target() == "html" {
     html.elem("style")[
         #set smartquote(enabled: false)
@@ -85,7 +87,7 @@
         \@font-face { font-family: 'Fira Code'; src: url('/static/fonts/FiraCode-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
         html { width: 100%; margin: 0em; padding: 0em; background: repeating-linear-gradient(90deg, var(-\-background-pattern-color) 0, var(-\-background-pattern-color) 5%, transparent 0, transparent 50%), repeating-linear-gradient(180deg, var(-\-background-pattern-color) 0, var(-\-background-pattern-color) 5%, transparent 0, transparent 50%); background-size: 1em 1em; background-color: var(-\-background-color); }
         body { font-family: 'SourceSans', sans-serif; margin: 12pt auto 0pt auto; max-width: 1099pt; min-width: 720pt; }
-	code { font-family: 'Fira Code', monospace; }
+        code { font-family: 'Fira Code', monospace; }
         \@media (max-width: 1099pt) {
           .table-of-contents { margin: auto auto 1em auto; max-width: 1099pt; min-width: 720pt; width: 820pt; background: var(-\-block-background); color: var(-\-text-color); padding: 0em; border: solid 1pt var(-\-chapter-border-color); border-radius: 1em 1em .5em .5em; }
           .chapter { margin: auto auto 1em auto; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
@@ -94,17 +96,17 @@
         \@media (min-width: 1099pt) {
           .chapter { margin-left: 279pt !important; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
           .table-of-contents { position: fixed; height: auto; overflow-y: auto; width: 265pt; min-width: 265pt; max-width: 265pt; display: inline-block; border: solid 1pt var(-\-chapter-border-color); padding: 0em; margin: 0em; background: var(-\-block-background); color: var(-\-text-color); border-radius: .5em; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
-          nav > ol > li > ol > li > ol > li > span > a,
-          nav > ol > li > ol > li > ol > li > div > span { display: none; }
-          nav > ol > li > ol > li > span >a,
-          nav > ol > li > ol > li > div > span > a { font-size: 0.9em; }
+          nav > ol > li > ol > li > ol > li > a,
+          nav > ol > li > ol > li > ol > li > div { display: none; }
+          nav > ol > li > ol > li > a,
+          nav > ol > li > ol > li > div > a { font-size: 0.9em; }
           section[role=doc-endnotes] { margin-left: 279pt; color: var(-\-text-color); }
-	  .table-of-contents > nav > ol > li > ol { display: none; }
-	  .table-of-contents nav > ol > li > ol a, .table-of-contents nav > ol > li > ol span { text-decoration: none !important; }
-	  .table-of-contents nav > ol > li > ol > li { border: solid 1px var(-\-nav-sub-border-bg-color); border-radius: .4em; padding: 2px 2px 2px 6px; margin-bottom: 5px; }
-	  .table-of-contents nav > ol > li > ol > li:nth-child(even) { background: var(-\-nav-sub-even-bg-color); }
-	  .table-of-contents nav > ol > li > ol > li:nth-child(odd) { background: var(-\-nav-sub-odd-bg-color); }
-	  .table-of-contents nav > ol > li > ol > li:hover { background: var(-\-nav-sub-hover-bg-color); }
+          .table-of-contents > nav > ol > li > ol { display: none; }
+          .table-of-contents nav > ol > li > ol a { text-decoration: none; }
+          .table-of-contents nav > ol > li > ol > li { border: solid 1px var(-\-nav-sub-border-bg-color); border-radius: .4em; padding: 2px 2px 2px 6px; margin-bottom: 5px; }
+          .table-of-contents nav > ol > li > ol > li:nth-child(even) { background: var(-\-nav-sub-even-bg-color); }
+          .table-of-contents nav > ol > li > ol > li:nth-child(odd) { background: var(-\-nav-sub-odd-bg-color); }
+          .table-of-contents nav > ol > li > ol > li:hover { background: var(-\-nav-sub-hover-bg-color); }
           #chapter-toc-css(9)
         }
         .table-of-contents p { padding: 0em 0em 0em 1em; margin-bottom: 0em; }
@@ -113,14 +115,14 @@
         .table-of-contents h2 { background: var(-\-toc-header-color); color: var(-\-toc-header-text-color); padding: .75em; margin: 0em; border-radius: .25em .25em 0 0; }
         nav > ol { margin-top: 0em; }
         nav > ol > li { margin: 0em; }
-        nav > ol > li > div > span > a,
-        nav > ol > li > span > a { display: inline-block; width: calc(100% - 2em); background: var(-\-h4-bg-color); padding: .5em 1em .5em 1em; margin: .3em 0 .3em 0; font-size: 1.2em; color: var(-\-text-color); }
-        nav > ol > li > ol > li > span > a,
-        nav > ol > li > ol > li > div > span > a { display: block; color: var(-\-nav-sub-text-color); }
-        nav > ol > li > ol > li > span > a:hover,
-        nav > ol > li > ol > li > div > span > a:hover { color: var(-\-nav-sub-hover-text-color); }
-        nav > ol > li > ol > li > ol > li > span > a { color: var(-\-nav-sub-sub-text-color); }
-        nav > ol > li > ol > li > ol > li > span > a:hover { color: var(-\-nav-sub-sub-hover-text-color); }
+        nav > ol > li > div > a,
+        nav > ol > li > a { display: inline-block; width: calc(100% - 2em); background: var(-\-h4-bg-color); padding: .5em 1em .5em 1em; margin: .3em 0 .3em 0; font-size: 1.2em; color: var(-\-text-color); }
+        nav > ol > li > ol > li > a,
+        nav > ol > li > ol > li > div > a { display: block; color: var(-\-nav-sub-text-color); }
+        nav > ol > li > ol > li > a:hover,
+        nav > ol > li > ol > li > div > a:hover { color: var(-\-nav-sub-hover-text-color); }
+        nav > ol > li > ol > li > ol > li > a { color: var(-\-nav-sub-sub-text-color); }
+        nav > ol > li > ol > li > ol > li > a:hover { color: var(-\-nav-sub-sub-hover-text-color); }
         .center { text-align: center; }
         img { display: block; max-width: 760pt; margin: 1em auto 1em auto; height: auto; }
         figure { background: var(-\-figure-bg-color); border: solid 1pt var(-\-figure-border-color); border-radius: .5em; }
@@ -146,7 +148,7 @@
         table tbody tr:nth-child(even) { background: var(-\-h4-bg-color); }
         table tbody tr td:first-child { border-left: solid 1pt var(-\-table-header-bg-color); }
         section[role=doc-endnotes] ol { padding-left: .5em; }
-	a { color: var(-\-text-anchor-color); }
+        a { color: var(-\-text-anchor-color); }
     ]
 }
 
@@ -184,10 +186,7 @@
     ]
 }
 
-#context if target() == "paged" {
-    set page(numbering: "1")
-    counter(page).update(1)
-}
+#context if target() == "paged" { counter(page).update(1) }
 
 #include "introduction.typ"
 #pagebreak-when-paged()
