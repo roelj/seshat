@@ -24,6 +24,7 @@ EXTRA_DIST              = $(doc_TYPST)                             \
                           running-seshat.typ                       \
                           references.bib                           \
                           toc-scroll-helper.js                     \
+                          postprocess-html.py                      \
                           figures/account.svg                      \
                           figures/author.svg                       \
                           figures/category.svg                     \
@@ -53,6 +54,7 @@ $(doc_PDF):
 
 $(doc_HTML):
 	@$(TYPST) compile --features html --format=html $(doc_TYPST) $(doc_HTML)
+	@@PYTHON@ postprocess-html.py ${doc_HTML}
 	@printf "Generated $(doc_HTML).\n"
 
 all: $(doc_PDF) $(doc_HTML)

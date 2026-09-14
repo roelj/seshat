@@ -15,6 +15,23 @@
 )
 
 #let target = dictionary(std).at("target", default: () => "paged")
+#let svg-data-uri(path) = {
+    let s = read(path)
+    s = s.replace(regex("^<\\?xml[^>]*\\?>\\s*"), "")
+    s = s.replace("\r\n", "\n").replace("\n", " ")
+    s = s.replace("%", "%25")
+    s = s.replace("#", "%23").replace("<", "%3C").replace(">", "%3E").replace("\"", "%22")
+    "data:image/svg+xml," + s
+}
+#let css-size(v) = if v.length == 0pt { repr(v.ratio) } else { repr(v.length) }
+#show image: it => context if target() == "html" and it.source.ends-with(".svg") {
+    let style = "display: block"
+    if it.width != auto { style += "; width: " + css-size(it.width) }
+    if it.height != auto { style += "; height: " + css-size(it.height) }
+    let attrs = (src: svg-data-uri(it.source), style: style)
+    if it.alt != none { attrs.insert("alt", it.alt) }
+    html.elem("img", attrs: attrs)
+} else { it }
 #show: body => context if target() == "html" { body } else {
     set page(numbering: "1", paper: "a4", margin: (x: 2.0cm, y: 2.0cm))
     body
