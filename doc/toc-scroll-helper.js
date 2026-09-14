@@ -12,9 +12,13 @@
     }
   }, { threshold: 0 });
 
-  document.querySelectorAll('.chapter[id^="chapter-"]').forEach(ch => obs.observe(ch));
+  const chapters = [...document.querySelectorAll('.chapter[id^="chapter-"]')];
+  chapters.forEach(ch => obs.observe(ch));
+
   mql.addEventListener('change', () => {
     document.querySelectorAll('.table-of-contents nav > ol > li > ol')
       .forEach(ol => ol.style.display = '');
+    if (!mql.matches) return;
+    chapters.forEach(ch => { obs.unobserve(ch); obs.observe(ch); });
   });
 })();
