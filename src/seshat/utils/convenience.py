@@ -310,8 +310,7 @@ def split_author_name(name):
         parts = name.split(')', 1)
         parts[0] += ')'
     elif '.' in name:
-        parts = name[::-1].split('.', 1)
-        parts = [part[::-1] for part in parts][::-1]
+        parts = name.rsplit('.', 1)
         parts[0] += '.'
     else:
         parts = name.split(' ', 1)
