@@ -27,6 +27,8 @@ def collapse (run):
     return ''.join(out)
 
 html   = re.sub(r'(?:<span class=t\d+>[^<]*</span>)+', collapse, html)
+html   = re.sub(r'(https?:)<span class=t\d+>(//[^<]*)</span>', r'\1\2', html)
+html   = re.sub(r'(?<=\w)<span class=t\d+>(-?\d[\d.]*)</span>', r'\1', html)
 rules  = ''.join(f'.{n}{{color:{c}}}' for c, n in names.items())
 
 # Overwrite the file.
