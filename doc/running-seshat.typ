@@ -131,6 +131,18 @@ A Debian package is provided and built for Debian 13.
     [Binary DEB, to install and run `seshat`.],
 )
 
+
+=== PyPI package
+
+A Python package is published at PyPI.  This package does not include the
+system intergration like the systemd service file, the man page and the
+example configuration.
+
+Installing through `pip` can be done using:
+```bash
+pip install seshat
+```
+
 == Using container images <container-images>
 
 === Production-grade containers
