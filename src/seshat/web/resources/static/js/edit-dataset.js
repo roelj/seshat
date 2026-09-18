@@ -1619,7 +1619,7 @@ function submit_dataset (dataset_uuid, event) {
             window.location.replace("/my/datasets/submitted-for-review");
         }).fail(function (response) {
             jQuery(".missing-required").removeClass("missing-required");
-            let error_messages = jQuery.parseJSON (response.responseText);
+            let error_messages = JSON.parse (response.responseText);
             let error_message = "<p>Please fill in all required fields.</p>";
             if (error_messages != null && error_messages.length > 0) {
                 for (let message of error_messages) {
