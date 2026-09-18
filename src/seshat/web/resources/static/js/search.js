@@ -157,7 +157,8 @@ function toggle_filter_apply_button(flag) {
     let color_text = flag ? "white" : "#cccccc";
     let classes = flag ? ["enabled", "disabled"] : ["disabled", "enabled"];
     jQuery("#search-filter-apply-button").css("background", color).css("color", color_text).css("cursor", cursor);
-    jQuery("#search-filter-apply-button").addClass(classes[0]).removeClass(classes[1]);
+    document.getElementById("search-filter-apply-button").classList.add(classes[0]);
+    document.getElementById("search-filter-apply-button").classList.remove(classes[1]);
 }
 
 function toggle_filter_reset_button(flag) {
@@ -167,7 +168,8 @@ function toggle_filter_reset_button(flag) {
     let color_text = flag ? "white" : "#cccccc";
     let classes = flag ? ["enabled", "disabled"] : ["disabled", "enabled"];
     jQuery("#search-filter-reset-button").css("background", color).css("color", color_text).css("cursor", cursor);
-    jQuery("#search-filter-reset-button").addClass(classes[0]).removeClass(classes[1]);
+    document.getElementById("search-filter-reset-button").classList.add(classes[0]);
+    document.getElementById("search-filter-reset-button").classList.remove(classes[1]);
 }
 
 function toggle_filter_input_text(id, flag) {
@@ -346,7 +348,7 @@ function register_event_handlers() {
 
     // When the apply button is clicked, update the URL.
     document.getElementById("search-filter-apply-button")?.addEventListener("click", function() {
-        if (jQuery("#search-filter-apply-button").hasClass("disabled")) {
+        if (document.getElementById("search-filter-apply-button").classList.contains("disabled")) {
             return;
         }
 

@@ -1,7 +1,7 @@
 function decline_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
 
-    jQuery("#content").addClass("loader-top");
+    document.getElementById("content")?.classList.add("loader-top");
     jQuery("#content-wrapper").css("opacity", "0.15");
     save_dataset (dataset_uuid, event, false, function() {
         fetch(`/v3/datasets/${dataset_uuid}/decline`, {
@@ -15,7 +15,7 @@ function decline_dataset (dataset_uuid, event) {
                           `<p>Could not decline due to error ` +
                           `<code>${error.message}</code>.</p>`);
             jQuery("#content-wrapper").css("opacity", "1.0");
-            jQuery("#content").removeClass("loader-top");
+            document.getElementById("content")?.classList.remove("loader-top");
         });
     });
 }
@@ -505,10 +505,10 @@ function cancel_edit_author (author_uuid, dataset_uuid) {
     jQuery("#author-inline-edit-form").remove();
     let button = document.getElementById(`edit-author-${author_uuid}`);
     set_edit_author_handler (button, edit_author_event, author_uuid, dataset_uuid);
-    jQuery(button)
-        .removeClass("fa-times")
-        .removeClass("fa-lg")
-        .addClass("fa-pen");
+    if (button !== null) {
+        button.classList.remove("fa-times", "fa-lg");
+        button.classList.add("fa-pen");
+    }
 }
 
 function reorder_author (dataset_uuid, author_uuid, direction) {
@@ -587,10 +587,10 @@ function edit_author (author_uuid, dataset_uuid) {
         jQuery(`#author-${author_uuid}`).after(row);
         let button = document.getElementById(`edit-author-${author_uuid}`);
         set_edit_author_handler (button, cancel_edit_author_event, author_uuid, dataset_uuid);
-        jQuery(button)
-            .removeClass("fa-pen")
-            .addClass("fa-times")
-            .addClass("fa-lg");
+        if (button !== null) {
+            button.classList.remove("fa-pen");
+            button.classList.add("fa-times", "fa-lg");
+        }
     }).catch(function (error) { console.log(`Error: ${error.message}`); });
 }
 
@@ -916,16 +916,17 @@ function render_files_for_thumbnail (dataset_uuid) {
 
             // Add event listener to toggle the blue border on selection
             add_event_listeners ('input[name="thumbnail"]', "change", function () {
-                jQuery(".thumbnail-item")
-                    .removeClass("thumbnail-active")
-                    .addClass("thumbnail-inactive");
+                document.querySelectorAll(".thumbnail-item").forEach(function (element) {
+                    element.classList.remove("thumbnail-active");
+                    element.classList.add("thumbnail-inactive");
+                });
 
-                let selected_thumb = jQuery('input[name="thumbnail"]:checked');
-                selected_thumb.closest('.thumbnail-item').addClass("thumbnail-active");
+                let selected_thumb = document.querySelector('input[name="thumbnail"]:checked');
+                selected_thumb.closest(".thumbnail-item").classList.add("thumbnail-active");
                 fetch(`/v3/datasets/${dataset_uuid}/update-thumbnail`, {
                     method:  "PUT",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body:    JSON.stringify({ "uuid": `${selected_thumb[0].value}` })
+                    body:    JSON.stringify({ "uuid": `${selected_thumb.value}` })
                 }).then(function (response) {
                     if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
 
@@ -1029,12 +1030,12 @@ function add_tag (dataset_uuid) {
 function submit_new_author (dataset_uuid) {
     let first_name = document.getElementById("author_first_name").value;
     let last_name = document.getElementById("author_last_name").value;
-    jQuery("#author_first_name").removeClass("missing-required") ;
-    jQuery("#author_last_name").removeClass("missing-required") ;
+    document.getElementById("author_first_name")?.classList.remove("missing-required");
+    document.getElementById("author_last_name")?.classList.remove("missing-required");
 
     if (first_name == "" && last_name == "") {
         let error_message = "<p>You must enter at least one of the first or last names.</p>";
-        jQuery("#author_first_name").addClass("missing-required") ;
+        document.getElementById("author_first_name")?.classList.add("missing-required");
         show_message ("failure", `${error_message}`);
         return false;
     }
@@ -1056,7 +1057,7 @@ function submit_new_author (dataset_uuid) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#authors-ac").remove();
-        jQuery("#authors").removeClass("input-for-ac");
+        document.getElementById("authors")?.classList.remove("input-for-ac");
         document.getElementById("authors").value = "";
         render_authors_for_dataset (dataset_uuid);
     }).catch(function () { show_message ("failure", `<p>Failed to add author.</p>`); });
@@ -1077,7 +1078,7 @@ function submit_new_funding (dataset_uuid) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#funding-ac").remove();
-        jQuery("#funding").removeClass("input-for-ac");
+        document.getElementById("funding")?.classList.remove("input-for-ac");
         render_funding_for_dataset (dataset_uuid);
     }).catch(function () { show_message ("failure", `<p>Failed to add funding.</p>`); });
 }
@@ -1128,7 +1129,9 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
 
     jQuery(".article-content").hide();
     jQuery(".article-content-loader").show();
-    jQuery(".article-content-loader").addClass("loader");
+    document.querySelectorAll(".article-content-loader").forEach(function (element) {
+        element.classList.add("loader");
+    });
     fetch(`/v2/account/articles/${dataset_uuid}`, {
         method:  "GET",
         headers: { "Accept": "application/json" }
@@ -1236,7 +1239,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             let group = document.getElementById(`group_${data["group_id"]}`);
             if (group !== null) { group.checked = true; }
         }
-        jQuery(`#article_${dataset_uuid}`).removeClass("loader");
+        document.getElementById(`article_${dataset_uuid}`)?.classList.remove("loader");
         jQuery(`#article_${dataset_uuid}`).show();
         new Quill('#description', { modules: quill_modules, theme: 'snow' });
 
@@ -1630,14 +1633,14 @@ function prettify_size (size) {
 
 function submit_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
-    jQuery("#content").addClass("loader-top");
+    document.getElementById("content")?.classList.add("loader-top");
     jQuery("#content-wrapper").css('opacity', '0.15');
     save_dataset (dataset_uuid, event, false, function() {
         let form_data = gather_form_data();
         let is_open_access = document.getElementById("open_access").checked;
         if (form_data["license_id"] == "98") {
-            jQuery("#license_open").addClass("missing-required");
-            jQuery("#license_embargoed").addClass("missing-required");
+            document.getElementById("license_open")?.classList.add("missing-required");
+            document.getElementById("license_embargoed")?.classList.add("missing-required");
             show_message ("failure", "<p>The '4TU General Terms Of Use' is deprecated.  We selected 'CC0' instead.  Submit again to accept this change.</p>");
             if (is_open_access) {
                 document.getElementById("license_open").value = "2";
@@ -1653,35 +1656,41 @@ function submit_dataset (dataset_uuid, event) {
             if (!response.ok) { throw response; }
             window.location.replace("/my/datasets/submitted-for-review");
         }).catch(function (error) {
-            jQuery(".missing-required").removeClass("missing-required");
+            document.querySelectorAll(".missing-required").forEach(function (element) {
+                element.classList.remove("missing-required");
+            });
             json_from_error (error).then(function (error_messages) {
                 let error_message = "<p>Please fill in all required fields.</p>";
                 if (error_messages != null && error_messages.length > 0) {
                     for (let message of error_messages) {
                         if (message.field_name == "license_id") {
-                            jQuery("#license_open").addClass("missing-required");
-                            jQuery("#license_embargoed").addClass("missing-required");
+                            document.getElementById("license_open")?.classList.add("missing-required");
+                            document.getElementById("license_embargoed")?.classList.add("missing-required");
                         } else if (message.field_name == "group_id") {
-                            jQuery("#groups-wrapper").addClass("missing-required");
+                            document.getElementById("groups-wrapper")?.classList.add("missing-required");
                         } else if (message.field_name == "categories") {
-                            jQuery("#categories-wrapper").addClass("missing-required");
+                            document.getElementById("categories-wrapper")?.classList.add("missing-required");
                         } else if (message.field_name == "agreed_to_deposit_agreement") {
-                            jQuery("label[for='deposit_agreement']").addClass("missing-required");
+                            document.querySelectorAll("label[for='deposit_agreement']").forEach(function (element) {
+                                element.classList.add("missing-required");
+                            });
                         } else if (message.field_name == "agreed_to_publish") {
-                            jQuery("label[for='publish_agreement']").addClass("missing-required");
+                            document.querySelectorAll("label[for='publish_agreement']").forEach(function (element) {
+                                element.classList.add("missing-required");
+                            });
                         } else if (message.field_name == "embargo_type") {
-                            jQuery("#record-type-wrapper").addClass("missing-required");
+                            document.getElementById("record-type-wrapper")?.classList.add("missing-required");
                         } else if (message.field_name == "files") {
                             show_message ("failure", `<p>${message.message}</p>`);
-                            jQuery("#dropzone-field").addClass("missing-required");
+                            document.getElementById("dropzone-field")?.classList.add("missing-required");
                         } else {
-                            jQuery(`#${message.field_name}`).addClass("missing-required");
+                            document.getElementById(`${message.field_name}`)?.classList.add("missing-required");
                         }
                     }
                 }
                 show_message ("failure", `${error_message}`);
                 jQuery("#content-wrapper").css('opacity', '1.0');
-                jQuery("#content").removeClass("loader-top");
+                document.getElementById("content")?.classList.remove("loader-top");
             });
         });
     });
@@ -1689,7 +1698,7 @@ function submit_dataset (dataset_uuid, event) {
 
 function publish_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
-    jQuery("#content").addClass("loader-top");
+    document.getElementById("content")?.classList.add("loader-top");
     jQuery("#content-wrapper").css('opacity', '0.15');
     save_dataset (dataset_uuid, event, false, function() {
         fetch(`/v3/datasets/${dataset_uuid}/publish`, {
@@ -1703,7 +1712,7 @@ function publish_dataset (dataset_uuid, event) {
                           `<p>Could not publish due to error ` +
                           `<code>${error.message}</code>.</p>`);
             jQuery("#content-wrapper").css('opacity', '1.0');
-            jQuery("#content").removeClass("loader-top");
+            document.getElementById("content")?.classList.remove("loader-top");
         });
     });
 }

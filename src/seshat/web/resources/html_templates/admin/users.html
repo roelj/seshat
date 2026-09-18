@@ -27,7 +27,9 @@ function clear_accounts_cache (event) {
     });
 }
 document.addEventListener("DOMContentLoaded", function () {
-    jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
+    document.querySelectorAll(".hide-for-javascript").forEach(function (element) {
+        element.classList.remove("hide-for-javascript");
+    });
     let table = document.getElementById("users-table");
     if (table !== null) {
         new DataTable(table, {

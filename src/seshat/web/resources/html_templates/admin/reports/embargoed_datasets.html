@@ -11,7 +11,9 @@
 </style>
 <script nonce="{{nonce}}">
 document.addEventListener("DOMContentLoaded", function () {
-    jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
+    document.querySelectorAll(".hide-for-javascript").forEach(function (element) {
+        element.classList.remove("hide-for-javascript");
+    });
     let table = document.getElementById("reports-table");
     if (table !== null) {
         new DataTable(table, {

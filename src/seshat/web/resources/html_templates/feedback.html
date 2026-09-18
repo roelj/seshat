@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     {%- endif %}
 
     document.getElementById("submit-feedback")?.addEventListener("click", function (event) {
-      jQuery("#content").addClass("loader-top");
+      document.getElementById("content")?.classList.add("loader-top");
       jQuery("#content-wrapper").css('opacity', '0.15');
     });
     document.getElementById("description")?.addEventListener("keyup", function(event) {

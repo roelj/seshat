@@ -9,7 +9,9 @@
 Dropzone.autoDiscover = false;
 document.addEventListener("DOMContentLoaded", function (){
     root_categories = []
-    jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
+    document.querySelectorAll(".hide-for-javascript").forEach(function (element) {
+        element.classList.remove("hide-for-javascript");
+    });
     jQuery(".subcategory-wrapper").hide();
 {%- for category in categories %}
     root_categories.push("{{category.uuid}}");

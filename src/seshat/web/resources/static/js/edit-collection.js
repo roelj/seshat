@@ -458,7 +458,7 @@ function save_collection (collection_id, event, notify=true, on_success=function
 
 function publish_collection (collection_id, event) {
     stop_event_propagation (event);
-    jQuery("#content").addClass("loader-top");
+    document.getElementById("content")?.classList.add("loader-top");
     jQuery("#content-wrapper").css('opacity', '0.15');
     save_collection (collection_id, event, false, function() {
         fetch(`/v3/collections/${collection_id}/publish`, {
@@ -468,26 +468,28 @@ function publish_collection (collection_id, event) {
             if (!response.ok) { throw response; }
             window.location.replace(`/my/collections/published/${collection_id}`);
         }).catch(function (error) {
-            jQuery(".missing-required").removeClass("missing-required");
+            document.querySelectorAll(".missing-required").forEach(function (element) {
+                element.classList.remove("missing-required");
+            });
             json_from_error (error).then(function (error_messages) {
                 let error_message = "<p>Please fill in all required fields.</p>";
                 if (error_messages != null && error_messages.length > 0) {
                     for (let message of error_messages) {
                         if (message.field_name == "license_id") {
-                            jQuery("#license_open").addClass("missing-required");
-                            jQuery("#license_embargoed").addClass("missing-required");
+                            document.getElementById("license_open")?.classList.add("missing-required");
+                            document.getElementById("license_embargoed")?.classList.add("missing-required");
                         } else if (message.field_name == "group_id") {
-                            jQuery("#groups-wrapper").addClass("missing-required");
+                            document.getElementById("groups-wrapper")?.classList.add("missing-required");
                         } else if (message.field_name == "categories") {
-                            jQuery("#categories-wrapper").addClass("missing-required");
+                            document.getElementById("categories-wrapper")?.classList.add("missing-required");
                         } else {
-                            jQuery(`#${message.field_name}`).addClass("missing-required");
+                            document.getElementById(`${message.field_name}`)?.classList.add("missing-required");
                         }
                     }
                 }
                 show_message ("failure", `${error_message}`);
                 jQuery("#content-wrapper").css('opacity', '1.0');
-                jQuery("#content").removeClass("loader-top");
+                document.getElementById("content")?.classList.remove("loader-top");
             });
         });
     });
@@ -502,7 +504,7 @@ function autocomplete_dataset (event, collection_id) {
     let current_text = document.getElementById("article-search").value.trim();
     if (current_text == "") {
         jQuery("#articles-ac").remove();
-        jQuery("#article-search").removeClass("input-for-ac");
+        document.getElementById("article-search")?.classList.remove("input-for-ac");
     } else if (current_text.length > 2) {
         fetch(`/v2/articles/search`, {
             method:  "POST",
@@ -531,9 +533,8 @@ function autocomplete_dataset (event, collection_id) {
             }
             let wrapper = create_element("div", { "id": "articles-ac", "class": "autocomplete" });
             wrapper.append(list);
-            jQuery("#article-search")
-                .addClass("input-for-ac")
-                .after(wrapper);
+            document.getElementById("article-search").classList.add("input-for-ac");
+            jQuery("#article-search").after(wrapper);
         }).catch(function (error) { console.log(`Error: ${error.message}`); });
     }
 }
@@ -556,7 +557,7 @@ function submit_new_author (collection_id) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#authors-ac").remove();
-        jQuery("#authors").removeClass("input-for-ac");
+        document.getElementById("authors")?.classList.remove("input-for-ac");
         render_authors_for_collection (collection_id);
     }).catch(function () {
         show_message ("failure", "<p>Failed to add author.</p>");
@@ -578,7 +579,7 @@ function submit_new_funding (collection_id) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#funding-ac").remove();
-        jQuery("#funding").removeClass("input-for-ac");
+        document.getElementById("funding")?.classList.remove("input-for-ac");
         render_funding_for_collection (collection_id);
     }).catch(function () { show_message ("failure", `<p>Failed to add funding.</p>`); });
 }
@@ -589,8 +590,12 @@ function activate (collection_id) {
 
     jQuery(".collection-content").hide();
     jQuery(".collection-content-loader").show();
-    jQuery(".collection-content-loader").addClass("loader");
-    jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
+    document.querySelectorAll(".collection-content-loader").forEach(function (element) {
+        element.classList.add("loader");
+    });
+    document.querySelectorAll(".hide-for-javascript").forEach(function (element) {
+        element.classList.remove("hide-for-javascript");
+    });
 
     document.getElementById("delete")?.addEventListener("click", function (event) { delete_collection (collection_id, event); });
     document.getElementById("save")?.addEventListener("click", function (event)   { save_collection (collection_id, event); });

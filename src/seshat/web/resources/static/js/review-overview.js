@@ -87,13 +87,12 @@ function copy_row (uuid, dataset_uuid, title, version, first_name, last_name,
     let escaped_title = title.replaceAll ('"', '""');
     let text = `=HYPERLINK("${window.location.origin}/review/goto-dataset/${dataset_uuid}"; "${escaped_title}")\t${version}\t${first_name} ${last_name}\t${email}\t${group_name}\t\t${request_date}\t${modified_date}\t${published_date}\n`;
     navigator.clipboard.writeText(text);
-    jQuery(`#copy-btn-${uuid}`)
-        .removeClass("fa-copy")
-        .addClass("fa-check-double");
+    let button = document.getElementById(`copy-btn-${uuid}`);
+    button.classList.remove("fa-copy");
+    button.classList.add("fa-check-double");
     setTimeout(function() {
-        jQuery(`#copy-btn-${uuid}`)
-            .removeClass("fa-check-double")
-            .addClass("fa-copy");
+        button.classList.remove("fa-check-double");
+        button.classList.add("fa-copy");
     }, 3000);
 }
 

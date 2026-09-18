@@ -10,7 +10,9 @@
 </style>
 <script nonce="{{nonce}}">
 document.addEventListener("DOMContentLoaded", function () {
-    jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
+    document.querySelectorAll(".hide-for-javascript").forEach(function (element) {
+        element.classList.remove("hide-for-javascript");
+    });
     jQuery("#table-unpublished-collections-loader").remove();
     jQuery("#table-published-collections-loader").remove();
     document.querySelectorAll(".delete-draft-collection").forEach(function (element) {

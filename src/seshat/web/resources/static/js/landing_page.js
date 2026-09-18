@@ -16,17 +16,17 @@ function toggle_access_request (event) {
     let access_request_div = jQuery("#access-request-wrapper");
     if (access_request_div.is(":visible")) {
         jQuery("#access-request-wrapper").slideUp(150, function (){
-            jQuery("#access-request")
-                .removeClass("close")
-                .addClass("open")
-                .text("Request access to data");
+            let button = document.getElementById("access-request");
+            button.classList.remove("close");
+            button.classList.add("open");
+            jQuery(button).text("Request access to data");
         });
     } else {
        jQuery("#access-request-wrapper").slideDown(150, function (){
-           jQuery("#access-request")
-                .removeClass("open")
-                .addClass("close")
-               .text("Cancel access request");
+            let button = document.getElementById("access-request");
+            button.classList.remove("open");
+            button.classList.add("close");
+            jQuery(button).text("Cancel access request");
         });
     }
 }
@@ -54,15 +54,16 @@ function submit_access_request (event) {
 }
 
 function prompt_download_all_request (event) {
+    document.getElementById("download-all-files-message").classList.add("success");
     jQuery("#download-all-files-message")
-        .addClass("success")
         .append("<p>Your download is being prepared. This may take a while.</p>")
         .fadeIn(250);
     setTimeout(function() {
         jQuery("#download-all-files-message").fadeOut(500, function() {
-            jQuery("#message")
-                .removeClass("success")
-                .addClass("transparent")
+            let message = document.getElementById("message");
+            message.classList.remove("success");
+            message.classList.add("transparent");
+            jQuery(message)
                 .html("<p>&nbsp;</p>")
                 .show();
         });
@@ -74,11 +75,15 @@ function toggle_versions (event) {
     let versions = jQuery("#versions");
     if (versions.is(":visible")) {
         versions.slideUp(150, function () {
-            jQuery("#versions-arrow").removeClass("fa-angle-up").addClass("fa-angle-down");
+            let arrow = document.getElementById("versions-arrow");
+            arrow.classList.remove("fa-angle-up");
+            arrow.classList.add("fa-angle-down");
         });
     } else {
         versions.slideDown(150, function () {
-            jQuery("#versions-arrow").removeClass("fa-angle-down").addClass("fa-angle-up");
+            let arrow = document.getElementById("versions-arrow");
+            arrow.classList.remove("fa-angle-down");
+            arrow.classList.add("fa-angle-up");
         });
     }
 }
