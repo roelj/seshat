@@ -178,26 +178,30 @@ function render_overview_table () {
                 .append (jQuery ("<td/>").html (copy_button));
             table_body.append (row);
         }
-        jQuery("#overview-table").DataTable({
-            paging: false,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search..."
-            },
-            columnDefs: [{ orderable: false, targets: 10 }],
-            order: [[6, 'desc']],
-            orderable: false,
-            info: false,
-            initComplete: function (settings, json) {
-                jQuery("#overview-h1").show();
-                jQuery("#overview-table").show();
-                jQuery("#reviews-loader").hide();
-                update_item_count ();
-                jQuery(".reviewer-selector").change(assign_reviewer);
-                jQuery(".reviewer-filter").change(apply_filters);
-                jQuery(".status-filter").change(apply_filters);
-            }
-        });
+	let table = document.getElementById("overview-table");
+	if (table !== null) {
+            new DataTable(table, {
+		paging: false,
+		info: false,
+		language: { search: "_INPUT_", searchPlaceholder: "Search..." },
+		columnDefs: [{ orderable: false, targets: 10 }],
+		order: [[6, "desc"]]
+            });
+
+            let on_change = (selector, handler) => {
+		for (let element of document.querySelectorAll(selector)) {
+                    element.addEventListener("change", handler);
+		}
+            };
+
+            document.getElementById("overview-h1").style.display = "";
+            table.style.display = "";
+            document.getElementById("reviews-loader").style.display = "none";
+            update_item_count ();
+            on_change (".reviewer-selector", assign_reviewer);
+            on_change (".reviewer-filter, .status-filter", apply_filters);
+	    table.style.display = "block";
+	}
     }).fail(function (jqXHR, textStatus, errorThrown) {
         show_message ("failure", "<p>Failed to render the overview table.</p>");
     });

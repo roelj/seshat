@@ -35,11 +35,6 @@ Copyright: OpenJS Foundation and other contributors
 License: MIT
 
 Files:
- src/seshat/web/resources/static/js/jquery.dataTables.min.js
-Copyright: 2008-2021 SpryMedia Ltd.
-License: MIT
-
-Files:
  src/seshat/web/resources/static/js/dropzone.min.js
 Copyright: 2021 Matias Meno <m@tias.me>
 License: MIT

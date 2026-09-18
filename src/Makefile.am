@@ -208,7 +208,6 @@ EXTRA_RESOURCES =                                                             \
     seshat/web/resources/sparql_templates/update_view_and_download_counts.sparql \
     seshat/web/resources/static/css/ace.css                                   \
     seshat/web/resources/static/css/dropzone.min.css                          \
-    seshat/web/resources/static/css/jquery.dataTables.min.css                 \
     seshat/web/resources/static/css/form.css                                  \
     seshat/web/resources/static/css/main.css                                  \
     seshat/web/resources/static/css/pub.css                                   \
@@ -247,12 +246,12 @@ EXTRA_RESOURCES =                                                             \
     seshat/web/resources/static/js/d3.v7.min.js                               \
     seshat/web/resources/static/js/depositor-dashboard.js                     \
     seshat/web/resources/static/js/dropzone.min.js                            \
+    seshat/web/resources/static/js/dtable.js                                  \
     seshat/web/resources/static/js/edit-collection.js                         \
     seshat/web/resources/static/js/edit-dataset.js                            \
     seshat/web/resources/static/js/edit-profile.js                            \
     seshat/web/resources/static/js/edit-project.js                            \
     seshat/web/resources/static/js/exploratory.js                             \
-    seshat/web/resources/static/js/jquery.dataTables.min.js                   \
     seshat/web/resources/static/js/jquery-3.6.0.min.js                        \
     seshat/web/resources/static/js/landing_page.js                            \
     seshat/web/resources/static/js/my-data.js                                 \

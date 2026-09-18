@@ -630,7 +630,8 @@ img { user-select: none; }
     border-radius: .5em .5em 0em 0em;
 }
 .handle-icon { margin-bottom: -0.2em; margin-right: .75em; }
-input[type="search"] { background-color: var(--search-box-background); }
+input[type="search"] { background-color: var(--search-box-background); border-radius: .5em; padding: .25em; border: solid 1pt var(--search-box-border); }
+input[type="search"]:focus { background-color: var(--search-box-background-focus) !important; border: solid 1pt var(--search-box-border) !important; }
 select { background: var(--select-background); border: solid 1pt var(--select-border); border-radius: .5em; padding: .25em; }
 .small { font-size: 75%; opacity: 0.8; margin-top: 0pt; padding-top: 0pt; }
 #new-author-description {
@@ -647,6 +648,17 @@ select { background: var(--select-background); border: solid 1pt var(--select-bo
 .dashboard-group > table { width: 100%; }
 .dashboard-group > table > tbody > tr > th { text-align: left; padding: .25em 0 .25em 0; }
 .dashboard-group > table > tbody > tr > th:nth-child(1) { width: 100pt; font-weight: bold; }
+
+.dataTables_wrapper { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: start; column-gap: .5em; }
+.dataTables_wrapper > table { grid-column: 1 / -1; }
+.dataTables_filter, .dataTables_paginate, .dataTables_info { grid-row: 2; padding: .5em; user-select: none; }
+.dataTables_filter { grid-column: 1; }
+.dataTables_filter input { margin-left: .5em; }
+.dataTables_paginate { grid-column: 2; justify-self: center; color: var(--text); background: var(--brand-subtle); border: solid 1pt var(--primary-color); border-top: none; border-radius: 0 0 .5em .5em; }
+.dataTables_paginate > * { color: inherit; padding: 0 .25em; }
+.dataTables_paginate > .current { background: var(--primary-color); color: var(--on-brand); border-radius: .25em; }
+.dataTables_paginate:empty { display: none; }
+.dataTables_info { grid-column: 3; justify-self: end; }
 
 @media (max-width: 940px) {
     #primary-menu-wrapper, #submenu-wrapper { width: auto; max-width: 880pt; }

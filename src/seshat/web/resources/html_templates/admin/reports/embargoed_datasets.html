@@ -1,8 +1,7 @@
 {% extends "layout.html" %}
 {% block headers %}
 <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/jquery.dataTables.min.js"></script>
-<link href="/static/css/jquery.dataTables.min.css" rel="stylesheet">
+<script src="/static/js/dtable.js"></script>
 <style nonce="{{nonce}}">
 #reports-table .fa-user-secret { color: #000; }
 #reports-table .fa-user-secret:hover { color: #666; }
@@ -13,11 +12,14 @@
 <script nonce="{{nonce}}">
 jQuery(document).ready(function () {
     jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
-    jQuery("#reports-table").DataTable({
-        columnDefs: [{ orderable: false,  targets: 0 }],
-        pageLength: 25
-    });
-    jQuery("#reports-table").show();
+    let table = document.getElementById("reports-table");
+    if (table !== null) {
+        new DataTable(table, {
+            columnDefs: [{ orderable: false, targets: 0 }],
+            pageLength: 10
+        });
+        table.style.display = "block";
+    }
 });
 </script>
 {% endblock %}

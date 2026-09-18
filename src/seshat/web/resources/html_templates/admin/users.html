@@ -1,9 +1,8 @@
 {% extends "layout.html" %}
 {% block headers %}
 <script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/js/jquery.dataTables.min.js"></script>
+<script src="/static/js/dtable.js"></script>
 <script src="/static/js/utils.js?cache=1744290797"></script>
-<link href="/static/css/jquery.dataTables.min.css" rel="stylesheet">
 <style nonce="{{nonce}}">
 #users-table .fa-user-secret { color: var(--primary-foreground-color); }
 #users-table .fa-user-secret:hover { color: var(--primary-foreground-color-hover); }
@@ -28,11 +27,14 @@ function clear_accounts_cache (event) {
 }
 jQuery(document).ready(function () {
     jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
-    jQuery("#users-table").DataTable({
-        columnDefs: [{ orderable: false,  targets: 3 }],
-        pageLength: 25
-    });
-    jQuery("#users-table").show();
+    let table = document.getElementById("users-table");
+    if (table !== null) {
+        new DataTable(table, {
+            columnDefs: [{ orderable: false, targets: 3 }],
+            pageLength: 10
+        });
+        table.style.display = "block";
+    }
     jQuery("#remove-cache").on("click", function (event) {
         clear_accounts_cache (event);
     });
