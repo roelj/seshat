@@ -252,7 +252,6 @@ EXTRA_RESOURCES =                                                             \
     seshat/web/resources/static/js/edit-profile.js                            \
     seshat/web/resources/static/js/edit-project.js                            \
     seshat/web/resources/static/js/exploratory.js                             \
-    seshat/web/resources/static/js/jquery-3.6.0.min.js                        \
     seshat/web/resources/static/js/landing_page.js                            \
     seshat/web/resources/static/js/my-data.js                                 \
     seshat/web/resources/static/js/project-settings.js                        \
