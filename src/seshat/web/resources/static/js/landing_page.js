@@ -34,10 +34,10 @@ function toggle_access_request (event) {
 function submit_access_request (event) {
     stop_event_propagation (event);
     let data = {
-        "email":      or_null(jQuery("#access-request-email").val()),
-        "name" :      or_null(jQuery("#access-request-name").val()),
-        "dataset_id": or_null(jQuery("#access-request-dataset-id").val()),
-        "version":    or_null(jQuery("#access-request-version").val()),
+        "email":      or_null(document.getElementById("access-request-email").value),
+        "name" :      or_null(document.getElementById("access-request-name").value),
+        "dataset_id": or_null(document.getElementById("access-request-dataset-id").value),
+        "version":    or_null(document.getElementById("access-request-version").value),
         "reason":     value_from_quill("#access-request-reason")
     };
     fetch(`/data_access_request`, {

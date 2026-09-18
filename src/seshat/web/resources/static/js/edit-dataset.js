@@ -58,7 +58,7 @@ function gather_form_data () {
     let categories   = jQuery("input[name='categories']:checked");
     let category_ids = [];
     for (let category of categories) {
-        category_ids.push(jQuery(category).val());
+        category_ids.push(category.value);
     }
 
     let defined_type_name = null;
@@ -78,28 +78,28 @@ function gather_form_data () {
     let agreed_to_publish = jQuery("#publish_agreement").prop("checked");
     let is_metadata_record = jQuery("#metadata_record_only").prop("checked");
 
-    let title = or_null(jQuery("#title").val());
+    let title = or_null(document.getElementById("title").value);
     if (title == "" || title == null) { title = "Untitled item"; }
     let form_data = {
         "title":          title,
         "description":    value_from_quill("#description"),
-        "resource_title": or_null(jQuery("#resource_title").val()),
-        "resource_doi":   or_null(jQuery("#resource_doi").val()),
-        "geolocation":    or_null(jQuery("#geolocation").val()),
-        "longitude":      or_null(jQuery("#longitude").val()),
-        "latitude":       or_null(jQuery("#latitude").val()),
-        "format":         or_null(jQuery("#format").val()),
-        "data_link":      or_null(jQuery("#data_link").val()),
-        "derived_from":   or_null(jQuery("#derived_from").val()),
-        "same_as":        or_null(jQuery("#same_as").val()),
-        "organizations":  or_null(jQuery("#organizations").val()),
-        "publisher":      or_null(jQuery("#publisher").val()),
-        "time_coverage":  or_null(jQuery("#time_coverage").val()),
-        "language":       or_null(jQuery("#language").val()),
-        "git_repository_name": or_null(jQuery("#git-repository-name").val()),
-        "git_code_hosting_url": or_null(jQuery("#git-code-hosting-url").val()),
+        "resource_title": or_null(document.getElementById("resource_title").value),
+        "resource_doi":   or_null(document.getElementById("resource_doi").value),
+        "geolocation":    or_null(document.getElementById("geolocation").value),
+        "longitude":      or_null(document.getElementById("longitude").value),
+        "latitude":       or_null(document.getElementById("latitude").value),
+        "format":         or_null(document.getElementById("format").value),
+        "data_link":      or_null(document.getElementById("data_link").value),
+        "derived_from":   or_null(document.getElementById("derived_from").value),
+        "same_as":        or_null(document.getElementById("same_as").value),
+        "organizations":  or_null(document.getElementById("organizations").value),
+        "publisher":      or_null(document.getElementById("publisher").value),
+        "time_coverage":  or_null(document.getElementById("time_coverage").value),
+        "language":       or_null(document.getElementById("language").value),
+        "git_repository_name": or_null(document.getElementById("git-repository-name").value),
+        "git_code_hosting_url": or_null(document.getElementById("git-code-hosting-url").value),
         "is_metadata_record": is_metadata_record,
-        "metadata_reason": or_null(jQuery("#metadata_only_reason").val()),
+        "metadata_reason": or_null(document.getElementById("metadata_only_reason").value),
         "defined_type":   defined_type_name,
         "is_embargoed":   is_embargoed || is_restricted,
         "group_id":       group_id,
@@ -109,10 +109,10 @@ function gather_form_data () {
     };
 
     if (is_embargoed) {
-        form_data["embargo_until_date"] = or_null(jQuery("#embargo_until_date").val());
+        form_data["embargo_until_date"] = or_null(document.getElementById("embargo_until_date").value);
         form_data["embargo_title"]  = "Under embargo";
         form_data["embargo_reason"] = value_from_quill("#embargo_reason");
-        form_data["license_id"]     = or_null(jQuery("#license_embargoed").val());
+        form_data["license_id"]     = or_null(document.getElementById("license_embargoed").value);
         if (jQuery("#files_only_embargo").prop("checked")) {
             form_data["embargo_type"] = "file";
         } else if (jQuery("#content_embargo").prop("checked")) {
@@ -127,7 +127,7 @@ function gather_form_data () {
         form_data["eula"]           = value_from_quill("#restricted_access_eula");
         form_data["embargo_options"] = [{ "id": 1000, "type": "restricted_access" }];
     } else {
-        form_data["license_id"]     = or_null(jQuery("#license_open").val());
+        form_data["license_id"]     = or_null(document.getElementById("license_open").value);
     }
 
     if (form_data["description"] !== null) {
@@ -142,7 +142,7 @@ function save_dataset (dataset_uuid, event, notify=true, on_success=function () 
     // When keywords were entered but not yet submitted, handle those first.
     add_tag (dataset_uuid);
     add_reference (dataset_uuid);
-    let external_url = jQuery("#external_url").val();
+    let external_url = document.getElementById("external_url").value;
     if (external_url && external_url != "") {
         submit_external_link (dataset_uuid);
     }
@@ -410,7 +410,7 @@ function update_collaborator (collaborator_uuid, dataset_uuid, may_edit_metadata
                 "edit": jQuery(`#row-${collaborator_uuid} input[name='edit'].subitem-checkbox-data`).prop("checked"),
                 "remove": jQuery(`#row-${collaborator_uuid} input[name='remove'].subitem-checkbox-data`).prop("checked"),
             },
-            "account": or_null(jQuery("#account_uuid").val())
+            "account": or_null(document.getElementById("account_uuid")?.value)
         };
 
         fetch(`/v3/datasets/${dataset_uuid}/collaborators/${collaborator_uuid}`, {
@@ -420,7 +420,6 @@ function update_collaborator (collaborator_uuid, dataset_uuid, may_edit_metadata
         }).then(function (response) {
             if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             render_collaborators_for_dataset(dataset_uuid, may_edit_metadata);
-            jQuery("#update_collaborator").val("");
         }).catch(function () {
             show_message("failure", `<p>Failed to update ${collaborator_uuid}</p>`);
         });
@@ -438,7 +437,7 @@ function add_collaborator (dataset_uuid, may_edit_metadata) {
             "edit": jQuery("input[name='edit'].subitem-checkbox-data").prop("checked"),
             "remove": jQuery("input[name='remove'].subitem-checkbox-data").prop("checked"),
         },
-        "account": or_null(jQuery("#account_uuid").val())
+        "account": or_null(document.getElementById("account_uuid")?.value)
     };
 
     fetch(`/v3/datasets/${dataset_uuid}/collaborators`, {
@@ -448,7 +447,7 @@ function add_collaborator (dataset_uuid, may_edit_metadata) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_collaborators_for_dataset(dataset_uuid, may_edit_metadata);
-        jQuery("#add_collaborator").val("");
+        document.getElementById("add_collaborator").value = "";
     }).catch(function () { show_message ("failure", `<p>Failed to add collaborator.</p>`); });
 }
 
@@ -525,10 +524,10 @@ function reorder_author (dataset_uuid, author_uuid, direction) {
 
 function update_author (author_uuid, dataset_uuid) {
     let record = {
-        "first_name": jQuery("#edit_author_first_name").val(),
-        "last_name": jQuery("#edit_author_last_name").val(),
-        "email": jQuery("#edit_author_email").val(),
-        "orcid": jQuery("#edit_author_orcid").val()
+        "first_name": document.getElementById("edit_author_first_name").value,
+        "last_name": document.getElementById("edit_author_last_name").value,
+        "email": document.getElementById("edit_author_email").value,
+        "orcid": document.getElementById("edit_author_orcid").value
     };
     fetch(`/v3/authors/${author_uuid}`, {
         method:  "PUT",
@@ -752,7 +751,7 @@ function render_git_branches_for_dataset (dataset_uuid, event) {
 
 function set_default_git_branch (dataset_uuid, event) {
     stop_event_propagation (event);
-    let branch_name = jQuery("#git-branches").val();
+    let branch_name = document.getElementById("git-branches").value;
     fetch(`/v3/datasets/${dataset_uuid}.git/set-default-branch`, {
         method:  "PUT",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
@@ -924,7 +923,7 @@ function render_files_for_thumbnail (dataset_uuid) {
                 fetch(`/v3/datasets/${dataset_uuid}/update-thumbnail`, {
                     method:  "PUT",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body:    JSON.stringify({ "uuid": `${selected_thumb.val()}` })
+                    body:    JSON.stringify({ "uuid": `${selected_thumb[0].value}` })
                 }).then(function (response) {
                     if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
 
@@ -949,7 +948,7 @@ function add_author (author_uuid, dataset_uuid) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_authors_for_dataset (dataset_uuid);
-        jQuery("#authors").val("");
+        document.getElementById("authors").value = "";
         autocomplete_author(null, dataset_uuid);
     }).catch(function () { show_message ("failure", `<p>Failed to add ${author_uuid}.</p>`); });
 }
@@ -962,13 +961,13 @@ function add_funding (funding_uuid, dataset_uuid) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_funding_for_dataset (dataset_uuid);
-        jQuery("#funding").val("");
+        document.getElementById("funding").value = "";
         autocomplete_funding(null, dataset_uuid);
     }).catch(function () { show_message ("failure", `<p>Failed to add ${funding_uuid}.</p>`); });
 }
 
 function submit_external_link (dataset_uuid) {
-    let url = jQuery("#external_url").val();
+    let url = document.getElementById("external_url").value;
     if (url == "") {
         jQuery("#external_url").css("background", "#cc0000");
         return false;
@@ -979,14 +978,14 @@ function submit_external_link (dataset_uuid) {
         body:    JSON.stringify({ "link": url })
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
-        jQuery("#external_url").val("");
+        document.getElementById("external_url").value = "";
         jQuery("#external_link_field").hide();
         render_files_for_dataset (dataset_uuid, null);
     }).catch(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
 }
 
 function add_reference (dataset_uuid) {
-    let url = jQuery("#references").val().trim();
+    let url = document.getElementById("references").value.trim();
     if (url != "") {
         fetch(`/v3/datasets/${dataset_uuid}/references`, {
             method:  "POST",
@@ -995,13 +994,13 @@ function add_reference (dataset_uuid) {
         }).then(function (response) {
             if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             render_references_for_dataset (dataset_uuid);
-            jQuery("#references").val("");
+            document.getElementById("references").value = "";
         }).catch(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
     }
 }
 
 function add_tag (dataset_uuid) {
-    let tag = jQuery("#tag").val().trim();
+    let tag = document.getElementById("tag").value.trim();
     if (tag == "") { return 0; }
 
     let tags = [];
@@ -1020,14 +1019,14 @@ function add_tag (dataset_uuid) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_tags_for_dataset (dataset_uuid);
-        jQuery("#tag").val("");
+        document.getElementById("tag").value = "";
         autocomplete_tags(null, dataset_uuid);
     }).catch(function () { show_message ("failure", `<p>Failed to add ${tag}.</p>`); });
 }
 
 function submit_new_author (dataset_uuid) {
-    let first_name = jQuery("#author_first_name").val();
-    let last_name = jQuery("#author_last_name").val();
+    let first_name = document.getElementById("author_first_name").value;
+    let last_name = document.getElementById("author_last_name").value;
     jQuery("#author_first_name").removeClass("missing-required") ;
     jQuery("#author_last_name").removeClass("missing-required") ;
 
@@ -1042,8 +1041,8 @@ function submit_new_author (dataset_uuid) {
         "name":       `${first_name} ${last_name}`,
         "first_name": first_name,
         "last_name":  last_name,
-        "email":      jQuery("#author_email").val(),
-        "orcid_id":   jQuery("#author_orcid").val()
+        "email":      document.getElementById("author_email").value,
+        "orcid_id":   document.getElementById("author_orcid").value
     }];
 
     fetch(`/v2/account/articles/${dataset_uuid}/authors`, {
@@ -1056,7 +1055,7 @@ function submit_new_author (dataset_uuid) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#authors-ac").remove();
         jQuery("#authors").removeClass("input-for-ac");
-        jQuery("#authors").val("");
+        document.getElementById("authors").value = "";
         render_authors_for_dataset (dataset_uuid);
     }).catch(function () { show_message ("failure", `<p>Failed to add author.</p>`); });
 }
@@ -1067,10 +1066,10 @@ function submit_new_funding (dataset_uuid) {
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body:    JSON.stringify({
             "funders": [{
-                "title":       jQuery("#funding_title").val(),
-                "grant_code":  jQuery("#funding_grant_code").val(),
-                "funder_name": jQuery("#funding_funder_name").val(),
-                "url":         jQuery("#funding_url").val()
+                "title":       document.getElementById("funding_title").value,
+                "grant_code":  document.getElementById("funding_grant_code").value,
+                "funder_name": document.getElementById("funding_funder_name").value,
+                "url":         document.getElementById("funding_url").value
             }]
         })
     }).then(function (response) {
@@ -1636,9 +1635,9 @@ function submit_dataset (dataset_uuid, event) {
             jQuery("#license_embargoed").addClass("missing-required");
             show_message ("failure", "<p>The '4TU General Terms Of Use' is deprecated.  We selected 'CC0' instead.  Submit again to accept this change.</p>");
             if (is_open_access) {
-                jQuery("#license_open").val("2");
+                document.getElementById("license_open").value = "2";
             } else {
-                jQuery("#license_embargoed").val("2");
+                document.getElementById("license_embargoed").value = "2";
             }
         }
         fetch(`/v3/datasets/${dataset_uuid}/submit-for-review`, {

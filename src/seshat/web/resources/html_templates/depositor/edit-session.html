@@ -9,7 +9,7 @@ function save_session (session_id) {
     fetch(`/my/sessions/${session_id}/edit`, {
         method:  "PUT",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body:    JSON.stringify({ "name": jQuery("#name").val() })
+        body:    JSON.stringify({ "name": document.getElementById("name").value })
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         window.location.replace("/my/dashboard");

@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
       jQuery("#content-wrapper").css('opacity', '0.15');
     });
     document.getElementById("description")?.addEventListener("keyup", function(event) {
-        jQuery("#description_html").val(jQuery("#description .ql-editor").html());
+        document.getElementById("description_html").value = jQuery("#description .ql-editor").html();
     });
 });
 </script>

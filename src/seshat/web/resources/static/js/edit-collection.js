@@ -260,7 +260,7 @@ function add_author (author_id, collection_id) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_authors_for_collection (collection_id);
-        jQuery("#authors").val("");
+        document.getElementById("authors").value = "";
         autocomplete_author(null, collection_id);
     }).catch(function () {
         show_message ("failure",`<p>Failed to add ${author_id}.</p>`);
@@ -275,7 +275,7 @@ function add_funding (funding_uuid, collection_id) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_funding_for_collection (collection_id);
-        jQuery("#funding").val("");
+        document.getElementById("funding").value = "";
         autocomplete_funding(null, collection_id);
     }).catch(function () { show_message ("failure", `<p>Failed to add ${funding_uuid}.</p>`); });
 }
@@ -288,7 +288,7 @@ function add_dataset (dataset_id, collection_id) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_datasets_for_collection (collection_id);
-        jQuery("#article-search").val("");
+        document.getElementById("article-search").value = "";
         autocomplete_dataset(null, collection_id);
     }).catch(function () {
         show_message ("failure",`<p>Failed to add ${dataset_id}.</p>`);
@@ -296,7 +296,7 @@ function add_dataset (dataset_id, collection_id) {
 }
 
 function add_reference (collection_id) {
-    let url = jQuery("#references").val().trim();
+    let url = document.getElementById("references").value.trim();
     if (url != "") {
         fetch(`/v3/collections/${collection_id}/references`, {
             method:  "POST",
@@ -305,13 +305,13 @@ function add_reference (collection_id) {
         }).then(function (response) {
             if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             render_references_for_collection (collection_id);
-            jQuery("#references").val("");
+            document.getElementById("references").value = "";
         }).catch(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
     }
 }
 
 function add_tag (collection_id) {
-    let tag = jQuery("#tag").val().trim();
+    let tag = document.getElementById("tag").value.trim();
     if (tag == "") { return 0; }
 
     let tags = []
@@ -330,7 +330,7 @@ function add_tag (collection_id) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_tags_for_collection (collection_id);
-        jQuery("#tag").val("");
+        document.getElementById("tag").value = "";
         autocomplete_tags(null, collection_id);
     }).catch(function () { show_message ("failure", `<p>Failed to add ${tag}.</p>`); });
 }
@@ -393,27 +393,27 @@ function gather_form_data () {
     let categories   = jQuery("input[name='categories']:checked");
     let category_ids = [];
     for (let category of categories) {
-        category_ids.push(jQuery(category).val());
+        category_ids.push(category.value);
     }
 
     let group_id = jQuery("input[name='groups']:checked")[0];
     if (group_id !== undefined) { group_id = group_id["value"]; }
     else { group_id = null; }
 
-    let title = or_null(jQuery("#title").val());
+    let title = or_null(document.getElementById("title").value);
     if (title == "" || title == null) { title = "Untitled collection"; }
     let form_data = {
         "title":          title,
         "description":    value_from_quill("#description"),
-        "resource_title": or_null(jQuery("#resource_title").val()),
-        "resource_doi":   or_null(jQuery("#resource_doi").val()),
-        "geolocation":    or_null(jQuery("#geolocation").val()),
-        "longitude":      or_null(jQuery("#longitude").val()),
-        "latitude":       or_null(jQuery("#latitude").val()),
-        "organizations":  or_null(jQuery("#organizations").val()),
-        "publisher":      or_null(jQuery("#publisher").val()),
-        "language":       or_null(jQuery("#language").val()),
-        "time_coverage":  or_null(jQuery("#time_coverage").val()),
+        "resource_title": or_null(document.getElementById("resource_title").value),
+        "resource_doi":   or_null(document.getElementById("resource_doi").value),
+        "geolocation":    or_null(document.getElementById("geolocation").value),
+        "longitude":      or_null(document.getElementById("longitude").value),
+        "latitude":       or_null(document.getElementById("latitude").value),
+        "organizations":  or_null(document.getElementById("organizations").value),
+        "publisher":      or_null(document.getElementById("publisher").value),
+        "language":       or_null(document.getElementById("language").value),
+        "time_coverage":  or_null(document.getElementById("time_coverage").value),
         "group_id":       group_id,
         "categories":     category_ids
     };
@@ -497,7 +497,7 @@ function add_dataset_event (event) {
 }
 
 function autocomplete_dataset (event, collection_id) {
-    let current_text = jQuery("#article-search").val().trim();
+    let current_text = document.getElementById("article-search").value.trim();
     if (current_text == "") {
         jQuery("#articles-ac").remove();
         jQuery("#article-search").removeClass("input-for-ac");
@@ -537,14 +537,14 @@ function autocomplete_dataset (event, collection_id) {
 }
 
 function submit_new_author (collection_id) {
-    let first_name = jQuery("#author_first_name").val();
-    let last_name = jQuery("#author_last_name").val();
+    let first_name = document.getElementById("author_first_name").value;
+    let last_name = document.getElementById("author_last_name").value;
     let authors = [{
         "name":       `${first_name} ${last_name}`,
         "first_name": first_name,
         "last_name":  last_name,
-        "email":      jQuery("#author_email").val(),
-        "orcid":      jQuery("#author_orcid").val()
+        "email":      document.getElementById("author_email").value,
+        "orcid":      document.getElementById("author_orcid").value
     }];
 
     fetch(`/v2/account/collections/${collection_id}/authors`, {
@@ -567,10 +567,10 @@ function submit_new_funding (collection_id) {
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body:    JSON.stringify({
             "funders": [{
-                "title":       jQuery("#funding_title").val(),
-                "grant_code":  jQuery("#funding_grant_code").val(),
-                "funder_name": jQuery("#funding_funder_name").val(),
-                "url":         jQuery("#funding_url").val()
+                "title":       document.getElementById("funding_title").value,
+                "grant_code":  document.getElementById("funding_grant_code").value,
+                "funder_name": document.getElementById("funding_funder_name").value,
+                "url":         document.getElementById("funding_url").value
             }]
         })
     }).then(function (response) {

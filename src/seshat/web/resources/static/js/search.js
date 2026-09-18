@@ -186,7 +186,7 @@ function toggle_filter_input_text(id, flag) {
         }
 
     } else {
-        jQuery(`#${id}`).val("");
+        document.getElementById(id).value = "";
         jQuery(`#${id}`).hide();
 
         // Enable the other checkboxes if the 'Other' checkbox for institutions is unchecked.
@@ -226,7 +226,7 @@ function toggle_sort_by(sort_by) {
         return;
     }
 
-    jQuery('#sort-by').val(sort_by);
+    document.getElementById("sort-by").value = sort_by;
     sort_search_results(sort_by);
 
     let page_preferences = new PagePreferences();
@@ -380,11 +380,11 @@ function register_event_handlers() {
             }
         }
 
-        let search_for = jQuery("#search-box").val();
+        let search_for = document.getElementById("search-box")?.value;
         if (search_for && search_for.length > 0) {
             if (search_for.length > max_parameter_length) {
                 search_for = search_for.substring(0, max_parameter_length);
-                jQuery("#search-box").val(search_for);
+                document.getElementById("search-box").value = search_for;
             }
             new_url += `search=${search_for}&`;
         }
@@ -422,7 +422,7 @@ function register_event_handlers() {
     });
 
     document.getElementById('sort-by')?.addEventListener("change", function() {
-        let sort_by = jQuery('#sort-by').val();
+        let sort_by = document.getElementById("sort-by").value;
         toggle_sort_by(sort_by);
     });
 }
@@ -447,10 +447,10 @@ function load_search_filters_from_url() {
                 });
                 jQuery(`#search-box-wrapper form`).append(field);
             } else if (filter_name === "search") {
-                let search_for = jQuery("#search-box").val();
+                let search_for = document.getElementById("search-box")?.value;
                 if (search_for && search_for.length > 0 && search_for.length > max_parameter_length) {
                     search_for = search_for.substring(0, max_parameter_length);
-                    jQuery("#search-box").val(search_for);
+                    document.getElementById("search-box").value = search_for;
                 }
             }
 
@@ -510,7 +510,7 @@ function load_search_filters_from_url() {
                     let input_text_id = `textinput_${filter_name}_other`;
                     let input_text_id_element = jQuery(`#${input_text_id}`);
                     if (input_text_id_element.length > 0) {
-                        input_text_id_element.val(other_value);
+                        input_text_id_element[0].value = other_value;
                         toggle_filter_input_text(input_text_id, true);
                     }
                     let checkbox_id = `checkbox_${filter_name}_other`;
