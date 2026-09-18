@@ -15,10 +15,10 @@ document.addEventListener("DOMContentLoaded", function (){
     root_categories.push("{{category.uuid}}");
     document.getElementById("category_{{category.uuid}}")?.addEventListener("change", function () {
         if (this.checked) {
-            jQuery("#category_{{category.uuid}}").prop("checked", true);
+            document.getElementById("category_{{category.uuid}}").checked = true;
             jQuery("#subcategories_{{category.uuid}}").slideDown(200);
         } else {
-            jQuery("#subcategories_{{category.uuid}} input[name='categories']").prop("checked", false);
+            document.querySelectorAll("#subcategories_{{category.uuid}} input[name='categories']").forEach(function (element) { element.checked = false; });
             jQuery("#subcategories_{{category.uuid}}").slideUp(200);
         }
     });

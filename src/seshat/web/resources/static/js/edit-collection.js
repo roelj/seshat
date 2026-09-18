@@ -1,7 +1,9 @@
 function render_categories_for_collection (dataset_uuid, categories) {
     for (let category of categories) {
-        jQuery(`#category_${category["uuid"]}`).prop("checked", true);
-        jQuery(`#category_${category["parent_uuid"]}`).prop("checked", true);
+        let checkbox = document.getElementById(`category_${category["uuid"]}`);
+        let parent   = document.getElementById(`category_${category["parent_uuid"]}`);
+        if (checkbox !== null) { checkbox.checked = true; }
+        if (parent !== null)   { parent.checked = true; }
         jQuery(`#subcategories_${category["parent_uuid"]}`).show();
     }
 }
@@ -630,7 +632,8 @@ function activate (collection_id) {
         render_funding_for_collection (collection_id);
 
         if (data["group_id"] != null) {
-            jQuery(`#group_${data["group_id"]}`).prop("checked", true);
+            let group = document.getElementById(`group_${data["group_id"]}`);
+            if (group !== null) { group.checked = true; }
         }
         document.getElementById("add-keyword-button")?.addEventListener("click", function(event) {
             stop_event_propagation (event);

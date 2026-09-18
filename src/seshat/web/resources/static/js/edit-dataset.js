@@ -62,7 +62,7 @@ function gather_form_data () {
     }
 
     let defined_type_name = null;
-    if (jQuery("#upload_software").prop("checked")) {
+    if (document.getElementById("upload_software").checked) {
         defined_type_name = "software";
     } else {
         defined_type_name = "dataset";
@@ -72,11 +72,11 @@ function gather_form_data () {
     if (group_id !== undefined) { group_id = group_id["value"]; }
     else { group_id = null; }
 
-    let is_embargoed  = jQuery("#embargoed_access").prop("checked");
-    let is_restricted = jQuery("#restricted_access").prop("checked");
-    let agreed_to_da  = jQuery("#deposit_agreement").prop("checked");
-    let agreed_to_publish = jQuery("#publish_agreement").prop("checked");
-    let is_metadata_record = jQuery("#metadata_record_only").prop("checked");
+    let is_embargoed  = document.getElementById("embargoed_access").checked;
+    let is_restricted = document.getElementById("restricted_access").checked;
+    let agreed_to_da  = document.getElementById("deposit_agreement").checked;
+    let agreed_to_publish = document.getElementById("publish_agreement").checked;
+    let is_metadata_record = document.getElementById("metadata_record_only").checked;
 
     let title = or_null(document.getElementById("title").value);
     if (title == "" || title == null) { title = "Untitled item"; }
@@ -113,9 +113,9 @@ function gather_form_data () {
         form_data["embargo_title"]  = "Under embargo";
         form_data["embargo_reason"] = value_from_quill("#embargo_reason");
         form_data["license_id"]     = or_null(document.getElementById("license_embargoed").value);
-        if (jQuery("#files_only_embargo").prop("checked")) {
+        if (document.getElementById("files_only_embargo").checked) {
             form_data["embargo_type"] = "file";
-        } else if (jQuery("#content_embargo").prop("checked")) {
+        } else if (document.getElementById("content_embargo").checked) {
             form_data["embargo_type"] = "article";
         }
     } else if (is_restricted) {
@@ -234,8 +234,10 @@ function render_categories_for_dataset (dataset_uuid) {
         return response.json();
     }).then(function (categories) {
         for (let category of categories) {
-            jQuery(`#category_${category["uuid"]}`).prop("checked", true);
-            jQuery(`#category_${category["parent_uuid"]}`).prop("checked", true);
+            let checkbox = document.getElementById(`category_${category["uuid"]}`);
+            let parent   = document.getElementById(`category_${category["parent_uuid"]}`);
+            if (checkbox !== null) { checkbox.checked = true; }
+            if (parent !== null)   { parent.checked = true; }
             jQuery(`#subcategories_${category["parent_uuid"]}`).show();
         }
     }).catch(function () {
@@ -402,13 +404,13 @@ function update_collaborator (collaborator_uuid, dataset_uuid, may_edit_metadata
     if (may_edit_metadata) {
         let update_form_data = {
             "metadata": {
-                "read": jQuery(`#row-${collaborator_uuid} input[name='read'].subitem-checkbox-metadata`).prop("checked"),
-                "edit": jQuery(`#row-${collaborator_uuid} input[name='edit'].subitem-checkbox-metadata`).prop("checked"),
+                "read": document.querySelector(`#row-${collaborator_uuid} input[name='read'].subitem-checkbox-metadata`)?.checked,
+                "edit": document.querySelector(`#row-${collaborator_uuid} input[name='edit'].subitem-checkbox-metadata`)?.checked,
             },
             "data": {
-                "read": jQuery(`#row-${collaborator_uuid} input[name='read'].subitem-checkbox-data`).prop("checked"),
-                "edit": jQuery(`#row-${collaborator_uuid} input[name='edit'].subitem-checkbox-data`).prop("checked"),
-                "remove": jQuery(`#row-${collaborator_uuid} input[name='remove'].subitem-checkbox-data`).prop("checked"),
+                "read": document.querySelector(`#row-${collaborator_uuid} input[name='read'].subitem-checkbox-data`)?.checked,
+                "edit": document.querySelector(`#row-${collaborator_uuid} input[name='edit'].subitem-checkbox-data`)?.checked,
+                "remove": document.querySelector(`#row-${collaborator_uuid} input[name='remove'].subitem-checkbox-data`)?.checked,
             },
             "account": or_null(document.getElementById("account_uuid")?.value)
         };
@@ -429,13 +431,13 @@ function update_collaborator (collaborator_uuid, dataset_uuid, may_edit_metadata
 function add_collaborator (dataset_uuid, may_edit_metadata) {
     let form_data= {
         "metadata": {
-            "read": jQuery("input[name='read'].subitem-checkbox-metadata").prop("checked"),
-            "edit": jQuery("input[name='edit'].subitem-checkbox-metadata").prop("checked"),
+            "read": document.querySelector("input[name='read'].subitem-checkbox-metadata")?.checked,
+            "edit": document.querySelector("input[name='edit'].subitem-checkbox-metadata")?.checked,
         },
         "data": {
-            "read": jQuery("input[name='read'].subitem-checkbox-data").prop("checked"),
-            "edit": jQuery("input[name='edit'].subitem-checkbox-data").prop("checked"),
-            "remove": jQuery("input[name='remove'].subitem-checkbox-data").prop("checked"),
+            "read": document.querySelector("input[name='read'].subitem-checkbox-data")?.checked,
+            "edit": document.querySelector("input[name='edit'].subitem-checkbox-data")?.checked,
+            "remove": document.querySelector("input[name='remove'].subitem-checkbox-data")?.checked,
         },
         "account": or_null(document.getElementById("account_uuid")?.value)
     };
@@ -809,9 +811,9 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
         }
         jQuery("#files tbody").empty();
         if (files.length > 0) {
-            jQuery("input[name='record_type']").attr('disabled', true);
-            jQuery("#upload_software").attr('disabled', false);
-            jQuery("#upload_files").attr('disabled', false);
+            document.querySelectorAll("input[name='record_type']").forEach(function (element) { element.disabled = true; });
+            document.getElementById("upload_software").disabled = false;
+            document.getElementById("upload_files").disabled = false;
 
             let number_of_files = 0;
             for (let index in files) {
@@ -859,7 +861,7 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
         } else {
             jQuery("#files").hide();
             jQuery("#files-table-actions").hide();
-            jQuery("input[name='record_type']").attr('disabled', false);
+            document.querySelectorAll("input[name='record_type']").forEach(function (element) { element.disabled = false; });
             render_files_for_thumbnail (dataset_uuid);
         }
     }).catch(function (error) {
@@ -1081,37 +1083,37 @@ function submit_new_funding (dataset_uuid) {
 }
 
 function toggle_record_type () {
-    if (jQuery("#external_link").prop("checked")) {
+    if (document.getElementById("external_link").checked) {
         jQuery(".record-type-field").hide();
         jQuery("#external_link_field").show();
         jQuery("#files-wrapper").show();
-    } else if (jQuery("#metadata_record_only").prop("checked")) {
+    } else if (document.getElementById("metadata_record_only").checked) {
         jQuery(".record-type-field").hide();
         jQuery("#metadata_reason_field").show();
-    } else if (jQuery("#upload_files").prop("checked")) {
+    } else if (document.getElementById("upload_files").checked) {
         jQuery(".record-type-field").hide();
         jQuery("#file_upload_field").show();
         jQuery("#files-wrapper").show();
-    } else if (jQuery("#upload_software").prop("checked")) {
+    } else if (document.getElementById("upload_software").checked) {
         jQuery(".record-type-field").hide();
         jQuery("#software_upload_field").show();
         jQuery("#file_upload_field").show();
         jQuery("#files-wrapper").show();
     } else {
-        jQuery("#upload_files").prop("checked", true);
+        document.getElementById("upload_files").checked = true;
     }
 }
 
 function toggle_access_level () {
     jQuery(".access_level").hide();
-    if (jQuery("#open_access").prop("checked")) {
+    if (document.getElementById("open_access").checked) {
         jQuery("#open_access_form").show();
-    } else if (jQuery("#embargoed_access").prop("checked")) {
+    } else if (document.getElementById("embargoed_access").checked) {
         if (jQuery("#embargo_reason.ql-container").length === 0) {
             new Quill('#embargo_reason', { modules: quill_modules, theme: 'snow' });
         }
         jQuery("#embargoed_access_form").show();
-    } else if (jQuery("#restricted_access").prop("checked")) {
+    } else if (document.getElementById("restricted_access").checked) {
         if (jQuery("#restricted_access_reason.ql-container").length === 0) {
             new Quill('#restricted_access_reason', { modules: quill_modules, theme: 'snow' });
             new Quill('#restricted_access_eula', { modules: quill_modules, theme: 'snow' });
@@ -1192,45 +1194,47 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             return autocomplete_tags (event, dataset_uuid);
         });
         add_event_listeners (".subitem-checkbox-metadata", "change", function (event) {
-            if (jQuery(".subitem-checkbox-metadata[name='edit']").prop("checked")) {
-                jQuery(".subitem-checkbox-metadata[name='read']").prop("checked", true);
-                jQuery(".subitem-checkbox-metadata[name='read']").attr("disabled", true);
+            if (document.querySelector(".subitem-checkbox-metadata[name='edit']")?.checked) {
+                document.querySelectorAll(".subitem-checkbox-metadata[name='read']").forEach(function (element) { element.checked = true; });
+                document.querySelectorAll(".subitem-checkbox-metadata[name='read']").forEach(function (element) { element.disabled = true; });
             } else {
-                jQuery(".subitem-checkbox-metadata[name='read']").attr("disabled", false);
+                document.querySelectorAll(".subitem-checkbox-metadata[name='read']").forEach(function (element) { element.disabled = false; });
             }
          });
 
          add_event_listeners (".subitem-checkbox-dataset", "change", function (event) {
-            let edit = jQuery(".subitem-checkbox-dataset[name='edit']").prop("checked");
-            let remove = jQuery(".subitem-checkbox-dataset[name='remove']").prop("checked");
+            let edit = document.querySelector(".subitem-checkbox-dataset[name='edit']")?.checked;
+            let remove = document.querySelector(".subitem-checkbox-dataset[name='remove']")?.checked;
 
             if (remove) {
-                jQuery(".subitem-checkbox-dataset[name='edit']").prop("checked", true);
+                document.querySelectorAll(".subitem-checkbox-dataset[name='edit']").forEach(function (element) { element.checked = true; });
                 edit = true;
-                jQuery(".subitem-checkbox-dataset[name='read']").prop("checked", true);
+                document.querySelectorAll(".subitem-checkbox-dataset[name='read']").forEach(function (element) { element.checked = true; });
             } else if (edit) {
-                jQuery(".subitem-checkbox-dataset[name='read']").prop("checked", true);
+                document.querySelectorAll(".subitem-checkbox-dataset[name='read']").forEach(function (element) { element.checked = true; });
             }
             if (remove) {
-                jQuery(".subitem-checkbox-dataset[name='edit']").attr("disabled", true);
-                jQuery(".subitem-checkbox-dataset[name='read']").attr("disabled", true);
+                document.querySelectorAll(".subitem-checkbox-dataset[name='edit']").forEach(function (element) { element.disabled = true; });
+                document.querySelectorAll(".subitem-checkbox-dataset[name='read']").forEach(function (element) { element.disabled = true; });
             } else {
-                jQuery(".subitem-checkbox-dataset[name='edit']").attr("disabled", false);
-                jQuery(".subitem-checkbox-dataset[name='read']").attr("disabled", true);
+                document.querySelectorAll(".subitem-checkbox-dataset[name='edit']").forEach(function (element) { element.disabled = false; });
+                document.querySelectorAll(".subitem-checkbox-dataset[name='read']").forEach(function (element) { element.disabled = true; });
             }
             if (edit) {
-                jQuery(".subitem-checkbox-dataset[name='read']").attr("disabled", true);
+                document.querySelectorAll(".subitem-checkbox-dataset[name='read']").forEach(function (element) { element.disabled = true; });
             } else {
-                jQuery(".subitem-checkbox-dataset[name='read']").attr("disabled", false);
+                document.querySelectorAll(".subitem-checkbox-dataset[name='read']").forEach(function (element) { element.disabled = false; });
             }
          });
 
         render_files_for_dataset (dataset_uuid, null);
         if (data["defined_type_name"] != null) {
-            jQuery(`#type-${data["defined_type_name"]}`).prop("checked", true);
+            let type = document.getElementById(`type-${data["defined_type_name"]}`);
+            if (type !== null) { type.checked = true; }
         }
         if (data["group_id"] != null) {
-            jQuery(`#group_${data["group_id"]}`).prop("checked", true);
+            let group = document.getElementById(`group_${data["group_id"]}`);
+            if (group !== null) { group.checked = true; }
         }
         jQuery(`#article_${dataset_uuid}`).removeClass("loader");
         jQuery(`#article_${dataset_uuid}`).show();
@@ -1417,15 +1421,15 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             set_default_git_branch (dataset_uuid, event);
         });
         if (data["is_metadata_record"]) {
-            jQuery("#metadata_record_only").prop("checked", true);
+            document.getElementById("metadata_record_only").checked = true;
         } else if (data["has_linked_file"]) {
-            jQuery("#external_link").prop("checked", true);
+            document.getElementById("external_link").checked = true;
         } else if (data["defined_type_name"] == "software") {
-            jQuery("#upload_software").prop("checked", true);
+            document.getElementById("upload_software").checked = true;
             render_git_files_for_dataset (dataset_uuid, null);
             render_git_branches_for_dataset (dataset_uuid, null);
         } else {
-            jQuery("#upload_files").prop("checked", true);
+            document.getElementById("upload_files").checked = true;
         }
 
         if (data["is_embargoed"]) {
@@ -1434,21 +1438,21 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             catch (error) { access_type = 0; }
 
             if (access_type === 1000) {
-                jQuery("#restricted_access").prop("checked", true);
+                document.getElementById("restricted_access").checked = true;
             } else {
-                jQuery("#embargoed_access").prop("checked", true);
+                document.getElementById("embargoed_access").checked = true;
                 if (data["embargo_type"] == "file") {
-                    jQuery("#files_only_embargo").prop("checked", true);
+                    document.getElementById("files_only_embargo").checked = true;
                 } else if (data["embargo_type"] == "article") {
-                    jQuery("#content_embargo").prop("checked", true);
+                    document.getElementById("content_embargo").checked = true;
                 }
             }
         }
         if (data["agreed_to_deposit_agreement"]) {
-            jQuery("#deposit_agreement").prop("checked", true);
+            document.getElementById("deposit_agreement").checked = true;
         }
         if (data["agreed_to_publish"]) {
-            jQuery("#publish_agreement").prop("checked", true);
+            document.getElementById("publish_agreement").checked = true;
         }
 
         toggle_record_type ();
@@ -1504,9 +1508,10 @@ function toggle_embargo_options (event) {
 
 function toggle_embargo_until (event) {
     stop_event_propagation (event);
-    jQuery("#embargo_until_date")
-        .prop("disabled",
-              jQuery("#embargo_until_forever").prop("checked"));
+    let forever = document.getElementById("embargo_until_forever");
+    if (forever !== null) {
+        document.getElementById("embargo_until_date").disabled = forever.checked;
+    }
 }
 
 function perform_upload (files, current_file, dataset_uuid) {
@@ -1565,7 +1570,7 @@ function remove_file (file_id, dataset_uuid, rerender=true) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         if (rerender) {
             render_files_for_dataset (dataset_uuid, null);
-            if (jQuery("#external_link").prop("checked")) {
+            if (document.getElementById("external_link").checked) {
                 jQuery("#external_link_field").show();
             }
         }
@@ -1629,7 +1634,7 @@ function submit_dataset (dataset_uuid, event) {
     jQuery("#content-wrapper").css('opacity', '0.15');
     save_dataset (dataset_uuid, event, false, function() {
         let form_data = gather_form_data();
-        let is_open_access = jQuery("#open_access").prop("checked");
+        let is_open_access = document.getElementById("open_access").checked;
         if (form_data["license_id"] == "98") {
             jQuery("#license_open").addClass("missing-required");
             jQuery("#license_embargoed").addClass("missing-required");

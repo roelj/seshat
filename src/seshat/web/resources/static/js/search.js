@@ -292,7 +292,7 @@ function register_event_handlers() {
                     let parent_category_id = target_element.id.split("_").pop();
                     toggle_checkbox_subcategories(parent_category_id);
                 } else if (target_element.classList.contains("subcategory")) {
-                    let parent_category_id = jQuery(target_element).parent().parent().prop("id").split("_").pop();
+                    let parent_category_id = target_element.parentElement.parentElement.id.split("_").pop();
                     clear_checkbox_parentcategory(parent_category_id);
                 }
             }
@@ -472,16 +472,16 @@ function load_search_filters_from_url() {
                     let checkbox_id = `checkbox_${filter_name}_${stripped_value}`;
                     let checkbox_id_element = jQuery(`#${checkbox_id}`);
                     if (checkbox_id_element.length > 0) {
-                        jQuery(`#${checkbox_id}`).prop("checked", true);
+                        document.getElementById(checkbox_id).checked = true;
                         if (filter_name == "categories") {
                             if (enable_subcategories) {
-                                let checkbox_id_class = checkbox_id_element.prop("class");
+                                let checkbox_id_class = checkbox_id_element[0].className;
                                 if (checkbox_id_class) {
                                     let classes = checkbox_id_class.split(" ");
                                     if (classes.includes("subcategory")) {
-                                        let parent_category_id = jQuery(checkbox_id_element).parent().parent().prop("id").split("_").pop();
+                                        let parent_category_id = checkbox_id_element[0].parentElement.parentElement.id.split("_").pop();
                                         toggle_checkbox_subcategories(parent_category_id, force_on=true);
-                                        jQuery(`#${checkbox_id}`).prop("checked", true);
+                                        document.getElementById(checkbox_id).checked = true;
                                     }
                                 }
                             }
@@ -516,7 +516,7 @@ function load_search_filters_from_url() {
                     let checkbox_id = `checkbox_${filter_name}_other`;
                     let checkbox_id_element = jQuery(`#${checkbox_id}`);
                     if (checkbox_id_element.length > 0) {
-                        jQuery(`#${checkbox_id}`).prop("checked", true);
+                        document.getElementById(checkbox_id).checked = true;
                     }
                 }
             } else {

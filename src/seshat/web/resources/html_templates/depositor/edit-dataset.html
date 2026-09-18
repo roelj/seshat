@@ -30,18 +30,22 @@ document.addEventListener("DOMContentLoaded", function (){
     root_categories.push("{{category.uuid}}");
     document.getElementById("category_{{category.uuid}}")?.addEventListener("change", function () {
         if (this.checked) {
-            jQuery("#category_{{category.uuid}}").prop("checked", true);
+            document.getElementById("category_{{category.uuid}}").checked = true;
             jQuery("#subcategories_{{category.uuid}}").slideDown(200);
         } else {
-            jQuery("#subcategories_{{category.uuid}} input[name='categories']").prop("checked", false);
+            document.querySelectorAll("#subcategories_{{category.uuid}} input[name='categories']").forEach(function (element) { element.checked = false; });
             jQuery("#subcategories_{{category.uuid}}").slideUp(200);
         }
     });
 {%- endfor %}
     activate ("{{container_uuid}}", permissions, function() {
 {%- if article.is_shared_with_me and not permissions.metadata_edit %}
-    jQuery("#content-wrapper :input").prop("disabled", "disabled").css("background", "var(--input-background)");
-    jQuery(".ql-editor").prop("contenteditable", false).css("background", "var(--input-background)");
+    let inputs  = document.querySelectorAll("#content-wrapper input, #content-wrapper select, #content-wrapper textarea, #content-wrapper button");
+    let editors = document.querySelectorAll(".ql-editor");
+    inputs.forEach(function (input) { input.disabled = true; });
+    editors.forEach(function (editor) { editor.contentEditable = "false"; });
+    jQuery(inputs).css("background", "var(--input-background)");
+    jQuery(editors).css("background", "var(--input-background)");
     jQuery(".upload-container").css("background", "var(--input-background)");
 {%- endif %}
 {%- if article.is_shared_with_me and not permissions.data_edit %}
