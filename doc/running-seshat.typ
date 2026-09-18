@@ -110,10 +110,10 @@ repository.
   columns: (auto, 1fr),
   table.header([*Filename*], [*Description*]),
     [#link(seshatgiturl + "/releases/download/v" + seshatversion + "/seshat-" +
-           seshatversion + "-1.el10.noarch.rpm")[seshat-#(seshatversion)-1.el10.noarch.rpm]],
+           seshatversion + "-1.el10.noarch.rpm")[#raw("seshat-" + seshatversion + "-1.el10.noarch.rpm")]],
   [Binary RPM, to install and run `seshat`.],
     [#link(seshatgiturl + "/releases/download/v" + seshatversion + "/seshat-" +
-           seshatversion + "-1.el10.src.rpm")[seshat-#(seshatversion)-1.el10.src.rpm]],
+           seshatversion + "-1.el10.src.rpm")[#raw("seshat-" + seshatversion + "-1.el10.src.rpm")]],
   [Source RPM, to (re)build from source code.],
 )
 
@@ -127,7 +127,7 @@ A Debian package is provided and built for Debian 13.
   columns: (auto, 1fr),
   table.header([*Filename*], [*Description*]),
     [#link(seshatgiturl + "/releases/download/v" + seshatversion + "/seshat_" +
-           seshatversion + "-1_all.deb")[seshat\_#(seshatversion)-1\_all\.deb]],
+           seshatversion + "-1_all.deb")[#raw("seshat_" + seshatversion + "-1_all.deb")]],
     [Binary DEB, to install and run `seshat`.],
 )
 
