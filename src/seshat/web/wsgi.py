@@ -8936,8 +8936,7 @@ class WebServer:
     def api_v3_profile (self, request):
         """Implements /v3/profile."""
 
-        account_uuid = self.default_authenticated_error_handling (request, "PUT",
-                                                                  "application/json")
+        account_uuid = self.default_authenticated_error_handling (request, "PUT", "application/json")
         if isinstance (account_uuid, Response):
             return account_uuid
 
@@ -8951,7 +8950,6 @@ class WebServer:
             if self.db.update_account (account_uuid,
                     active                = validator.integer_value (record, "active", 0, 1),
                     job_title             = validator.string_value  (record, "job_title", 0, 255),
-                    email                 = validator.string_value  (record, "email", 0, 255),
                     first_name            = validator.string_value  (record, "first_name", 0, 255),
                     last_name             = validator.string_value  (record, "last_name", 0, 255),
                     location              = validator.string_value  (record, "location", 0, 255),
@@ -8959,10 +8957,6 @@ class WebServer:
                     linkedin              = validator.string_value  (record, "linkedin", 0, 255),
                     website               = validator.string_value  (record, "website", 0, 255),
                     biography             = validator.string_value  (record, "biography", 0, 32768),
-                    institution_user_id   = validator.integer_value (record, "institution_user_id"),
-                    institution_id        = validator.integer_value (record, "institution_id"),
-                    maximum_file_size     = validator.integer_value (record, "maximum_file_size"),
-                    modified_date         = validator.string_value  (record, "modified_date", 0, 32),
                     categories            = categories):
                 return self.respond_204 ()
 
