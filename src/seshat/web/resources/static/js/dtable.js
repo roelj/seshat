@@ -4,12 +4,12 @@ const file_size_units = { b: 1, bytes: 1, kb: 1e3, kib: 1024, mb: 1e6, mib: 1048
 function file_size_to_number (text) {
     let matches = text.match(/^(\d+(?:\.\d+)?)\s*([a-z]+)/i);
     if (matches === null) { return 0; }
-    return parseFloat(matches[1]) * (file_size_units[matches[2].toLowerCase()] ?? 1);
+    return Number.parseFloat(matches[1]) * (file_size_units[matches[2].toLowerCase()] ?? 1);
 }
 
 function sort_key (text, type) {
     if (type === "file-size") { return file_size_to_number (text); }
-    if (type === "num") { return parseFloat(text.replace(/[^0-9.eE+-]/g, "")) || 0; }
+    if (type === "num") { return Number.parseFloat(text.replace(/[^0-9.eE+-]/g, "")) || 0; }
     if (type === "date") { return Date.parse(text) || 0; }
     return text.toLowerCase();
 }
@@ -20,11 +20,11 @@ function detect_column_type (rows, index) {
         let text = row.keys[index];
         if (text === "") { continue; }
         seen = true;
-        if (isNaN(Number(text)) && isNaN(Date.parse(text))) { return "string"; }
+        if (Number.isNaN(Number(text)) && Number.isNaN(Date.parse(text))) { return "string"; }
     }
     if (!seen) { return "string"; }
     for (let row of rows) {
-        if (row.keys[index] !== "" && isNaN(Number(row.keys[index]))) { return "date"; }
+        if (row.keys[index] !== "" && Number.isNaN(Number(row.keys[index]))) { return "date"; }
     }
     return "num";
 }
