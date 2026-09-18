@@ -235,7 +235,7 @@ function toggle_sort_by(sort_by) {
 
 function register_event_handlers() {
     // reset all checkboxes if the reset button is clicked.
-    jQuery("#search-filter-reset-button").click(function() {
+    document.getElementById("search-filter-reset-button")?.addEventListener("click", function() {
         jQuery(`#search-box-wrapper input [type='hidden']`).remove();
         document.querySelectorAll(".search-filter-content input[type='checkbox']").forEach(function (checkbox) {
             checkbox.checked = false;
@@ -254,13 +254,13 @@ function register_event_handlers() {
     });
 
     // Collapse the list if 'Show more' is clicked.
-    jQuery('#search-categories-show-more').click(function() {
+    document.getElementById('search-categories-show-more')?.addEventListener("click", function() {
         toggle_filter_categories_showmore(false);
     });
-    jQuery('#search-institutions-show-more').click(function() {
+    document.getElementById('search-institutions-show-more')?.addEventListener("click", function() {
         toggle_filter_institutions_showmore(false);
     });
-    jQuery('#search-licenses-show-more').click(function() {
+    document.getElementById('search-licenses-show-more')?.addEventListener("click", function() {
         toggle_filter_licenses_showmore(false);
     });
 
@@ -269,7 +269,7 @@ function register_event_handlers() {
         let event_id = "search-filter-content-" + filter_name;
         let is_multiple = filter_info[filter_name]["is_multiple"];
 
-        jQuery(`#${event_id} input[type='checkbox']`).change(function(event) {
+        add_event_listeners (`#${event_id} input[type='checkbox']`, "change", function(event) {
             let target_element = event.currentTarget;
             if (target_element.checked) {
                 if (!is_multiple) {
@@ -309,13 +309,13 @@ function register_event_handlers() {
     }
 
     // show more licenses if 'Show more' for licenses is clicked.
-    jQuery('#search-licenses-show-more').click(function() {
+    document.getElementById('search-licenses-show-more')?.addEventListener("click", function() {
         toggle_filter_licenses_showmore(false);
     });
 
     // Enable the apply button if any checkbox is checked.
     // If collection is checked, disable Search Scope and File Types.
-    jQuery(".search-filter-content input[type='checkbox']").change(function() {
+    add_event_listeners (".search-filter-content input[type='checkbox']", "change", function() {
         let is_checked = false;
         document.querySelectorAll(".search-filter-content input[type='checkbox']").forEach(function (checkbox) {
             if (checkbox.checked) {
@@ -345,7 +345,7 @@ function register_event_handlers() {
     });
 
     // When the apply button is clicked, update the URL.
-    jQuery("#search-filter-apply-button").click(function() {
+    document.getElementById("search-filter-apply-button")?.addEventListener("click", function() {
         if (jQuery("#search-filter-apply-button").hasClass("disabled")) {
             return;
         }
@@ -396,32 +396,32 @@ function register_event_handlers() {
         window.location.href = new_url;
     });
 
-    jQuery("#textinput_institutions_other").keyup(function() {
+    document.getElementById("textinput_institutions_other")?.addEventListener("keyup", function() {
         toggle_filter_apply_button(true);
         toggle_filter_reset_button(true);
     });
-    jQuery("#textinput_filetypes_other").keyup(function() {
+    document.getElementById("textinput_filetypes_other")?.addEventListener("keyup", function() {
         toggle_filter_apply_button(true);
         toggle_filter_reset_button(true);
     });
-    jQuery("#textinput_publisheddate_other").keyup(function() {
+    document.getElementById("textinput_publisheddate_other")?.addEventListener("keyup", function() {
         toggle_filter_apply_button(true);
         toggle_filter_reset_button(true);
     });
-    jQuery("#textinput_publisheddate_other").change(function() {
+    document.getElementById("textinput_publisheddate_other")?.addEventListener("change", function() {
         toggle_filter_apply_button(true);
         toggle_filter_reset_button(true);
     });
 
-    jQuery('#tile-view-mode').click(function() {
+    document.getElementById('tile-view-mode')?.addEventListener("click", function() {
         toggle_view_mode("tile");
     });
 
-    jQuery('#list-view-mode').click(function() {
+    document.getElementById('list-view-mode')?.addEventListener("click", function() {
         toggle_view_mode("list");
     });
 
-    jQuery('#sort-by').change(function() {
+    document.getElementById('sort-by')?.addEventListener("change", function() {
         let sort_by = jQuery('#sort-by').val();
         toggle_sort_by(sort_by);
     });

@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     jQuery(".subcategory-wrapper").hide();
 {%- for category in categories %}
     root_categories.push("{{category.uuid}}");
-    jQuery("#category_{{category.uuid}}").change(function () {
+    document.getElementById("category_{{category.uuid}}")?.addEventListener("change", function () {
         if (this.checked) {
             jQuery("#category_{{category.uuid}}").prop("checked", true);
             jQuery("#subcategories_{{category.uuid}}").slideDown(200);

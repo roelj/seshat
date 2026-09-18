@@ -382,13 +382,13 @@ function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, call
             row += '<td></td>';
             row += "</tr>";
             jQuery("#collaborators-form tbody").prepend(row);
-            jQuery("#add-collaborator-button").on("click", function(event) {
+            document.getElementById("add-collaborator-button")?.addEventListener("click", function(event) {
                 stop_event_propagation (event);
                 add_collaborator(dataset_uuid, may_edit_metadata);
             });
         }
 
-        jQuery("#add_collaborator").on("input", function (event) {
+        document.getElementById("add_collaborator")?.addEventListener("input", function (event) {
             return autocomplete_collaborator (event, dataset_uuid);
         });
         jQuery("#collaborators-form").show();
@@ -914,7 +914,7 @@ function render_files_for_thumbnail (dataset_uuid) {
             jQuery("#thumbnails-wrapper").show();
 
             // Add event listener to toggle the blue border on selection
-            jQuery('input[name="thumbnail"]').change(function () {
+            add_event_listeners ('input[name="thumbnail"]', "change", function () {
                 jQuery(".thumbnail-item")
                     .removeClass("thumbnail-active")
                     .addClass("thumbnail-inactive");
@@ -1141,58 +1141,58 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
         render_funding_for_dataset (dataset_uuid);
         render_categories_for_dataset (dataset_uuid);
         render_licenses (data);
-        jQuery("#authors").on("input", function (event) {
+        document.getElementById("authors")?.addEventListener("input", function (event) {
             return autocomplete_author (event, dataset_uuid);
         });
-        jQuery("#funding").on("input", function (event) {
+        document.getElementById("funding")?.addEventListener("input", function (event) {
             return autocomplete_funding (event, dataset_uuid);
         });
-        jQuery("#references").on("keypress", function(e){
+        document.getElementById("references")?.addEventListener("keypress", function(e){
             if(e.which == 13){
                 add_reference(dataset_uuid);
             }
         });
-        jQuery("#add-reference-button").on("click", function(event) {
+        document.getElementById("add-reference-button")?.addEventListener("click", function(event) {
             stop_event_propagation (event);
             add_reference (dataset_uuid);
         });
-         jQuery("#collaborators").on("keypress", function(e){
+         document.getElementById("collaborators")?.addEventListener("keypress", function(e){
             if (e.which == 13) {
                 add_collaborator(dataset_uuid, permissions.metadata_edit);
             }
         });
 
-        jQuery("#collaborators").on("keypress", function(e){
+        document.getElementById("collaborators")?.addEventListener("keypress", function(e){
             if (e.which == 13) {
                 update_collaborator(dataset_uuid, permissions.metadata_edit);
             }
         });
 
         if (permissions.data_edit) {
-            jQuery("#repair-md5s").on("click", function(event) {
+            document.getElementById("repair-md5s")?.addEventListener("click", function(event) {
                 stop_event_propagation (event);
                 repair_md5_sums (dataset_uuid, event);
             });
         }
         if (permissions.data_remove) {
-            jQuery("#remove-all-files").on("click", function(event) {
+            document.getElementById("remove-all-files")?.addEventListener("click", function(event) {
                 stop_event_propagation (event);
                 delete_all_files (dataset_uuid);
             });
         }
-        jQuery("#add-keyword-button").on("click", function(event) {
+        document.getElementById("add-keyword-button")?.addEventListener("click", function(event) {
             stop_event_propagation (event);
             add_tag (dataset_uuid);
         });
-        jQuery("#tag").on("keypress", function(e){
+        document.getElementById("tag")?.addEventListener("keypress", function(e){
             if(e.which == 13){
                 add_tag(dataset_uuid);
             }
         });
-        jQuery("#tag").on("input", function (event) {
+        document.getElementById("tag")?.addEventListener("input", function (event) {
             return autocomplete_tags (event, dataset_uuid);
         });
-        jQuery(".subitem-checkbox-metadata").on("change", function (event) {
+        add_event_listeners (".subitem-checkbox-metadata", "change", function (event) {
             if (jQuery(".subitem-checkbox-metadata[name='edit']").prop("checked")) {
                 jQuery(".subitem-checkbox-metadata[name='read']").prop("checked", true);
                 jQuery(".subitem-checkbox-metadata[name='read']").attr("disabled", true);
@@ -1201,7 +1201,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             }
          });
 
-         jQuery(".subitem-checkbox-dataset").on("change", function (event) {
+         add_event_listeners (".subitem-checkbox-dataset", "change", function (event) {
             let edit = jQuery(".subitem-checkbox-dataset[name='edit']").prop("checked");
             let remove = jQuery(".subitem-checkbox-dataset[name='remove']").prop("checked");
 
@@ -1284,8 +1284,12 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
                 }
                 this.on("sending", function() { upload_message (0); });
                 this.on("uploadprogress", function(file, progress) { upload_message (Math.floor(progress)); });
-                jQuery(window).on('beforeunload', function() {
-                    if (fileUploader.getUploadingFiles().length > 0 || fileUploader.getQueuedFiles().length > 0) { return 1; }
+                window.addEventListener("beforeunload", function (event) {
+                    if (fileUploader.getUploadingFiles().length > 0 || fileUploader.getQueuedFiles().length > 0) {
+                        // Ask for confirmation before leaving the page.
+                        event.preventDefault();
+                        event.returnValue = true;
+                    }
                 });
             },
             accept:   function(file, done) { done(); fileUploader.processQueue(); },
@@ -1409,8 +1413,8 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             true // Run before Dropzone listener
         );
 
-        jQuery("input[name='record_type']").change(function () { toggle_record_type (); });
-        jQuery("#git-branches").on("change", function (event) {
+        add_event_listeners ("input[name='record_type']", "change", function () { toggle_record_type (); });
+        document.getElementById("git-branches")?.addEventListener("change", function (event) {
             set_default_git_branch (dataset_uuid, event);
         });
         if (data["is_metadata_record"]) {
@@ -1451,29 +1455,29 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
         toggle_record_type ();
         toggle_access_level ();
 
-        jQuery("#delete").on("click", function (event) { delete_dataset (dataset_uuid, event); });
-        jQuery("#save").on("click", function (event)   { save_dataset (dataset_uuid, event); });
-        jQuery("#submit").on("click", function (event) { submit_dataset (dataset_uuid, event); });
-        jQuery("#publish").on("click", function (event) { publish_dataset (dataset_uuid, event); });
-        jQuery("#decline").on("click", function (event) { decline_dataset (dataset_uuid, event); });
-        jQuery("#preview").on("click", function (event) { preview_dataset (dataset_uuid, event); });
-        jQuery("#refresh-git-files").on("click", function (event) {
+        document.getElementById("delete")?.addEventListener("click", function (event) { delete_dataset (dataset_uuid, event); });
+        document.getElementById("save")?.addEventListener("click", function (event)   { save_dataset (dataset_uuid, event); });
+        document.getElementById("submit")?.addEventListener("click", function (event) { submit_dataset (dataset_uuid, event); });
+        document.getElementById("publish")?.addEventListener("click", function (event) { publish_dataset (dataset_uuid, event); });
+        document.getElementById("decline")?.addEventListener("click", function (event) { decline_dataset (dataset_uuid, event); });
+        document.getElementById("preview")?.addEventListener("click", function (event) { preview_dataset (dataset_uuid, event); });
+        document.getElementById("refresh-git-files")?.addEventListener("click", function (event) {
             render_git_files_for_dataset (dataset_uuid, event);
             render_git_branches_for_dataset (dataset_uuid, event);
         });
-        jQuery("input[name=access_type]").on("change", toggle_access_level);
-        jQuery("#configure_embargo").on("click", toggle_embargo_options);
-        jQuery("#embargo_until_forever").on("change", toggle_embargo_until);
-        jQuery("#cancel_embargo").on("click", toggle_embargo_options);
+        add_event_listeners ("input[name=access_type]", "change", toggle_access_level);
+        document.getElementById("configure_embargo")?.addEventListener("click", toggle_embargo_options);
+        document.getElementById("embargo_until_forever")?.addEventListener("change", toggle_embargo_until);
+        document.getElementById("cancel_embargo")?.addEventListener("click", toggle_embargo_options);
 
         jQuery(".article-content-loader").hide();
         jQuery(".article-content").fadeIn(200);
         jQuery("#thumbnail-files-wrapper").hide();
 
         jQuery("#api-upload-fold").hide();
-        jQuery("#api-upload-toggle").on("click", function (event) { toggle_api_upload_text (event); });
-        jQuery("#expand-categories-button").on("click", toggle_categories);
-        jQuery("#expand-collaborators-button").on("click", function (event) {
+        document.getElementById("api-upload-toggle")?.addEventListener("click", function (event) { toggle_api_upload_text (event); });
+        document.getElementById("expand-categories-button")?.addEventListener("click", toggle_categories);
+        document.getElementById("expand-collaborators-button")?.addEventListener("click", function (event) {
             toggle_collaborators (dataset_uuid, !is_shared_with_me, event)
         });
         callback ();

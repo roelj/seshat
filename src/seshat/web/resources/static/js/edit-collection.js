@@ -590,28 +590,28 @@ function activate (collection_id) {
     jQuery(".collection-content-loader").addClass("loader");
     jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
 
-    jQuery("#delete").on("click", function (event) { delete_collection (collection_id, event); });
-    jQuery("#save").on("click", function (event)   { save_collection (collection_id, event); });
-    jQuery("#publish").on("click", function (event) { publish_collection (collection_id, event); });
+    document.getElementById("delete")?.addEventListener("click", function (event) { delete_collection (collection_id, event); });
+    document.getElementById("save")?.addEventListener("click", function (event)   { save_collection (collection_id, event); });
+    document.getElementById("publish")?.addEventListener("click", function (event) { publish_collection (collection_id, event); });
     // Initialize Quill to provide the WYSIWYG editor.
     new Quill('#description', { modules: quill_modules, theme: 'snow' });
 
-    jQuery("#authors").on("input", function (event) {
+    document.getElementById("authors")?.addEventListener("input", function (event) {
         return autocomplete_author (event, collection_id);
     });
-    jQuery("#funding").on("input", function (event) {
+    document.getElementById("funding")?.addEventListener("input", function (event) {
         return autocomplete_funding (event, collection_id);
     });
-    jQuery("#references").on("keypress", function(e){
+    document.getElementById("references")?.addEventListener("keypress", function(e){
         if(e.which == 13){
             add_reference(collection_id);
         }
     });
-    jQuery("#add-reference-button").on("click", function(event) {
+    document.getElementById("add-reference-button")?.addEventListener("click", function(event) {
         stop_event_propagation (event);
         add_reference (collection_id);
     });
-    jQuery("#article-search").on("input", function (event) {
+    document.getElementById("article-search")?.addEventListener("input", function (event) {
         return autocomplete_dataset (event, collection_id);
     });
 
@@ -632,17 +632,17 @@ function activate (collection_id) {
         if (data["group_id"] != null) {
             jQuery(`#group_${data["group_id"]}`).prop("checked", true);
         }
-        jQuery("#add-keyword-button").on("click", function(event) {
+        document.getElementById("add-keyword-button")?.addEventListener("click", function(event) {
             stop_event_propagation (event);
             add_tag (collection_id);
         });
-        jQuery("#tag").on("keypress", function(e){
+        document.getElementById("tag")?.addEventListener("keypress", function(e){
             if(e.which == 13) { add_tag(collection_id); }
         });
-        jQuery("#tag").on("input", function (event) {
+        document.getElementById("tag")?.addEventListener("input", function (event) {
             return autocomplete_tags(event, collection_id);
         });
-        jQuery("#expand-categories-button").on("click", toggle_categories);
+        document.getElementById("expand-categories-button")?.addEventListener("click", toggle_categories);
         jQuery(".collection-content-loader").hide();
         jQuery(".collection-content").fadeIn(200);
     }).catch(function () {

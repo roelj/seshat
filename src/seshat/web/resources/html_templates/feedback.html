@@ -20,11 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
     show_message ("success", "<p>{{success_message}}</p>");
     {%- endif %}
 
-    jQuery("#submit-feedback").on("click", function (event) {
+    document.getElementById("submit-feedback")?.addEventListener("click", function (event) {
       jQuery("#content").addClass("loader-top");
       jQuery("#content-wrapper").css('opacity', '0.15');
     });
-    jQuery("#description").on("keyup", function(event) {
+    document.getElementById("description")?.addEventListener("keyup", function(event) {
         jQuery("#description_html").val(jQuery("#description .ql-editor").html());
     });
 });

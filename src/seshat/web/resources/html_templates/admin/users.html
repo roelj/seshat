@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         table.style.display = "block";
     }
-    jQuery("#remove-cache").on("click", function (event) {
+    document.getElementById("remove-cache")?.addEventListener("click", function (event) {
         clear_accounts_cache (event);
     });
 });

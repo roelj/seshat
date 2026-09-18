@@ -23,6 +23,12 @@ function on_click_with_data (element, data, handler) {
     return element;
 }
 
+function add_event_listeners (selector, type, handler) {
+    for (let element of document.querySelectorAll(selector)) {
+        element.addEventListener(type, handler);
+    }
+}
+
 function is_empty_object (item) {
     if (item === null || item === undefined) { return true; }
     return Object.keys(item).length === 0;

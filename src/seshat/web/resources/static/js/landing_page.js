@@ -115,14 +115,14 @@ document.addEventListener("DOMContentLoaded", function (){
     if (document.getElementById ("access-request-reason") !== null) {
         new Quill("#access-request-reason", { modules: quill_modules, theme: 'snow' });
     }
-    jQuery("#access-request").on("click", toggle_access_request);
-    jQuery("#submit-access-request").on("click", submit_access_request);
-    jQuery("#download-all-files").on("click", prompt_download_all_request);
-    jQuery("#cite-btn").on("click", toggle_citation);
-    jQuery("#collect-btn").on("click", function (event) {
+    document.getElementById("access-request")?.addEventListener("click", toggle_access_request);
+    document.getElementById("submit-access-request")?.addEventListener("click", submit_access_request);
+    document.getElementById("download-all-files")?.addEventListener("click", prompt_download_all_request);
+    document.getElementById("cite-btn")?.addEventListener("click", toggle_citation);
+    document.getElementById("collect-btn")?.addEventListener("click", function (event) {
         toggle_collect (event);
         render_draft_collections ();
         stop_event_propagation (event);
     });
-    jQuery("#versions-btn").on("click", toggle_versions);
+    document.getElementById("versions-btn")?.addEventListener("click", toggle_versions);
 });

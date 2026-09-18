@@ -220,7 +220,7 @@ function render_overview_table () {
 
 document.addEventListener("DOMContentLoaded", function (){
     render_overview_table ();
-    jQuery("#remove-cache").on("click", function (event) {
+    document.getElementById("remove-cache")?.addEventListener("click", function (event) {
         clear_reviews_cache (event);
     });
 });
