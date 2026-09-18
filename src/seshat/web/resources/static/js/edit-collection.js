@@ -4,7 +4,7 @@ function render_categories_for_collection (dataset_uuid, categories) {
         let parent   = document.getElementById(`category_${category["parent_uuid"]}`);
         if (checkbox !== null) { checkbox.checked = true; }
         if (parent !== null)   { parent.checked = true; }
-        jQuery(`#subcategories_${category["parent_uuid"]}`).show();
+        show_elements (`#subcategories_${category["parent_uuid"]}`);
     }
 }
 
@@ -40,7 +40,7 @@ function render_references_for_collection (collection_id) {
             row.append(column1, column2);
             table_body.append(row);
         }
-        jQuery("#references-list").show();
+        show_elements ("#references-list", "table");
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve references.</p>");
     });
@@ -81,7 +81,7 @@ function render_datasets_for_collection (collection_id) {
             row.append(column1, column2);
             table_body.append(row);
         }
-        jQuery("#articles-list").show();
+        show_elements ("#articles-list", "table");
     }).catch(function () {
         show_message ("failure","<p>Failed to retrieve dataset details.</p>");
     });
@@ -187,7 +187,7 @@ function render_authors_for_collection (collection_id) {
             row.append(column1, column2, column3, column4, column5);
             table_body.append(row);
         }
-        jQuery("#authors-list").show();
+        show_elements ("#authors-list", "table");
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve author details.</p>");
     });
@@ -218,7 +218,7 @@ function render_funding_for_collection (collection_id) {
             row.append(column1, column2);
             table_body.append(row);
         }
-        jQuery("#funding-list").show();
+        show_elements ("#funding-list", "table");
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve funding details.</p>");
     });
@@ -255,7 +255,7 @@ function render_tags_for_collection (collection_id) {
             row.append(label, anchor);
             list.append(row);
         }
-        jQuery("#tags-list").show();
+        show_elements ("#tags-list", "block");
     }).catch(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
 }
 
@@ -593,8 +593,8 @@ function activate (collection_id) {
     install_sticky_header();
     install_touchable_help_icons();
 
-    jQuery(".collection-content").hide();
-    jQuery(".collection-content-loader").show();
+    hide_elements (".collection-content");
+    show_elements (".collection-content-loader", "block");
     document.querySelectorAll(".collection-content-loader").forEach(function (element) {
         element.classList.add("loader");
     });
@@ -656,7 +656,7 @@ function activate (collection_id) {
             return autocomplete_tags(event, collection_id);
         });
         document.getElementById("expand-categories-button")?.addEventListener("click", toggle_categories);
-        jQuery(".collection-content-loader").hide();
+        hide_elements (".collection-content-loader");
         jQuery(".collection-content").fadeIn(200);
     }).catch(function () {
         show_message ("failure","<p>Failed to retrieve collection.</p>");

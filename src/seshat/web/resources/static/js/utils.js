@@ -29,6 +29,18 @@ function add_event_listeners (selector, type, handler) {
     }
 }
 
+function show_elements (selector, display = "") {
+    for (let element of document.querySelectorAll(selector)) { element.style.display = display; }
+}
+
+function hide_elements (selector) {
+    for (let element of document.querySelectorAll(selector)) { element.style.display = "none"; }
+}
+
+function is_visible (element) {
+    return element !== null && element.getClientRects().length > 0;
+}
+
 function is_empty_object (item) {
     if (item === null || item === undefined) { return true; }
     return Object.keys(item).length === 0;

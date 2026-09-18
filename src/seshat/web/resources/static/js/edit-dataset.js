@@ -177,8 +177,8 @@ function delete_all_files (dataset_uuid) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         document.getElementById("remove-all-files").textContent = `Remove all files.`;
         render_files_for_dataset (dataset_uuid, null);
-        jQuery("#thumbnails-wrapper").hide();
-        jQuery("#thumbnail-files-wrapper").hide();
+        hide_elements ("#thumbnails-wrapper");
+        hide_elements ("#thumbnail-files-wrapper");
     }).catch(function () {
         show_message ("failure", "<p>Failed to remove files.</p>");
     });
@@ -240,7 +240,7 @@ function render_categories_for_dataset (dataset_uuid) {
             let parent   = document.getElementById(`category_${category["parent_uuid"]}`);
             if (checkbox !== null) { checkbox.checked = true; }
             if (parent !== null)   { parent.checked = true; }
-            jQuery(`#subcategories_${category["parent_uuid"]}`).show();
+            show_elements (`#subcategories_${category["parent_uuid"]}`);
         }
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve categories.</p>");
@@ -278,7 +278,7 @@ function render_references_for_dataset (dataset_uuid) {
             row.append(column1, column2);
             table_body.append(row);
         }
-        jQuery("#references-list").show();
+        show_elements ("#references-list", "table");
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve references.</p>");
     });
@@ -397,7 +397,7 @@ function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, call
         document.getElementById("add_collaborator")?.addEventListener("input", function (event) {
             return autocomplete_collaborator (event, dataset_uuid);
         });
-        jQuery("#collaborators-form").show();
+        show_elements ("#collaborators-form");
         callback ();
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve collaborators.</p>");
@@ -492,7 +492,7 @@ function render_tags_for_dataset (dataset_uuid) {
             row.append(label, anchor);
             list.append(row);
         }
-        jQuery("#tags-list").show();
+        show_elements ("#tags-list", "block");
     }).catch(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
 }
 
@@ -687,7 +687,7 @@ function render_authors_for_dataset (dataset_uuid) {
             row.append(column1, column2, column3, column4, column5);
             table_body.append(row);
         }
-        jQuery("#authors-list").show();
+        show_elements ("#authors-list", "table");
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve author details.</p>");
     });
@@ -720,7 +720,7 @@ function render_funding_for_dataset (dataset_uuid) {
             row.append(column1, column2);
             table_body.append(row);
         }
-        jQuery("#funding-list").show();
+        show_elements ("#funding-list", "table");
     }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve funding details.</p>");
     });
@@ -791,11 +791,11 @@ function render_git_files_for_dataset (dataset_uuid, event) {
         for (let file of files) {
             list.append(create_element("li", {}, file));
         }
-        jQuery("#git-files-label").show();
-        jQuery("#git-files-wrapper").show();
+        show_elements ("#git-files-label");
+        show_elements ("#git-files-wrapper");
     }).catch(function (error) {
-        jQuery("#git-files-label").hide();
-        jQuery("#git-files-wrapper").hide();
+        hide_elements ("#git-files-label");
+        hide_elements ("#git-files-wrapper");
 	if (error.status !== 404) {
             show_message ("failure", "<p>Failed to retrieve Git file details.</p>");
 	}
@@ -866,12 +866,12 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
                 number_of_files += 1;
             }
             document.getElementById("remove-all-files").textContent = `Remove all ${number_of_files} files.`;
-            jQuery("#files").show();
-            jQuery("#files-table-actions").show();
+            show_elements ("#files");
+            show_elements ("#files-table-actions");
             render_files_for_thumbnail (dataset_uuid);
         } else {
-            jQuery("#files").hide();
-            jQuery("#files-table-actions").hide();
+            hide_elements ("#files");
+            hide_elements ("#files-table-actions");
             document.querySelectorAll("input[name='record_type']").forEach(function (element) { element.disabled = false; });
             render_files_for_thumbnail (dataset_uuid);
         }
@@ -913,8 +913,8 @@ function render_files_for_thumbnail (dataset_uuid) {
         let wrapper = document.getElementById("thumbnails-wrapper");
         wrapper.replaceChildren();
         if (files.length > 0) {
-            jQuery("#thumbnails-wrapper").show();
-            jQuery("#thumbnail-files-wrapper").show();
+            show_elements ("#thumbnails-wrapper");
+            show_elements ("#thumbnail-files-wrapper");
             let html = "";
             html += html_for_thumbnail_tile ("/static/images/dataset-thumb.svg",
                                              "", "Standard thumbnail");
@@ -926,7 +926,7 @@ function render_files_for_thumbnail (dataset_uuid) {
             }
 
             wrapper.insertAdjacentHTML("beforeend", html);
-            jQuery("#thumbnails-wrapper").show();
+            show_elements ("#thumbnails-wrapper");
 
             // Add event listener to toggle the blue border on selection
             add_event_listeners ('input[name="thumbnail"]', "change", function () {
@@ -949,8 +949,8 @@ function render_files_for_thumbnail (dataset_uuid) {
                 });
             });
         } else {
-            jQuery("#thumbnails-wrapper").hide();
-            jQuery("#thumbnail-files-wrapper").hide();
+            hide_elements ("#thumbnails-wrapper");
+            hide_elements ("#thumbnail-files-wrapper");
         }
     }).catch(function () {
         show_message("failure", "<p>Failed to retrieve thumbnail file details.</p>");
@@ -996,7 +996,7 @@ function submit_external_link (dataset_uuid) {
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         document.getElementById("external_url").value = "";
-        jQuery("#external_link_field").hide();
+        hide_elements ("#external_link_field");
         render_files_for_dataset (dataset_uuid, null);
     }).catch(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
 }
@@ -1099,41 +1099,41 @@ function submit_new_funding (dataset_uuid) {
 
 function toggle_record_type () {
     if (document.getElementById("external_link").checked) {
-        jQuery(".record-type-field").hide();
-        jQuery("#external_link_field").show();
-        jQuery("#files-wrapper").show();
+        hide_elements (".record-type-field");
+        show_elements ("#external_link_field", "block");
+        show_elements ("#files-wrapper");
     } else if (document.getElementById("metadata_record_only").checked) {
-        jQuery(".record-type-field").hide();
-        jQuery("#metadata_reason_field").show();
+        hide_elements (".record-type-field");
+        show_elements ("#metadata_reason_field", "block");
     } else if (document.getElementById("upload_files").checked) {
-        jQuery(".record-type-field").hide();
-        jQuery("#file_upload_field").show();
-        jQuery("#files-wrapper").show();
+        hide_elements (".record-type-field");
+        show_elements ("#file_upload_field", "block");
+        show_elements ("#files-wrapper");
     } else if (document.getElementById("upload_software").checked) {
-        jQuery(".record-type-field").hide();
-        jQuery("#software_upload_field").show();
-        jQuery("#file_upload_field").show();
-        jQuery("#files-wrapper").show();
+        hide_elements (".record-type-field");
+        show_elements ("#software_upload_field");
+        show_elements ("#file_upload_field", "block");
+        show_elements ("#files-wrapper");
     } else {
         document.getElementById("upload_files").checked = true;
     }
 }
 
 function toggle_access_level () {
-    jQuery(".access_level").hide();
+    hide_elements (".access_level");
     if (document.getElementById("open_access").checked) {
-        jQuery("#open_access_form").show();
+        show_elements ("#open_access_form");
     } else if (document.getElementById("embargoed_access").checked) {
         if (jQuery("#embargo_reason.ql-container").length === 0) {
             new Quill('#embargo_reason', { modules: quill_modules, theme: 'snow' });
         }
-        jQuery("#embargoed_access_form").show();
+        show_elements ("#embargoed_access_form", "block");
     } else if (document.getElementById("restricted_access").checked) {
         if (jQuery("#restricted_access_reason.ql-container").length === 0) {
             new Quill('#restricted_access_reason', { modules: quill_modules, theme: 'snow' });
             new Quill('#restricted_access_eula', { modules: quill_modules, theme: 'snow' });
         }
-        jQuery("#restricted_access_form").show();
+        show_elements ("#restricted_access_form", "block");
     }
 }
 
@@ -1141,8 +1141,8 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
     install_sticky_header();
     install_touchable_help_icons();
 
-    jQuery(".article-content").hide();
-    jQuery(".article-content-loader").show();
+    hide_elements (".article-content");
+    show_elements (".article-content-loader", "block");
     document.querySelectorAll(".article-content-loader").forEach(function (element) {
         element.classList.add("loader");
     });
@@ -1254,7 +1254,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             if (group !== null) { group.checked = true; }
         }
         document.getElementById(`article_${dataset_uuid}`)?.classList.remove("loader");
-        jQuery(`#article_${dataset_uuid}`).show();
+        show_elements (`#article_${dataset_uuid}`);
         new Quill('#description', { modules: quill_modules, theme: 'snow' });
 
         const fileUploader = new Dropzone("#dropzone-field", {
@@ -1490,11 +1490,11 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
         document.getElementById("embargo_until_forever")?.addEventListener("change", toggle_embargo_until);
         document.getElementById("cancel_embargo")?.addEventListener("click", toggle_embargo_options);
 
-        jQuery(".article-content-loader").hide();
+        hide_elements (".article-content-loader");
         jQuery(".article-content").fadeIn(200);
-        jQuery("#thumbnail-files-wrapper").hide();
+        hide_elements ("#thumbnail-files-wrapper");
 
-        jQuery("#api-upload-fold").hide();
+        hide_elements ("#api-upload-fold");
         document.getElementById("api-upload-toggle")?.addEventListener("click", function (event) { toggle_api_upload_text (event); });
         document.getElementById("expand-categories-button")?.addEventListener("click", toggle_categories);
         document.getElementById("expand-collaborators-button")?.addEventListener("click", function (event) {
@@ -1506,7 +1506,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
 
 function toggle_api_upload_text (event) {
     stop_event_propagation (event);
-    if (jQuery("#api-upload-fold").is(":hidden")) {
+    if (!is_visible (document.getElementById("api-upload-fold"))) {
         jQuery("#api-upload-fold").slideDown(250);
     } else {
         jQuery("#api-upload-fold").slideUp(250);
@@ -1514,12 +1514,13 @@ function toggle_api_upload_text (event) {
 }
 function toggle_embargo_options (event) {
     stop_event_propagation (event);
-    if (jQuery("#embargo_options").is(":hidden")) {
-        jQuery("#embargo_options").show();
-        jQuery("#configure_embargo").hide();
+    let embargo_options = document.getElementById("embargo_options");
+    if (embargo_options !== null && !is_visible (embargo_options)) {
+        show_elements ("#embargo_options", "block");
+        hide_elements ("#configure_embargo");
     } else {
-        jQuery("#embargo_options").hide();
-        jQuery("#configure_embargo").show();
+        hide_elements ("#embargo_options");
+        show_elements ("#configure_embargo");
     }
 }
 
@@ -1588,7 +1589,7 @@ function remove_file (file_id, dataset_uuid, rerender=true) {
         if (rerender) {
             render_files_for_dataset (dataset_uuid, null);
             if (document.getElementById("external_link").checked) {
-                jQuery("#external_link_field").show();
+                show_elements ("#external_link_field", "block");
             }
         }
         return true;

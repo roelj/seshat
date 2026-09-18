@@ -74,28 +74,28 @@ function toggle_filter_institutions_showmore(flag) {
     if (flag) {
         let featured_count = _featured_institutions_count();
         document.querySelectorAll('#search-filter-content-institutions ul li').forEach(function (element) { element.style.display = 'none'; });
-        jQuery('#search-institutions-show-more').show();
+        show_elements ('#search-institutions-show-more');
 
         if (featured_count > 0) {
-            jQuery('#search-filter-content-institutions ul li').slice(0, featured_count).show();
+            [...document.querySelectorAll('#search-filter-content-institutions ul li')].slice(0, featured_count).forEach(function (item) { item.style.display = ""; });
         } else {
             // Show every institution if there are no featured institutions.
-            jQuery('#search-filter-content-institutions ul li').show();
+            show_elements ('#search-filter-content-institutions ul li');
         }
    } else {
-       jQuery('#search-filter-content-institutions ul li').show();
-       jQuery('#search-institutions-show-more').hide();
+       show_elements ('#search-filter-content-institutions ul li');
+       hide_elements ('#search-institutions-show-more');
    }
 }
 
 function toggle_filter_licenses_showmore(flag) {
     if (flag) {
         document.querySelectorAll('#search-filter-content-licenses ul li').forEach(function (element) { element.style.display = 'none'; });
-        jQuery('#search-licenses-show-more').show();
-        jQuery('#search-filter-content-licenses ul li').slice(0, 5).show();
+        show_elements ('#search-licenses-show-more');
+        [...document.querySelectorAll('#search-filter-content-licenses ul li')].slice(0, 5).forEach(function (item) { item.style.display = ""; });
    } else {
-       jQuery('#search-filter-content-licenses ul li').show();
-       jQuery('#search-licenses-show-more').hide();
+       show_elements ('#search-filter-content-licenses ul li');
+       hide_elements ('#search-licenses-show-more');
    }
 }
 
@@ -133,20 +133,20 @@ function clear_checkbox_parentcategory(parent_category_id) {
 function toggle_filter_categories_showmore(flag) {
     if (flag) {
         document.querySelectorAll('#search-filter-content-categories ul li').forEach(function (element) { element.style.display = 'none'; });
-        jQuery('#search-categories-show-more').show();
+        show_elements ('#search-categories-show-more');
         if (enable_subcategories) {
-            jQuery('#search-filter-content-categories ul li').slice(0, 75).show();
+            [...document.querySelectorAll('#search-filter-content-categories ul li')].slice(0, 75).forEach(function (item) { item.style.display = ""; });
             document.querySelectorAll(`#search-filter-content-categories input[type='checkbox']`).forEach(function (checkbox) {
                 if (checkbox.id.startsWith("checkbox_categories_")) {
                     toggle_checkbox_subcategories(checkbox.id.split("_")[2]);
                 }
             });
         } else {
-            jQuery('#search-filter-content-categories ul li').slice(0, 10).show();
+            [...document.querySelectorAll('#search-filter-content-categories ul li')].slice(0, 10).forEach(function (item) { item.style.display = ""; });
         }
    } else {
-       jQuery('#search-filter-content-categories ul li').show();
-       jQuery('#search-categories-show-more').hide();
+       show_elements ('#search-filter-content-categories ul li');
+       hide_elements ('#search-categories-show-more');
    }
 }
 
@@ -180,7 +180,7 @@ function toggle_filter_reset_button(flag) {
 
 function toggle_filter_input_text(id, flag) {
     if (flag) {
-        jQuery(`#${id}`).show();
+        show_elements (`#${id}`, "inline-block");
 
         // Disable all the checkboxes if the 'Other' checkbox for institutions is checked.
         if (id === "textinput_institutions_other") {
@@ -195,7 +195,7 @@ function toggle_filter_input_text(id, flag) {
 
     } else {
         document.getElementById(id).value = "";
-        jQuery(`#${id}`).hide();
+        hide_elements (`#${id}`);
 
         // Enable the other checkboxes if the 'Other' checkbox for institutions is unchecked.
         if (id === "textinput_institutions_other") {
@@ -214,13 +214,13 @@ function toggle_view_mode(mode) {
     let primary_color = _corporate_background_color();
 
     if (mode === "tile") {
-        jQuery('#search-results-list-view').hide();
-        jQuery('#search-results-tile-view').show();
+        hide_elements ('#search-results-list-view');
+        show_elements ('#search-results-tile-view');
         document.getElementById("list-view-mode").style.color = 'darkgray';
         document.getElementById("tile-view-mode").style.color = primary_color;
     } else {
-        jQuery('#search-results-list-view').show();
-        jQuery('#search-results-tile-view').hide();
+        show_elements ('#search-results-list-view', "block");
+        hide_elements ('#search-results-tile-view');
         document.getElementById("list-view-mode").style.color = primary_color;
         document.getElementById("tile-view-mode").style.color = 'darkgray';
     }
@@ -651,8 +651,8 @@ function load_search_results() {
     request_params["is_latest"] = 1;
     request_params["page"] = "page" in url_params ? url_params["page"] : 1;
 
-    jQuery("#search-loader").show();
-    jQuery("#search-error").hide();
+    show_elements ("#search-loader", "block");
+    hide_elements ("#search-error");
 
     fetch(target_api_url, {
         method:  "POST",
@@ -666,7 +666,7 @@ function load_search_results() {
             if (data.length == 0) {
                 let error_message = `No search results...`;
                 document.getElementById("search-error").innerHTML = error_message;
-                jQuery("#search-error").show();
+                show_elements ("#search-error", "block");
                 return;
             }
 
@@ -675,7 +675,7 @@ function load_search_results() {
             let error_message = `Failed to get search results` +
                                 `<br>reason: ${error}`;
             document.getElementById("search-error").innerHTML = error_message;
-            jQuery("#search-error").show();
+            show_elements ("#search-error", "block");
         }
     }).catch(function (error) {
         // An HTTP error gives us the response; anything else is an exception.
@@ -683,9 +683,9 @@ function load_search_results() {
                             `<br><br>status: ${error.status ?? "error"}` +
                             `<br>reason: ${error.statusText ?? error.message}`;
         document.getElementById("search-error").innerHTML = error_message;
-        jQuery("#search-error").show();
+        show_elements ("#search-error", "block");
     }).finally(function () {
-        jQuery("#search-loader").hide();
+        hide_elements ("#search-loader");
     });
 }
 

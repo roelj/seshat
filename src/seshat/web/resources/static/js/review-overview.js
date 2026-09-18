@@ -9,7 +9,8 @@ function cleanup_name(name) {
 }
 
 function update_item_count () {
-    document.getElementById("table-count").textContent = `${jQuery("#overview-table tbody tr:visible").length} items`;
+    let rows = [...document.querySelectorAll("#overview-table tbody tr")].filter(is_visible);
+    document.getElementById("table-count").textContent = `${rows.length} items`;
 }
 
 function clear_reviews_cache (event) {
@@ -48,7 +49,7 @@ function assign_reviewer (event) {
 
 function apply_filters (event) {
     document.querySelectorAll('#overview-table tr').forEach(function (element) {
-        jQuery(element).show();
+        element.style.display = "block";
     });
     filter_reviewer (event);
     filter_status (event);
@@ -68,9 +69,9 @@ function filter_reviewer (event) {
         else if (status == "approved") {
             let reviewer = element.querySelector("td:nth-child(10)")?.textContent ?? "";
             let reviewer_name = cleanup_name(reviewer);
-            if (reviewer_name != name) { jQuery(element).hide(); }
+            if (reviewer_name != name) { element.style.display = "none"; }
         }
-        else { jQuery(element).hide(); }
+        else { element.style.display = "none"; }
     });
 }
 
@@ -80,7 +81,7 @@ function filter_status (event) {
         let status = (element.querySelector("td:nth-child(6)")?.textContent ?? "").trim();
         if (jQuery(element).find("th").length > 0) {} // Skip the header.
         else if (value == "all" || value == status) {}
-        else { jQuery(element).hide(); }
+        else { element.style.display = "none"; }
     });
 }
 

@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function (){
     document.querySelectorAll(".hide-for-javascript").forEach(function (element) {
         element.classList.remove("hide-for-javascript");
     });
-    jQuery(".subcategory-wrapper").hide();
+    hide_elements (".subcategory-wrapper");
 {%- for category in categories %}
     root_categories.push("{{category.uuid}}");
     document.getElementById("category_{{category.uuid}}")?.addEventListener("change", function () {
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function (){
     document.querySelectorAll(".upload-container").forEach(function (element) {
         element.insertAdjacentHTML("afterend", '<div style="padding: .5em; margin-bottom: 1em; text-align: left" class="notice-box">You do not have permission to upload files.</div>');
     });
-    jQuery(".upload-container").hide();
+    hide_elements (".upload-container");
 {%- endif %}
     });
 });

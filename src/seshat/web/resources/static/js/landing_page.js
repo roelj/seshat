@@ -13,8 +13,7 @@ function add_dataset_to_collection (dataset_id, collection_id) {
 
 function toggle_access_request (event) {
     stop_event_propagation (event);
-    let access_request_div = jQuery("#access-request-wrapper");
-    if (access_request_div.is(":visible")) {
+    if (is_visible (document.getElementById("access-request-wrapper"))) {
         jQuery("#access-request-wrapper").slideUp(150, function (){
             let button = document.getElementById("access-request");
             button.classList.remove("close");
@@ -64,7 +63,7 @@ function prompt_download_all_request (event) {
             message.classList.remove("success");
             message.classList.add("transparent");
             message.innerHTML = "<p>&nbsp;</p>";
-            jQuery(message).show();
+            message.style.display = "block";
         });
     }, 120000);
 }
@@ -72,7 +71,7 @@ function prompt_download_all_request (event) {
 function toggle_versions (event) {
     stop_event_propagation (event);
     let versions = jQuery("#versions");
-    if (versions.is(":visible")) {
+    if (is_visible (versions[0])) {
         versions.slideUp(150, function () {
             let arrow = document.getElementById("versions-arrow");
             arrow.classList.remove("fa-angle-up");
