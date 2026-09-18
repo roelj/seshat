@@ -25,7 +25,7 @@ function clear_accounts_cache (event) {
         show_message ("failure", "<p>Failed to clear the accounts cache.</p>");
     });
 }
-jQuery(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
     jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
     let table = document.getElementById("users-table");
     if (table !== null) {

@@ -7,7 +7,7 @@
 <link href="/static/css/dropzone.min.css" rel="stylesheet">
 <link href="/static/css/form.css?cache=1738927707" rel="stylesheet">
 <script nonce="{{nonce}}">
-jQuery(document).ready(function (){ activate("{{project.uuid}}"); });
+document.addEventListener("DOMContentLoaded", function (){ activate("{{project.uuid}}"); });
 </script>
 {% endblock %}
 {% block submenu %}

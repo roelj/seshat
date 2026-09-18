@@ -114,7 +114,7 @@ function render_draft_collections () {
     });
 }
 
-jQuery(document).ready(function (){
+document.addEventListener("DOMContentLoaded", function (){
     if (document.getElementById ("access-request-reason") !== null) {
         new Quill("#access-request-reason", { modules: quill_modules, theme: 'snow' });
     }

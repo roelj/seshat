@@ -10,7 +10,7 @@
 #reports-table_wrapper { margin-top: 1em; }
 </style>
 <script nonce="{{nonce}}">
-jQuery(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
     jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
     let table = document.getElementById("reports-table");
     if (table !== null) {

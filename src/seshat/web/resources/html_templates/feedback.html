@@ -12,7 +12,7 @@
 #description { height: 500px !important; }
 </style>
 <script nonce="{{nonce}}">
-jQuery(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
     new Quill('#description', { modules: quill_modules, theme: 'snow' });
     {%- if error_message %}
     show_message ("failure", "<p>{{error_message}}</p>");

@@ -5,7 +5,7 @@
 <script src="/static/js/utils.js?cache=1774719208"></script>
 <script src="/static/js/edit-collection.js?cache=1774719208"></script>
 <script nonce="{{nonce}}">
-jQuery(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
     root_categories = []
     jQuery(".subcategory-wrapper").hide();
 {%- for category in categories %}

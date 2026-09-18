@@ -22,7 +22,7 @@ function save_session (session_id) {
     });
 }
 
-jQuery(document).ready(function (){
+document.addEventListener("DOMContentLoaded", function (){
     jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
     jQuery("#save").on("click", function (event) { save_session ("{{session.uuid}}"); });
 });

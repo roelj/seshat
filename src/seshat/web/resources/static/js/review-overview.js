@@ -207,7 +207,7 @@ function render_overview_table () {
     });
 }
 
-jQuery(document).ready(function (){
+document.addEventListener("DOMContentLoaded", function (){
     render_overview_table ();
     jQuery("#remove-cache").on("click", function (event) {
         clear_reviews_cache (event);

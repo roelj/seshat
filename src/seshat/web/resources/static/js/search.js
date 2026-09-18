@@ -918,7 +918,7 @@ function _split_comma_separated_string(value) {
     return values;
 }
 
-jQuery(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
     init_search_filter_info();
     toggle_filter_institutions_showmore(true);
     toggle_filter_categories_showmore(true);

@@ -22,7 +22,7 @@ var initial_thumbnail_file_uuid = "{{article.thumb_origin}}";
         "data_read": true, "data_edit": true, "data_remove": true
     }
 {%- endif %}
-jQuery(document).ready(function (){
+document.addEventListener("DOMContentLoaded", function (){
     root_categories = [];
     jQuery(".hide-for-javascript").removeClass("hide-for-javascript");
     jQuery(".subcategory-wrapper").hide();
