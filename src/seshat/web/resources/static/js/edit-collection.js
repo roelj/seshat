@@ -288,7 +288,7 @@ function add_dataset (dataset_id, collection_id) {
 }
 
 function add_reference (collection_id) {
-    let url = jQuery.trim(jQuery("#references").val());
+    let url = jQuery("#references").val().trim();
     if (url != "") {
         jQuery.ajax({
             url:         `/v3/collections/${collection_id}/references`,
@@ -304,14 +304,14 @@ function add_reference (collection_id) {
 }
 
 function add_tag (collection_id) {
-    let tag = jQuery.trim(jQuery("#tag").val());
+    let tag = jQuery("#tag").val().trim();
     if (tag == "") { return 0; }
 
     let tags = []
     if (tag.includes (";")) {
         let items = tag.split(";");
         for (let item of items) {
-            if (item != "") { tags.push(jQuery.trim(item)); }
+            if (item != "") { tags.push(item.trim()); }
         }
     } else {
         tags = [tag];
@@ -486,7 +486,7 @@ function add_dataset_event (event) {
 }
 
 function autocomplete_dataset (event, collection_id) {
-    let current_text = jQuery.trim(jQuery("#article-search").val());
+    let current_text = jQuery("#article-search").val().trim();
     if (current_text == "") {
         jQuery("#articles-ac").remove();
         jQuery("#article-search").removeClass("input-for-ac");

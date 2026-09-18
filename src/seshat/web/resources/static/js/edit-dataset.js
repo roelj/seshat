@@ -956,7 +956,7 @@ function submit_external_link (dataset_uuid) {
 }
 
 function add_reference (dataset_uuid) {
-    let url = jQuery.trim(jQuery("#references").val());
+    let url = jQuery("#references").val().trim();
     if (url != "") {
         jQuery.ajax({
             url:         `/v3/datasets/${dataset_uuid}/references`,
@@ -972,14 +972,14 @@ function add_reference (dataset_uuid) {
 }
 
 function add_tag (dataset_uuid) {
-    let tag = jQuery.trim(jQuery("#tag").val());
+    let tag = jQuery("#tag").val().trim();
     if (tag == "") { return 0; }
 
     let tags = [];
     if (tag.includes (";")) {
         let items = tag.split(";");
         for (let item of items) {
-            if (item != "") { tags.push(jQuery.trim(item)); }
+            if (item != "") { tags.push(item.trim()); }
         }
     } else {
         tags = [tag];
