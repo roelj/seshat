@@ -135,7 +135,7 @@ function gather_form_data () {
     return form_data;
 }
 
-function save_dataset (dataset_uuid, event, notify=true, on_success=jQuery.noop) {
+function save_dataset (dataset_uuid, event, notify=true, on_success=function () {}) {
     stop_event_propagation (event);
 
     // When keywords were entered but not yet submitted, handle those first.
@@ -287,7 +287,7 @@ function update_collaborator_event (event) {
                          event.data["may_edit_metadata"]);
 }
 
-function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, callback=jQuery.noop) {
+function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, callback=function () {}) {
     jQuery.ajax({
         url:         `/v3/datasets/${dataset_uuid}/collaborators`,
         data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
@@ -1095,7 +1095,7 @@ function toggle_access_level () {
     }
 }
 
-function activate (dataset_uuid, permissions=null, callback=jQuery.noop) {
+function activate (dataset_uuid, permissions=null, callback=function () {}) {
     install_sticky_header();
     install_touchable_help_icons();
 

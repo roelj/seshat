@@ -415,7 +415,7 @@ function gather_form_data () {
     return form_data;
 }
 
-function save_collection (collection_id, event, notify=true, on_success=jQuery.noop) {
+function save_collection (collection_id, event, notify=true, on_success=function () {}) {
     stop_event_propagation (event);
 
     // When keywords were entered but yet submitted, handle those first.
