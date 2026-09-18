@@ -8,6 +8,21 @@ function escape_html (text) {
     return element.innerHTML;
 }
 
+function create_element (tag, attributes = {}, text = null) {
+    let element = document.createElement(tag);
+    for (let [name, value] of Object.entries(attributes)) { element.setAttribute(name, value); }
+    if (text !== null && text !== undefined) { element.textContent = text; }
+    return element;
+}
+
+function on_click_with_data (element, data, handler) {
+    element.addEventListener("click", function (event) {
+        event.data = data;
+        handler (event);
+    });
+    return element;
+}
+
 function is_empty_object (item) {
     if (item === null || item === undefined) { return true; }
     return Object.keys(item).length === 0;

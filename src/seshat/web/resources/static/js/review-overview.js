@@ -148,9 +148,9 @@ function render_overview_table () {
                 if (review.status == "approved") { version = review.dataset_version; }
                 else { version = "update"; }
             }
-            copy_button = jQuery("<a/>", { "id": `copy-btn-${review.uuid}`,
+            copy_button = create_element("a", { "id": `copy-btn-${review.uuid}`,
                                            "class": "fas fa-copy" });
-            copy_button.on("click", {
+            on_click_with_data (copy_button, {
                 "review": review,
                 "version": version,
                 "published_date": or_empty (published_date)
@@ -166,19 +166,27 @@ function render_overview_table () {
                 }
                 reviewer_html += '</select>';
             }
-            row = jQuery("<tr/>");
+            row = document.createElement("tr");
             if (published_date != null) { published_date = published_date.substring(0, 10); }
-            row.append (jQuery ("<td/>").html (title_html))
-                .append (jQuery ("<td/>").text (or_empty (version)))
-                .append (jQuery ("<td/>").text (`${review.submitter_first_name} ${review.submitter_last_name}`))
-                .append (jQuery ("<td/>").text (or_empty (review.submitter_email)))
-                .append (jQuery ("<td/>").text (or_empty (review.group_name)))
-                .append (jQuery ("<td/>").html (status))
-                .append (jQuery ("<td/>").text (or_empty (review.request_date)))
-                .append (jQuery ("<td/>").text (or_empty (review.modified_date)))
-                .append (jQuery ("<td/>").text (or_empty (published_date)))
-                .append (jQuery ("<td/>").html (reviewer_html))
-                .append (jQuery ("<td/>").html (copy_button));
+            let title_cell    = document.createElement("td");
+            let status_cell   = document.createElement("td");
+            let reviewer_cell = document.createElement("td");
+            let copy_cell     = document.createElement("td");
+            title_cell.innerHTML    = title_html;
+            status_cell.innerHTML   = status;
+            reviewer_cell.innerHTML = reviewer_html;
+            copy_cell.append (copy_button);
+            row.append (title_cell,
+                        create_element("td", {}, or_empty (version)),
+                        create_element("td", {}, `${review.submitter_first_name} ${review.submitter_last_name}`),
+                        create_element("td", {}, or_empty (review.submitter_email)),
+                        create_element("td", {}, or_empty (review.group_name)),
+                        status_cell,
+                        create_element("td", {}, or_empty (review.request_date)),
+                        create_element("td", {}, or_empty (review.modified_date)),
+                        create_element("td", {}, or_empty (published_date)),
+                        reviewer_cell,
+                        copy_cell);
             table_body.append (row);
         }
 	let table = document.getElementById("overview-table");

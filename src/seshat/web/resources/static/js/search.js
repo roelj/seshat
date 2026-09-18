@@ -440,7 +440,7 @@ function load_search_filters_from_url() {
             }
 
             if (filter_name !== "search" && filter_name !== "page") {
-                let field = jQuery("<input/>", {
+                let field = create_element("input", {
                     "type": "hidden",
                     "name": (is_other) ? `${filter_name}_other` : filter_name,
                     "value": values

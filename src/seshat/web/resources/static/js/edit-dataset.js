@@ -261,16 +261,16 @@ function render_references_for_dataset (dataset_uuid) {
         for (let url of references) {
             let encoded_url = encodeURIComponent(url);
             encoded_url = encoded_url.replaceAll("'", "%27");
-            let row = jQuery("<tr/>");
-            let column1 = jQuery("<td/>");
-            let column2 = jQuery("<td/>");
-            column1.html(jQuery("<a/>", { "target": "_blank", "href": url }).text(url));
-            let anchor = jQuery("<a/>", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
-            anchor.on("click",
-                      { "encoded_url": encoded_url, "dataset_uuid": dataset_uuid },
-                      remove_reference_event);
-            column2.html(anchor);
-            row.append([column1, column2]);
+            let row = document.createElement("tr");
+            let column1 = document.createElement("td");
+            let column2 = document.createElement("td");
+            column1.append(create_element("a", { "target": "_blank", "href": url }, url));
+            let anchor = create_element("a", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
+            on_click_with_data (anchor,
+                                { "encoded_url": encoded_url, "dataset_uuid": dataset_uuid },
+                                remove_reference_event);
+            column2.append(anchor);
+            row.append(column1, column2);
             jQuery("#references-list tbody").append(row);
         }
         jQuery("#references-list").show();
@@ -305,8 +305,8 @@ function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, call
         jQuery("#collaborators-form tbody").empty();
 
         for (let collaborator of collaborators) {
-            let row = jQuery("<tr/>", { "id": `row-${encodeURIComponent(collaborator.uuid)}` });
-            let column1 = jQuery("<td/>");
+            let row = create_element("tr", { "id": `row-${encodeURIComponent(collaborator.uuid)}` });
+            let column1 = document.createElement("td");
             let supervisor_badge = "";
             let group_member_badge = "";
             if (collaborator.is_supervisor) {
@@ -318,14 +318,14 @@ function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, call
             let input_settings = { "type": "checkbox" };
             if (collaborator.is_supervisor) { input_settings["disabled"] = "disabled"; }
 
-            column1.html(`${collaborator.first_name} ${collaborator.last_name ?? ''} (${collaborator.email})${supervisor_badge}${group_member_badge}`);
-            let column2 = jQuery("<td/>", { "class": "type-begin" });
-            let column3 = jQuery("<td/>", { "class": "type-end" });
-            let column4 = jQuery("<td/>");
-            let column5 = jQuery("<td/>");
-            let column6 = jQuery("<td/>", { "class": "type-end" });
-            let column7 = jQuery("<td/>");
-            let column8 = jQuery("<td/>");
+            column1.innerHTML = `${collaborator.first_name} ${collaborator.last_name ?? ''} (${collaborator.email})${supervisor_badge}${group_member_badge}`;
+            let column2 = create_element("td", { "class": "type-begin" });
+            let column3 = create_element("td", { "class": "type-end" });
+            let column4 = document.createElement("td");
+            let column5 = document.createElement("td");
+            let column6 = create_element("td", { "class": "type-end" });
+            let column7 = document.createElement("td");
+            let column8 = document.createElement("td");
 
             let input1_settings = { ...input_settings, ...{ "class": "subitem-checkbox-metadata", "name": "read" } };
             let input2_settings = { ...input_settings, ...{ "class": "subitem-checkbox-metadata", "name": "edit" } };
@@ -339,30 +339,30 @@ function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, call
             if (collaborator.data_edit) { input4_settings["checked"] = "checked"; }
             if (collaborator.data_remove) { input5_settings["checked"] = "checked"; }
 
-            column2.append (jQuery("<input/>", input1_settings));
-            column3.append (jQuery("<input/>", input2_settings));
-            column4.append (jQuery("<input/>", input3_settings));
-            column5.append (jQuery("<input/>", input4_settings));
-            column6.append (jQuery("<input/>", input5_settings));
+            column2.append (create_element("input", input1_settings));
+            column3.append (create_element("input", input2_settings));
+            column4.append (create_element("input", input3_settings));
+            column5.append (create_element("input", input4_settings));
+            column6.append (create_element("input", input5_settings));
 
             if (may_edit_metadata && !collaborator.is_inferred && !collaborator.is_supervisor) {
-                let anchor = jQuery("<a/>", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
-                anchor.on("click", {
+                let anchor = create_element("a", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
+                on_click_with_data (anchor, {
                     "collaborator_uuid": collaborator.uuid,
                     "dataset_uuid": dataset_uuid,
                     "may_edit_metadata": may_edit_metadata }, remove_collaborator_event);
                 column7.append(anchor);
             }
             if (may_edit_metadata && !collaborator.is_supervisor && !collaborator.is_inferred) {
-                let anchor = jQuery("<a/>", { "href": "#", "class": "fas fa-sync", "title": "Update" });
-                anchor.on("click", {
+                let anchor = create_element("a", { "href": "#", "class": "fas fa-sync", "title": "Update" });
+                on_click_with_data (anchor, {
                     "collaborator_uuid": collaborator.uuid,
                     "dataset_uuid": dataset_uuid,
                     "may_edit_metadata": may_edit_metadata }, update_collaborator_event);
                 column8.append(anchor);
             }
 
-            row.append([column1, column2, column3, column4, column5, column6, column7, column8]);
+            row.append(column1, column2, column3, column4, column5, column6, column7, column8);
             if (collaborator.is_supervisor) { jQuery("#collaborators-form tbody").prepend(row); }
             else { jQuery("#collaborators-form tbody").append(row); }
 
@@ -478,25 +478,36 @@ function render_tags_for_dataset (dataset_uuid) {
     }).then(function (tags) {
         jQuery("#tags-list").empty();
         for (let tag of tags) {
-            let row = jQuery("<li/>");
-            let anchor = jQuery("<a/>", { "href": "#", "class": "fas fa-trash-can" });
-            anchor.on("click", { "tag": tag, "dataset_uuid": dataset_uuid }, remove_tag_event);
-            row.append(jQuery("<span/>").html(`${tag} &nbsp; `)).append(anchor);
+            let row = document.createElement("li");
+            let anchor = create_element("a", { "href": "#", "class": "fas fa-trash-can" });
+            on_click_with_data (anchor, { "tag": tag, "dataset_uuid": dataset_uuid }, remove_tag_event);
+            let label = document.createElement("span");
+            label.innerHTML = `${tag} &nbsp; `;
+            row.append(label, anchor);
             jQuery("#tags-list").append(row);
         }
         jQuery("#tags-list").show();
     }).catch(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
 }
 
+// The pen icon of an author toggles between "edit" and "cancel", so its click
+// handler gets replaced.  Hence the onclick property instead of a listener.
+function set_edit_author_handler (element, handler, author_uuid, dataset_uuid) {
+    if (element === null) { return; }
+    element.onclick = function (event) {
+        event.data = { "author_uuid": author_uuid, "dataset_uuid": dataset_uuid };
+        handler (event);
+    };
+}
+
 function cancel_edit_author (author_uuid, dataset_uuid) {
     jQuery("#author-inline-edit-form").remove();
-    jQuery(`#edit-author-${author_uuid}`)
-        .off("click")
+    let button = document.getElementById(`edit-author-${author_uuid}`);
+    set_edit_author_handler (button, edit_author_event, author_uuid, dataset_uuid);
+    jQuery(button)
         .removeClass("fa-times")
         .removeClass("fa-lg")
-        .addClass("fa-pen")
-        .on ("click", { "author_uuid": author_uuid, "dataset_uuid": dataset_uuid },
-             edit_author_event);
+        .addClass("fa-pen");
 }
 
 function reorder_author (dataset_uuid, author_uuid, direction) {
@@ -555,31 +566,30 @@ function edit_author (author_uuid, dataset_uuid) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         return response.json();
     }).then(function (author) {
-        let row = jQuery("<tr/>", { "id": "author-inline-edit-form" });
-        let column1 = jQuery("<td/>", { "colspan": "5" });
-        column1.append (jQuery("<label/>", { "for": "author_first_name" }).text("First name"));
-        column1.append (jQuery("<input/>", { "type": "text", "id": "edit_author_first_name", "name": "author_first_name", "value": or_empty (author.first_name) }));
-        column1.append (jQuery("<label/>", { "for": "author_last_name" }).text("Last name"));
-        column1.append (jQuery("<input/>", { "type": "text", "id": "edit_author_last_name", "name": "author_last_name", "value": or_empty (author.last_name) }));
-        column1.append (jQuery("<label/>", { "for": "author_email" }).text("E-mail address"));
-        column1.append (jQuery("<input/>", { "type": "text", "id": "edit_author_email", "name": "author_email", "value": or_empty (author.email) }));
-        column1.append (jQuery("<label/>", { "for": "author_orcid" }).text("ORCID"));
-        column1.append (jQuery("<input/>", { "type": "text", "id": "edit_author_orcid", "name": "author_orcid", "value": or_empty (author.orcid) }));
+        let row = create_element("tr", { "id": "author-inline-edit-form" });
+        let column1 = create_element("td", { "colspan": "5" });
+        column1.append (create_element("label", { "for": "author_first_name" }, "First name"));
+        column1.append (create_element("input", { "type": "text", "id": "edit_author_first_name", "name": "author_first_name", "value": or_empty (author.first_name) }));
+        column1.append (create_element("label", { "for": "author_last_name" }, "Last name"));
+        column1.append (create_element("input", { "type": "text", "id": "edit_author_last_name", "name": "author_last_name", "value": or_empty (author.last_name) }));
+        column1.append (create_element("label", { "for": "author_email" }, "E-mail address"));
+        column1.append (create_element("input", { "type": "text", "id": "edit_author_email", "name": "author_email", "value": or_empty (author.email) }));
+        column1.append (create_element("label", { "for": "author_orcid" }, "ORCID"));
+        column1.append (create_element("input", { "type": "text", "id": "edit_author_orcid", "name": "author_orcid", "value": or_empty (author.orcid) }));
 
-        let button_wrapper = jQuery("<div/>", { "id": "update-author", "class": "a-button" });
-        let anchor = jQuery("<a/>", { "href": "#" }).text("Update author");
-        anchor.on("click", { "author_uuid": author_uuid, "dataset_uuid": dataset_uuid }, update_author_event);
+        let button_wrapper = create_element("div", { "id": "update-author", "class": "a-button" });
+        let anchor = create_element("a", { "href": "#" }, "Update author");
+        on_click_with_data (anchor, { "author_uuid": author_uuid, "dataset_uuid": dataset_uuid }, update_author_event);
         button_wrapper.append (anchor);
         column1.append (button_wrapper);
         row.append(column1);
         jQuery(`#author-${author_uuid}`).after(row);
-        jQuery(`#edit-author-${author_uuid}`)
-            .off("click")
+        let button = document.getElementById(`edit-author-${author_uuid}`);
+        set_edit_author_handler (button, cancel_edit_author_event, author_uuid, dataset_uuid);
+        jQuery(button)
             .removeClass("fa-pen")
             .addClass("fa-times")
-            .addClass("fa-lg")
-            .on("click", { "author_uuid": author_uuid, "dataset_uuid": dataset_uuid },
-                cancel_edit_author_event);
+            .addClass("fa-lg");
     }).catch(function (error) { console.log(`Error: ${error.message}`); });
 }
 
@@ -608,64 +618,66 @@ function render_authors_for_dataset (dataset_uuid) {
         let number_of_items = authors.length;
         for (let index = 0; index < number_of_items; index++) {
             let author = authors[index];
-            let row = jQuery("<tr/>", { "id": `author-${author.uuid}` });
-            let column1 = jQuery("<td/>").text(author.full_name);
-            let column2 = jQuery("<td/>");
-            let column3 = jQuery("<td/>");
-            let column4 = jQuery("<td/>");
-            let column5 = jQuery("<td/>");
+            let row = create_element("tr", { "id": `author-${author.uuid}` });
+            let column1 = create_element("td", {}, author.full_name);
+            let column2 = document.createElement("td");
+            let column3 = document.createElement("td");
+            let column4 = document.createElement("td");
+            let column5 = document.createElement("td");
             let orcid = null;
             if (author.orcid && author.orcid != "") { orcid = author.orcid; }
             if (orcid !== null) {
-                let orcid_anchor = jQuery("<a/>", {
+                let orcid_anchor = create_element("a", {
                     "href": `https://orcid.org/${orcid}`,
                     "target": "_blank",
                     "rel": "noopener noreferrer"
                 });
-                orcid_anchor.html(jQuery("<img/>", {
+                orcid_anchor.append(create_element("img", {
                     "src": "/static/images/orcid.svg",
                     "class": "author-orcid",
                     "alt": "ORCID",
                     "title": "ORCID profile (new window)" }));
-                column1.append([ orcid_anchor ]);
+                column1.append(orcid_anchor);
             }
             if (author.is_editable) {
-                column2.append(jQuery("<a/>", {
+                let edit_anchor = create_element("a", {
                     "id": `edit-author-${author.uuid}`,
                     "href": "#",
                     "class": "fas fa-pen",
                     "title": "Edit"
-                }).on("click", { "author_uuid": author.uuid, "dataset_uuid": dataset_uuid }, edit_author_event));
+                });
+                set_edit_author_handler (edit_anchor, edit_author_event, author.uuid, dataset_uuid);
+                column2.append(edit_anchor);
             }
             if (number_of_items == 1) {
             } else if (index == 0) {
-                column3.append(jQuery("<a/>", { "class": "fas fa-angle-down"}).on("click", {
+                column3.append(on_click_with_data (create_element("a", { "class": "fas fa-angle-down"}), {
                     "author_uuid": author.uuid,
                     "dataset_uuid": dataset_uuid,
                     "direction": "down" }, reorder_author_event));
             } else if (index == number_of_items - 1) {
-                column4.append(jQuery("<a/>", { "class": "fas fa-angle-up"}).on("click", {
+                column4.append(on_click_with_data (create_element("a", { "class": "fas fa-angle-up"}), {
                     "author_uuid": author.uuid,
                     "dataset_uuid": dataset_uuid,
                     "direction": "up" }, reorder_author_event));
             } else {
-                column3.append(jQuery("<a/>", { "class": "fas fa-angle-down"}).on("click", {
+                column3.append(on_click_with_data (create_element("a", { "class": "fas fa-angle-down"}), {
                     "author_uuid": author.uuid,
                     "dataset_uuid": dataset_uuid,
                     "direction": "down" }, reorder_author_event));
-                column4.append(jQuery("<a/>", { "class": "fas fa-angle-up"}).on("click", {
+                column4.append(on_click_with_data (create_element("a", { "class": "fas fa-angle-up"}), {
                     "author_uuid": author.uuid,
                     "dataset_uuid": dataset_uuid,
                     "direction": "up" }, reorder_author_event));
             }
-            column5.append(jQuery("<a/>", {
+            column5.append(on_click_with_data (create_element("a", {
                 "href": "#",
                 "class": "fas fa-trash-can",
-                "title": "Remove" }).on("click", { "author_uuid": author.uuid,
+                "title": "Remove" }), { "author_uuid": author.uuid,
                                                    "dataset_uuid": dataset_uuid },
                                         remove_author_event));
 
-            row.append([column1, column2, column3, column4, column5]);
+            row.append(column1, column2, column3, column4, column5);
             jQuery("#authors-list tbody").append(row);
         }
         jQuery("#authors-list").show();
@@ -690,14 +702,14 @@ function render_funding_for_dataset (dataset_uuid) {
     }).then(function (funders) {
         jQuery("#funding-list tbody").empty();
         for (let funding of funders) {
-            let row = jQuery("<tr/>");
-            let column1 = jQuery("<td/>").text(funding.title);
-            let column2 = jQuery("<td/>");
-            let anchor = jQuery("<a/>", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
-            anchor.on ("click", { "funding_uuid": funding.uuid, "dataset_uuid": dataset_uuid },
+            let row = document.createElement("tr");
+            let column1 = create_element("td", {}, funding.title);
+            let column2 = document.createElement("td");
+            let anchor = create_element("a", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
+            on_click_with_data (anchor, { "funding_uuid": funding.uuid, "dataset_uuid": dataset_uuid },
                        remove_funding_event);
-            column2.html(anchor);
-            row.append([column1, column2]);
+            column2.append(anchor);
+            row.append(column1, column2);
             jQuery("#funding-list tbody").append(row);
         }
         jQuery("#funding-list").show();
@@ -720,9 +732,9 @@ function render_git_branches_for_dataset (dataset_uuid, event) {
         jQuery("#git-branches").empty();
         if (branches !== null && branches.length > 0) {
             for (let branch of branches) {
-                let option = jQuery("<option/>", { "value": branch }).text(branch);
+                let option = create_element("option", { "value": branch }, branch);
                 if (branch == default_branch) {
-                    option.prop("selected", true);
+                    option.selected = true;
                 }
                 jQuery("#git-branches").append(option);
             }
@@ -766,7 +778,7 @@ function render_git_files_for_dataset (dataset_uuid, event) {
     }).then(function (files) {
         jQuery("#git-files").empty();
         for (let file of files) {
-            jQuery("#git-files").append(jQuery("<li/>").text(file));
+            jQuery("#git-files").append(create_element("li", {}, file));
         }
         jQuery("#git-files-label").show();
         jQuery("#git-files-wrapper").show();
@@ -808,20 +820,20 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
                 if (file.name === null) {
                     file.name = file.download_url;
                 }
-                let row = jQuery("<tr/>");
-                let column1 = jQuery("<td/>");
-                let column2 = jQuery("<td/>");
-                let column3 = jQuery("<td/>");
-                let anchor = jQuery("<a/>", { "href": `/file/${dataset_uuid}/${file.uuid}` }).text(file.name);
-                let file_size = jQuery("<span/>", { "class": "file-size" }).text(prettify_size(file.size));
-                column1.append([anchor, file_size]);
+                let row = document.createElement("tr");
+                let column1 = document.createElement("td");
+                let column2 = document.createElement("td");
+                let column3 = document.createElement("td");
+                let anchor = create_element("a", { "href": `/file/${dataset_uuid}/${file.uuid}` }, file.name);
+                let file_size = create_element("span", { "class": "file-size" }, prettify_size(file.size));
+                column1.append(anchor, file_size);
                 if ("is_incomplete" in file && file["is_incomplete"] == true) {
-                    column1.append(jQuery("<span/>", { "class": "file-incomplete-warning" }).text("The file upload was not complete!"));
+                    column1.append(create_element("span", { "class": "file-incomplete-warning" }, "The file upload was not complete!"));
                 }
                 let file_handle = "";
                 if ("handle" in file) {
-                    let handle_anchor = jQuery("<a/>", { "href": `https://hdl.handle.net/${file.handle}` });
-                    handle_anchor.html(jQuery("<img/>", {
+                    let handle_anchor = create_element("a", { "href": `https://hdl.handle.net/${file.handle}` });
+                    handle_anchor.append(create_element("img", {
                         "src": "/static/images/handle-logo.png",
                         "class": "handle-icon",
                         "alt": "Handle"
@@ -829,15 +841,15 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
                     column1.append(handle_anchor);
                 }
                 if (file["computed_md5"] === null) {
-                    column2.text(`${render_in_form("Unavailable")}`);
+                    column2.textContent = `${render_in_form("Unavailable")}`;
                 } else {
-                    column2.text(`${render_in_form(file["computed_md5"])}`);
+                    column2.textContent = `${render_in_form(file["computed_md5"])}`;
                 }
 
-                let remove_anchor = jQuery("<a/>", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
-                remove_anchor.on ("click", { "file_uuid": file.uuid, "dataset_uuid": dataset_uuid }, remove_file_event);
-                column3.html(remove_anchor);
-                row.append([column1, column2, column3]);
+                let remove_anchor = create_element("a", { "href": "#", "class": "fas fa-trash-can", "title": "Remove" });
+                on_click_with_data (remove_anchor, { "file_uuid": file.uuid, "dataset_uuid": dataset_uuid }, remove_file_event);
+                column3.append(remove_anchor);
+                row.append(column1, column2, column3);
                 jQuery("#files tbody").append(row);
                 number_of_files += 1;
             }

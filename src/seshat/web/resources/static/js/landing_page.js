@@ -95,12 +95,11 @@ function render_draft_collections () {
         jQuery("#collect ul").remove();
         jQuery("#collect").append("<ul></ul>");
         for (let collection of records) {
-            let item = jQuery("<a/>", { "href": "#", "class": "corporate-identity" })
-                .text(collection.title)
-                .on("click", function (event) {
-                    add_dataset_to_collection (dataset_uuid, collection.uuid);
-                    stop_event_propagation (event);
-                });
+            let item = create_element("a", { "href": "#", "class": "corporate-identity" }, collection.title);
+            item.addEventListener("click", function (event) {
+                add_dataset_to_collection (dataset_uuid, collection.uuid);
+                stop_event_propagation (event);
+            });
             jQuery("#collect ul").append(item);
         }
     }).catch(function (error) {
