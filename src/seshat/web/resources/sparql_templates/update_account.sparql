@@ -78,7 +78,7 @@ INSERT {
     {%- endif%}{% if maximum_file_size is not none %}
     ?account          shst:maximum_file_size   {{maximum_file_size}} .
     {%- endif%}{% if modified_date is not none %}
-    ?account          shst:modified_date       "{{modified_date | safe}}"^^xsd:dateTime .
+    ?account          shst:modified_date       {{modified_date | safe}} .
     {%- endif%}
   }
 }

@@ -17,7 +17,7 @@ INSERT {
     {%- endif%}{% if status is not none %}
     ?review          shst:status               shst:Review{{status | safe}} .
     {%- endif%}{% if reminder_date is not none %}
-    ?review          shst:reminder_date        "{{reminder_date | safe}}"^^xsd:dateTime .
+    ?review          shst:reminder_date        {{reminder_date | safe}} .
     {%- endif%}
   }
 }

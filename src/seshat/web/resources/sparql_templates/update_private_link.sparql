@@ -16,7 +16,7 @@ INSERT {
     {%- if is_active is not none %}
     ?link     shst:is_active        {{is_active}} .
     {%- endif %}{% if expires_date is not none %}
-    ?link     shst:expires_date     "{{expires_date | safe}}"^^xsd:string .
+    ?link     shst:expires_date     {{expires_date | safe}} .
     {%- endif %}{% if read_only is not none %}
     ?link     shst:read_only        {{read_only}} .
     {%- endif %}
@@ -41,7 +41,7 @@ WHERE {
   FILTER (?item_uri   = <{{item_uri}}>)
   FILTER (?account    = <account:{{account_uuid}}>)
   {%- if id_string is not none %}
-  FILTER (?id_string  = "{{id_string | safe}}"^^xsd:string)
+  FILTER (?id_string  = {{id_string | safe}})
   {%- endif %}
 }
 {% endblock %}

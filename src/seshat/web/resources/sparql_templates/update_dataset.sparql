@@ -147,9 +147,9 @@ INSERT {
     {%- endif%}{% if container_doi is not none %}
     ?container         shst:doi                  {{container_doi | safe}} .
     {%- endif%}{% if first_online_date is not none %}
-    ?container         shst:first_online_date    "{{first_online_date | safe}}"^^xsd:dateTime .
+    ?container         shst:first_online_date    {{first_online_date | safe}} .
     {%- endif%}
-    ?dataset           shst:modified_date        "{{modified_date | safe}}"^^xsd:dateTime .
+    ?dataset           shst:modified_date        {{modified_date | safe}} .
   }
 }
 WHERE {

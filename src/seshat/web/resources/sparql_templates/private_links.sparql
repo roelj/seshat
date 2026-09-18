@@ -20,8 +20,8 @@ WHERE {
     {%- endif %}
   }
   {%- if id_string is not none %}
-  ?link                shst:id                   "{{id_string | safe}}"^^xsd:string .
-  BIND("{{id_string | safe}}"^^xsd:string AS ?id_string)
+  ?link                shst:id                   {{id_string | safe}} .
+  BIND({{id_string | safe}} AS ?id_string)
   {% else %}
   ?link                shst:id                   ?id_string .
   {%- endif %}

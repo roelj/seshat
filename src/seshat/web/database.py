@@ -887,7 +887,7 @@ class SparqlInterface:
         """Procedure to get private links to a dataset or a collection."""
 
         query   = self.__query_from_template ("private_links", {
-            "id_string":   id_string,
+            "id_string":   rdf.escape_string_value (id_string),
             "item_uri":    item_uri,
             "account_uuid": account_uuid,
         })
@@ -1481,7 +1481,7 @@ class SparqlInterface:
     def update_account (self, account_uuid, active=None, email=None, job_title=None,
                         first_name=None, last_name=None, institution_user_id=None,
                         institution_id=None, domain=None,
-                        maximum_file_size=None, modified_date=None, created_date=None,
+                        maximum_file_size=None, modified_date=None,
                         location=None, biography=None, categories=None, twitter=None,
                         linkedin=None, website=None, profile_image=None):
         """Procedure to update account settings."""
@@ -1511,8 +1511,7 @@ class SparqlInterface:
             "domain":                rdf.escape_string_value (domain),
             "maximum_file_size":     maximum_file_size,
             "profile_image":         profile_image,
-            "modified_date":         modified_date,
-            "created_date":          created_date
+            "modified_date":         rdf.escape_datetime_value (modified_date)
         })
 
         results = self.__run_logged_query (query)
@@ -2503,8 +2502,8 @@ class SparqlInterface:
                         funding_list=None):
         """Procedure to overwrite parts of a dataset."""
 
-        modified_date_str = datetime.strftime (datetime.now(), datetime_format)
-        first_online_date_str = modified_date_str if is_first_online else None
+        modified_date = datetime.strftime (datetime.now(), datetime_format)
+        first_online_date = modified_date if is_first_online else None
 
         query   = self.__query_from_template ("update_dataset", {
             "account_uuid":    account_uuid,
@@ -2525,7 +2524,7 @@ class SparqlInterface:
             "group_id":        group_id,
             "license_remarks": rdf.escape_string_value (license_remarks),
             "longitude":       rdf.escape_string_value (longitude),
-            "modified_date":   modified_date_str,
+            "modified_date":   rdf.escape_datetime_value (modified_date),
             "organizations":   rdf.escape_string_value (organizations),
             "publisher":       rdf.escape_string_value (publisher),
             "resource_doi":    rdf.escape_string_value (conv.normalize_doi (resource_doi)),
@@ -2548,7 +2547,7 @@ class SparqlInterface:
             "git_repository_name": rdf.escape_string_value (git_repository_name),
             "git_code_hosting_url": rdf.escape_string_value (git_code_hosting_url),
             "container_doi":   rdf.escape_string_value (container_doi),
-            "first_online_date": first_online_date_str
+            "first_online_date": rdf.escape_datetime_value (first_online_date)
         })
 
         collaborators = self.collaborators(dataset_uuid)
@@ -2627,9 +2626,9 @@ class SparqlInterface:
         query   = self.__query_from_template ("update_private_link", {
             "account_uuid": account_uuid,
             "item_uri":     item_uri,
-            "id_string":    link_id,
+            "id_string":    rdf.escape_string_value (link_id),
             "is_active":    is_active,
-            "expires_date": expires_date,
+            "expires_date": rdf.escape_datetime_value (expires_date),
             "read_only":    read_only
         })
 
@@ -2858,8 +2857,8 @@ class SparqlInterface:
                            container_doi=None, is_first_online=False):
         """Procedure to overwrite parts of a collection."""
 
-        modified_date_str = datetime.strftime (datetime.now(), datetime_format)
-        first_online_date_str = modified_date_str if is_first_online else None
+        modified_date = datetime.strftime (datetime.now(), datetime_format)
+        first_online_date = modified_date if is_first_online else None
 
         query   = self.__query_from_template ("update_collection", {
             "account_uuid":      account_uuid,
@@ -2872,7 +2871,7 @@ class SparqlInterface:
             "latitude":          rdf.escape_string_value (latitude),
             "group_id":          group_id,
             "longitude":         rdf.escape_string_value (longitude),
-            "modified_date":     modified_date_str,
+            "modified_date":     rdf.escape_datetime_value (modified_date),
             "organizations":     rdf.escape_string_value (organizations),
             "publisher":         rdf.escape_string_value (publisher),
             "resource_doi":      rdf.escape_string_value (conv.normalize_doi (resource_doi)),
@@ -2880,7 +2879,7 @@ class SparqlInterface:
             "time_coverage":     rdf.escape_string_value (time_coverage),
             "title":             rdf.escape_string_value (title),
             "container_doi":     rdf.escape_string_value (container_doi),
-            "first_online_date": first_online_date_str
+            "first_online_date": rdf.escape_datetime_value (first_online_date)
         })
 
         results = self.__run_logged_query (query)
@@ -3073,12 +3072,12 @@ class SparqlInterface:
                        author_account_uuid=None):
         """Procedure to update a review."""
 
-        query        = self.__query_from_template ("update_review", {
+        query = self.__query_from_template ("update_review", {
             "review_uri":            review_uri,
             "dataset_uri":           dataset_uri,
             "assigned_to":           assigned_to,
             "status":                status.capitalize() if status is not None else status,
-            "reminder_date":         reminder_date
+            "reminder_date":         rdf.escape_datetime_value (reminder_date)
         })
 
         result = self.__run_logged_query (query)
