@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block headers %}
-<script src="/static/js/utils.js?cache=1744290797"></script>
-<script src="/static/js/dtable.js"></script>
+<script src="/static/js/utils.js?cache={{startup_timestamp}}"></script>
+<script src="/static/js/dtable.js?cache={{startup_timestamp}}"></script>
 <style nonce="{{nonce}}">
 #content { max-width: 100% !important; }
 .dataTables_wrapper .dataTables_filter { width: 100%; text-align: center; }
@@ -42,7 +42,7 @@
       {%- endfor %}
   ]
 </script>
-<script src="/static/js/review-overview.js?cache=1744290797"></script>
+<script src="/static/js/review-overview.js?cache={{startup_timestamp}}"></script>
 {% endblock %}
 {% block submenu %}
 <ul>

@@ -3,8 +3,8 @@
 <script nonce="{{nonce}}">
 var categories = "{% for item in subcategories %}{{item.id}}{{ ',' if not loop.last else '' }}{% endfor %}";
 </script>
-<script src="/static/js/utils.js"></script>
-<script src="/static/js/ranking.js?cache=1742461855"></script>
+<script src="/static/js/utils.js?cache={{startup_timestamp}}"></script>
+<script src="/static/js/ranking.js?cache={{startup_timestamp}}"></script>
 {% endblock %}
 {% block body %}
 <h1>{{category.title}}</h1>

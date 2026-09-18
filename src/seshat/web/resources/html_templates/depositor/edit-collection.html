@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block headers %}
 <script src="/static/js/quill.min.js"></script>
-<script src="/static/js/utils.js?cache=1774719208"></script>
-<script src="/static/js/edit-collection.js?cache=1774719208"></script>
+<script src="/static/js/utils.js?cache={{startup_timestamp}}"></script>
+<script src="/static/js/edit-collection.js?cache={{startup_timestamp}}"></script>
 <script nonce="{{nonce}}">
 document.addEventListener("DOMContentLoaded", function () {
     root_categories = []

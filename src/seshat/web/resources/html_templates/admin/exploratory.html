@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block headers %}
   <script src="/static/js/d3.v7.min.js"></script>
-  <script src="/static/js/utils.js?cache=1744290797"></script>
-  <script src="/static/js/exploratory.js"></script>
+  <script src="/static/js/utils.js?cache={{startup_timestamp}}"></script>
+  <script src="/static/js/exploratory.js?cache={{startup_timestamp}}"></script>
   <style nonce="{{nonce}}">
 #data-model-explorer {
     width: 100%;

@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block headers %}
-<script src="/static/js/dtable.js"></script>
-<script src="/static/js/utils.js"></script>
-<script src="/static/js/my-data.js"></script>
-{% if enable_projects %}<script src="/static/js/project-settings.js"></script>{% endif %}
+<script src="/static/js/dtable.js?cache={{startup_timestamp}}"></script>
+<script src="/static/js/utils.js?cache={{startup_timestamp}}"></script>
+<script src="/static/js/my-data.js?cache={{startup_timestamp}}"></script>
+{% if enable_projects %}<script src="/static/js/project-settings.js?cache={{startup_timestamp}}"></script>{% endif %}
 <style nonce="{{nonce}}">
 #table-unpublished thead tr th:last-child { min-width: 50pt }
 #table-unpublished { display: none; }

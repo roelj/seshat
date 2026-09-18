@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block headers %}
-<script src="/static/js/utils.js?cache=1776522604"></script>
+<script src="/static/js/utils.js?cache={{startup_timestamp}}"></script>
 <script nonce="{{nonce}}">
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".delete-private-link").forEach(function (element) {

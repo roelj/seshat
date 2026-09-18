@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block headers %}
 <script src="/static/js/quill.min.js"></script>
-<script src="/static/js/utils.js?cache=1744290797"></script>
-<script src="/static/js/depositor-dashboard.js?cache=1739977731"></script>
-{% if enable_projects %}<script src="/static/js/project-settings.js"></script>{% endif %}
+<script src="/static/js/utils.js?cache={{startup_timestamp}}"></script>
+<script src="/static/js/depositor-dashboard.js?cache={{startup_timestamp}}"></script>
+{% if enable_projects %}<script src="/static/js/project-settings.js?cache={{startup_timestamp}}"></script>{% endif %}
 <link href="/static/css/quill.snow.css" rel="stylesheet">
 <style nonce="{{nonce}}">
 #session-table tbody tr td:nth-child(2) { white-space: nowrap; }
