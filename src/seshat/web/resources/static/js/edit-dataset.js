@@ -175,7 +175,7 @@ function delete_all_files (dataset_uuid) {
         body:    JSON.stringify({ "remove_all": true })
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
-        jQuery("#remove-all-files").text(`Remove all files.`);
+        document.getElementById("remove-all-files").textContent = `Remove all files.`;
         render_files_for_dataset (dataset_uuid, null);
         jQuery("#thumbnails-wrapper").hide();
         jQuery("#thumbnail-files-wrapper").hide();
@@ -854,7 +854,7 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
                 jQuery("#files tbody").append(row);
                 number_of_files += 1;
             }
-            jQuery("#remove-all-files").text(`Remove all ${number_of_files} files.`);
+            document.getElementById("remove-all-files").textContent = `Remove all ${number_of_files} files.`;
             jQuery("#files").show();
             jQuery("#files-table-actions").show();
             render_files_for_thumbnail (dataset_uuid);

@@ -569,7 +569,7 @@ function load_search_results() {
 
         for (let institution of url_params["institutions"].split(",")) {
             let institution_id = `checkbox_institutions_${institution}`;
-            let institution_name = jQuery(`label[for='${institution_id}']`).text().trim();
+            let institution_name = (document.querySelector(`label[for='${institution_id}']`)?.textContent ?? "").trim();
 
             checked_institutions[institution_name] = institution_id;
         }
@@ -663,7 +663,7 @@ function load_search_results() {
         try {
             if (data.length == 0) {
                 let error_message = `No search results...`;
-                jQuery("#search-error").html(error_message);
+                document.getElementById("search-error").innerHTML = error_message;
                 jQuery("#search-error").show();
                 return;
             }
@@ -672,7 +672,7 @@ function load_search_results() {
         } catch (error) {
             let error_message = `Failed to get search results` +
                                 `<br>reason: ${error}`;
-            jQuery("#search-error").html(error_message);
+            document.getElementById("search-error").innerHTML = error_message;
             jQuery("#search-error").show();
         }
     }).catch(function (error) {
@@ -680,7 +680,7 @@ function load_search_results() {
         let error_message = `Failed to get search results` +
                             `<br><br>status: ${error.status ?? "error"}` +
                             `<br>reason: ${error.statusText ?? error.message}`;
-        jQuery("#search-error").html(error_message);
+        document.getElementById("search-error").innerHTML = error_message;
         jQuery("#search-error").show();
     }).finally(function () {
         jQuery("#search-loader").hide();
@@ -745,9 +745,11 @@ function render_search_results(data, page_number) {
 
     html_list_view += `</tbody></table>`;
     let html_pager = get_pager_html(data, page_number);
-    jQuery("#search-results-tile-view").html(html_tile_view);
-    jQuery("#search-results-list-view").html(html_list_view);
-    jQuery(".search-results-pager").html(html_pager);
+    document.getElementById("search-results-tile-view").innerHTML = html_tile_view;
+    document.getElementById("search-results-list-view").innerHTML = html_list_view;
+    document.querySelectorAll(".search-results-pager").forEach(function (element) {
+        element.innerHTML = html_pager;
+    });
 
     update_search_results_count(data, page_number);
     // Sort the search results by the selected sort_by.
@@ -770,7 +772,7 @@ function update_search_results_count(data, current_page=1) {
         html = `Over <b>${escape_html(String(page_size))}</b> results found.`;
     }
 
-    jQuery("#search-results-count").html(html);
+    document.getElementById("search-results-count").innerHTML = html;
 }
 
 function get_pager_html(data, current_page=1) {
@@ -829,6 +831,11 @@ function load_search_preferences() {
 }
 
 function sort_search_results(sort_by) {
+    // Text of the index-th child of parent that matches selector ("" when there is none).
+    function child_text (parent, selector, index) {
+        return parent.querySelectorAll(`:scope > ${selector}`)[index]?.textContent ?? "";
+    }
+
     let search_results_list = jQuery(".corporate-identity-table");
     // the first <tr> is the header row, so find the second <tr>
     let list_items = search_results_list.find("tr:gt(0)").get();
@@ -840,13 +847,13 @@ function sort_search_results(sort_by) {
             let keyB = null;
 
             if (sort_by.startsWith("date_")) {
-                keyA = jQuery(a).children("td").eq(1).text();
-                keyB = jQuery(b).children("td").eq(1).text();
+                keyA = child_text(a, "td", 1);
+                keyB = child_text(b, "td", 1);
                 keyA = new Date(keyA);
                 keyB = new Date(keyB);
             } else if (sort_by.startsWith("title_")) {
-                keyA = jQuery(a).children("td").eq(0).text();
-                keyB = jQuery(b).children("td").eq(0).text();
+                keyA = child_text(a, "td", 0);
+                keyB = child_text(b, "td", 0);
                 // Sometimes, the title has leading/trailing spaces.
                 keyA = keyA.trim().toLowerCase();
                 keyB = keyB.trim().toLowerCase();
@@ -876,15 +883,15 @@ function sort_search_results(sort_by) {
             let keyB = null;
 
             if (sort_by.startsWith("date_")) {
-                keyA = jQuery(a).children("div").eq(2).text();
-                keyB = jQuery(b).children("div").eq(2).text();
+                keyA = child_text(a, "div", 2);
+                keyB = child_text(b, "div", 2);
                 keyA = keyA.split(" ").pop();
                 keyB = keyB.split(" ").pop();
                 keyA = new Date(keyA);
                 keyB = new Date(keyB);
             } else if (sort_by.startsWith("title_")) {
-                keyA = jQuery(a).children("div").eq(1).text();
-                keyB = jQuery(b).children("div").eq(1).text();
+                keyA = child_text(a, "div", 1);
+                keyB = child_text(b, "div", 1);
                 // Sometimes, the title has leading/trailing spaces.
                 keyA = keyA.trim().toLowerCase();
                 keyB = keyB.trim().toLowerCase();

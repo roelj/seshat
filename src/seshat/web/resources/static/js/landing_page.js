@@ -19,14 +19,14 @@ function toggle_access_request (event) {
             let button = document.getElementById("access-request");
             button.classList.remove("close");
             button.classList.add("open");
-            jQuery(button).text("Request access to data");
+            button.textContent = "Request access to data";
         });
     } else {
        jQuery("#access-request-wrapper").slideDown(150, function (){
             let button = document.getElementById("access-request");
             button.classList.remove("open");
             button.classList.add("close");
-            jQuery(button).text("Cancel access request");
+            button.textContent = "Cancel access request";
         });
     }
 }
@@ -63,9 +63,8 @@ function prompt_download_all_request (event) {
             let message = document.getElementById("message");
             message.classList.remove("success");
             message.classList.add("transparent");
-            jQuery(message)
-                .html("<p>&nbsp;</p>")
-                .show();
+            message.innerHTML = "<p>&nbsp;</p>";
+            jQuery(message).show();
         });
     }, 120000);
 }
