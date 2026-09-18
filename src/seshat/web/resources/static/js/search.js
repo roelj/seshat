@@ -73,7 +73,7 @@ function _featured_institutions_count() {
 function toggle_filter_institutions_showmore(flag) {
     if (flag) {
         let featured_count = _featured_institutions_count();
-        jQuery('#search-filter-content-institutions ul li').css('display', 'none');
+        document.querySelectorAll('#search-filter-content-institutions ul li').forEach(function (element) { element.style.display = 'none'; });
         jQuery('#search-institutions-show-more').show();
 
         if (featured_count > 0) {
@@ -90,7 +90,7 @@ function toggle_filter_institutions_showmore(flag) {
 
 function toggle_filter_licenses_showmore(flag) {
     if (flag) {
-        jQuery('#search-filter-content-licenses ul li').css('display', 'none');
+        document.querySelectorAll('#search-filter-content-licenses ul li').forEach(function (element) { element.style.display = 'none'; });
         jQuery('#search-licenses-show-more').show();
         jQuery('#search-filter-content-licenses ul li').slice(0, 5).show();
    } else {
@@ -132,7 +132,7 @@ function clear_checkbox_parentcategory(parent_category_id) {
 
 function toggle_filter_categories_showmore(flag) {
     if (flag) {
-        jQuery('#search-filter-content-categories ul li').css('display', 'none');
+        document.querySelectorAll('#search-filter-content-categories ul li').forEach(function (element) { element.style.display = 'none'; });
         jQuery('#search-categories-show-more').show();
         if (enable_subcategories) {
             jQuery('#search-filter-content-categories ul li').slice(0, 75).show();
@@ -156,9 +156,12 @@ function toggle_filter_apply_button(flag) {
     let cursor = flag ? "pointer" : "default";
     let color_text = flag ? "white" : "#cccccc";
     let classes = flag ? ["enabled", "disabled"] : ["disabled", "enabled"];
-    jQuery("#search-filter-apply-button").css("background", color).css("color", color_text).css("cursor", cursor);
-    document.getElementById("search-filter-apply-button").classList.add(classes[0]);
-    document.getElementById("search-filter-apply-button").classList.remove(classes[1]);
+    let button = document.getElementById("search-filter-apply-button");
+    button.style.background = color;
+    button.style.color = color_text;
+    button.style.cursor = cursor;
+    button.classList.add(classes[0]);
+    button.classList.remove(classes[1]);
 }
 
 function toggle_filter_reset_button(flag) {
@@ -167,9 +170,12 @@ function toggle_filter_reset_button(flag) {
     let cursor = flag ? "pointer" : "default";
     let color_text = flag ? "white" : "#cccccc";
     let classes = flag ? ["enabled", "disabled"] : ["disabled", "enabled"];
-    jQuery("#search-filter-reset-button").css("background", color).css("color", color_text).css("cursor", cursor);
-    document.getElementById("search-filter-reset-button").classList.add(classes[0]);
-    document.getElementById("search-filter-reset-button").classList.remove(classes[1]);
+    let button = document.getElementById("search-filter-reset-button");
+    button.style.background = color;
+    button.style.color = color_text;
+    button.style.cursor = cursor;
+    button.classList.add(classes[0]);
+    button.classList.remove(classes[1]);
 }
 
 function toggle_filter_input_text(id, flag) {
@@ -210,13 +216,13 @@ function toggle_view_mode(mode) {
     if (mode === "tile") {
         jQuery('#search-results-list-view').hide();
         jQuery('#search-results-tile-view').show();
-        jQuery('#list-view-mode').css('color', 'darkgray');
-        jQuery('#tile-view-mode').css('color', primary_color);
+        document.getElementById("list-view-mode").style.color = 'darkgray';
+        document.getElementById("tile-view-mode").style.color = primary_color;
     } else {
         jQuery('#search-results-list-view').show();
         jQuery('#search-results-tile-view').hide();
-        jQuery('#list-view-mode').css('color', primary_color);
-        jQuery('#tile-view-mode').css('color', 'darkgray');
+        document.getElementById("list-view-mode").style.color = primary_color;
+        document.getElementById("tile-view-mode").style.color = 'darkgray';
     }
 
     let page_preferences = new PagePreferences();
@@ -908,7 +914,8 @@ function trim_single_word(word) {
 }
 
 function _corporate_background_color() {
-    return jQuery(".corporate-identity-background").css("background-color") ?? "#000000";
+    let element = document.querySelector(".corporate-identity-background");
+    return (element !== null) ? getComputedStyle(element).backgroundColor : "#000000";
 }
 
 function _split_comma_separated_string(value) {

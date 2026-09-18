@@ -46,9 +46,9 @@ document.addEventListener("DOMContentLoaded", function (){
     let editors = document.querySelectorAll(".ql-editor");
     inputs.forEach(function (input) { input.disabled = true; });
     editors.forEach(function (editor) { editor.contentEditable = "false"; });
-    jQuery(inputs).css("background", "var(--input-background)");
-    jQuery(editors).css("background", "var(--input-background)");
-    jQuery(".upload-container").css("background", "var(--input-background)");
+    inputs.forEach(function (element) { element.style.background = "var(--input-background)"; });
+    editors.forEach(function (element) { element.style.background = "var(--input-background)"; });
+    document.querySelectorAll(".upload-container").forEach(function (element) { element.style.background = "var(--input-background)"; });
 {%- endif %}
 {%- if article.is_shared_with_me and not permissions.data_edit %}
     jQuery(".upload-container").after('<div style="padding: .5em; margin-bottom: 1em; text-align: left" class="notice-box">You do not have permission to upload files.</div>');

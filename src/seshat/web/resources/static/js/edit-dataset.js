@@ -2,7 +2,7 @@ function decline_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
 
     document.getElementById("content")?.classList.add("loader-top");
-    jQuery("#content-wrapper").css("opacity", "0.15");
+    document.getElementById("content-wrapper").style.opacity = "0.15";
     save_dataset (dataset_uuid, event, false, function() {
         fetch(`/v3/datasets/${dataset_uuid}/decline`, {
             method:  "POST",
@@ -14,7 +14,7 @@ function decline_dataset (dataset_uuid, event) {
             show_message ("failure",
                           `<p>Could not decline due to error ` +
                           `<code>${error.message}</code>.</p>`);
-            jQuery("#content-wrapper").css("opacity", "1.0");
+            document.getElementById("content-wrapper").style.opacity = "1.0";
             document.getElementById("content")?.classList.remove("loader-top");
         });
     });
@@ -972,7 +972,7 @@ function add_funding (funding_uuid, dataset_uuid) {
 function submit_external_link (dataset_uuid) {
     let url = document.getElementById("external_url").value;
     if (url == "") {
-        jQuery("#external_url").css("background", "#cc0000");
+        document.getElementById("external_url").style.background = "#cc0000";
         return false;
     }
     fetch(`/v2/account/articles/${dataset_uuid}/files`, {
@@ -1634,7 +1634,7 @@ function prettify_size (size) {
 function submit_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
     document.getElementById("content")?.classList.add("loader-top");
-    jQuery("#content-wrapper").css('opacity', '0.15');
+    document.getElementById("content-wrapper").style.opacity = '0.15';
     save_dataset (dataset_uuid, event, false, function() {
         let form_data = gather_form_data();
         let is_open_access = document.getElementById("open_access").checked;
@@ -1689,7 +1689,7 @@ function submit_dataset (dataset_uuid, event) {
                     }
                 }
                 show_message ("failure", `${error_message}`);
-                jQuery("#content-wrapper").css('opacity', '1.0');
+                document.getElementById("content-wrapper").style.opacity = '1.0';
                 document.getElementById("content")?.classList.remove("loader-top");
             });
         });
@@ -1699,7 +1699,7 @@ function submit_dataset (dataset_uuid, event) {
 function publish_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
     document.getElementById("content")?.classList.add("loader-top");
-    jQuery("#content-wrapper").css('opacity', '0.15');
+    document.getElementById("content-wrapper").style.opacity = '0.15';
     save_dataset (dataset_uuid, event, false, function() {
         fetch(`/v3/datasets/${dataset_uuid}/publish`, {
             method:  "POST",
@@ -1711,7 +1711,7 @@ function publish_dataset (dataset_uuid, event) {
             show_message ("failure",
                           `<p>Could not publish due to error ` +
                           `<code>${error.message}</code>.</p>`);
-            jQuery("#content-wrapper").css('opacity', '1.0');
+            document.getElementById("content-wrapper").style.opacity = '1.0';
             document.getElementById("content")?.classList.remove("loader-top");
         });
     });

@@ -459,7 +459,7 @@ function save_collection (collection_id, event, notify=true, on_success=function
 function publish_collection (collection_id, event) {
     stop_event_propagation (event);
     document.getElementById("content")?.classList.add("loader-top");
-    jQuery("#content-wrapper").css('opacity', '0.15');
+    document.getElementById("content-wrapper").style.opacity = '0.15';
     save_collection (collection_id, event, false, function() {
         fetch(`/v3/collections/${collection_id}/publish`, {
             method:  "POST",
@@ -488,7 +488,7 @@ function publish_collection (collection_id, event) {
                     }
                 }
                 show_message ("failure", `${error_message}`);
-                jQuery("#content-wrapper").css('opacity', '1.0');
+                document.getElementById("content-wrapper").style.opacity = '1.0';
                 document.getElementById("content")?.classList.remove("loader-top");
             });
         });

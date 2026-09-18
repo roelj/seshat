@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.getElementById("submit-feedback")?.addEventListener("click", function (event) {
       document.getElementById("content")?.classList.add("loader-top");
-      jQuery("#content-wrapper").css('opacity', '0.15');
+      document.getElementById("content-wrapper").style.opacity = '0.15';
     });
     document.getElementById("description")?.addEventListener("keyup", function(event) {
         document.getElementById("description_html").value = jQuery("#description .ql-editor").html();
