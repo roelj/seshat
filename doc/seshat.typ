@@ -98,21 +98,22 @@
 	}
 	img { filter: invert(0.92) hue-rotate(180deg); }
 	}
-        \@font-face { font-family: 'SourceSans'; src: url('/static/fonts/SourceSansPro-Regular.ttf') format('truetype'); font-weight: normal; font-style: normal; }
-        \@font-face { font-family: 'SourceSans-Italic'; src: url('/static/fonts/SourceSansPro-Italic.ttf') format('truetype'); font-weight: normal; font-style: italic; }
-        \@font-face { font-family: 'SourceSans-Bold'; src: url('/static/fonts/SourceSansPro-Bold.ttf') format('truetype'); font-weight: bold; font-style: normal; }
-        \@font-face { font-family: 'Fira Code'; src: url('/static/fonts/FiraCode-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }
-        html { width: 100%; margin: 0em; padding: 0em; background: repeating-linear-gradient(90deg, var(-\-background-pattern-color) 0, var(-\-background-pattern-color) 5%, transparent 0, transparent 50%), repeating-linear-gradient(180deg, var(-\-background-pattern-color) 0, var(-\-background-pattern-color) 5%, transparent 0, transparent 50%); background-size: 1em 1em; background-color: var(-\-background-color); }
-        body { font-family: 'SourceSans', sans-serif; margin: 12pt auto 0pt auto; max-width: 1099pt; min-width: 720pt; }
+        \@font-face { font-family: 'SourceSans'; src: url('/static/fonts/SourceSansPro-Regular.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
+        \@font-face { font-family: 'SourceSans'; src: url('/static/fonts/SourceSansPro-Italic.ttf') format('truetype'); font-weight: normal; font-style: italic; font-display: swap; }
+        \@font-face { font-family: 'SourceSans'; src: url('/static/fonts/SourceSansPro-Bold.ttf') format('truetype'); font-weight: bold; font-style: normal; font-display: swap; }
+        \@font-face { font-family: 'Fira Code'; src: url('/static/fonts/FiraCode-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; font-display: swap; }
+        html { width: 100%; margin: 0em; padding: 0em; background: repeating-linear-gradient(90deg, var(-\-background-pattern-color) 0, var(-\-background-pattern-color) 5%, transparent 0, transparent 50%), repeating-linear-gradient(180deg, var(-\-background-pattern-color) 0, var(-\-background-pattern-color) 5%, transparent 0, transparent 50%); background-size: 1em 1em; background-color: var(-\-background-color); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        body { font-family: 'SourceSans', sans-serif; margin: 12pt auto 0pt auto; max-width: 1099pt; box-sizing: border-box; }
         code { font-family: 'Fira Code', monospace; }
         \@media (max-width: 1099pt) {
-          .table-of-contents { margin: auto auto 1em auto; max-width: 1099pt; min-width: 720pt; width: 820pt; background: var(-\-block-background); color: var(-\-text-color); padding: 0em; border: solid 1pt var(-\-chapter-border-color); border-radius: 1em 1em .5em .5em; }
+          body { padding: 0 12px; }
+          .table-of-contents { margin: auto auto 1em auto; max-width: 820pt; width: auto; background: var(-\-block-background); color: var(-\-text-color); padding: 0em; border: solid 1pt var(-\-chapter-border-color); border-radius: 1em 1em .5em .5em; }
           .chapter { margin: auto auto 1em auto; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
           section[role=doc-endnotes] { margin-left: auto; color: var(-\-text-color); }
         }
         \@media (min-width: 1099pt) {
           .chapter { margin-left: 279pt !important; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
-          .table-of-contents { position: fixed; height: auto; overflow-y: auto; width: 265pt; min-width: 265pt; max-width: 265pt; display: inline-block; border: solid 1pt var(-\-chapter-border-color); padding: 0em; margin: 0em; background: var(-\-block-background); color: var(-\-text-color); border-radius: .5em; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
+          .table-of-contents { box-sizing: border-box; position: fixed; height: auto; overflow-y: auto; width: 265pt; min-width: 265pt; max-width: 265pt; display: inline-block; border: solid 1pt var(-\-chapter-border-color); padding: 0em; margin: 0em; background: var(-\-block-background); color: var(-\-text-color); border-radius: .5em; box-shadow: 0 0 .4em var(-\-chapter-border-color); }
           nav > ol > li > ol > li > ol > li > a,
           nav > ol > li > ol > li > ol > li > div { display: none; }
           nav > ol > li > ol > li > a,
@@ -141,17 +142,19 @@
         nav > ol > li > ol > li > ol > li > a { color: var(-\-nav-sub-sub-text-color); }
         nav > ol > li > ol > li > ol > li > a:hover { color: var(-\-nav-sub-sub-hover-text-color); }
         .center { text-align: center; }
-        img { display: block; max-width: 760pt; margin: 1em auto 1em auto; height: auto; }
+        img { display: block; max-width: 100%; margin: 1em auto 1em auto; height: auto; }
         figure { background: var(-\-figure-bg-color); border: solid 1pt var(-\-figure-border-color); border-radius: .5em; }
         figcaption { text-align: center;  border-top: solid 1pt var(-\-figure-border-color); border-radius: 0em 0em .5em .5em; background: var(-\-h3-bg-color); padding: .5em; }
-        .chapter { margin: auto auto 1em auto; max-width: 1099pt; min-width: 720pt; width: 820pt; background: var(-\-block-background); color: var(-\-text-color); padding: 0em; border: solid 1pt var(-\-chapter-border-color); border-radius: .5em; }
+        .chapter { margin: auto auto 1em auto; max-width: 820pt; width: auto; box-sizing: border-box; background: var(-\-block-background); color: var(-\-text-color); padding: 0em; border: solid 1pt var(-\-chapter-border-color); border-radius: .5em; }
         .chapter p, .chapter pre, .chapter table { padding: 0pt 12pt 0pt 12pt; }
+        .chapter :is(p, li, h2, h3, h4, h5, h6), figcaption { overflow-wrap: anywhere; }
+        .chapter :is(td, th) { overflow-wrap: break-word; }
         .chapter h2 { background: var(-\-chapter-header-color); color: var(-\-h2-fg-color); padding: .75em; margin: 0em; border-radius: .25em .25em 0em 0em; }
         .chapter h3 { font-size: 1.25em; padding: .25em 1em .25em 1em; background: var(-\-h3-bg-color); }
         .chapter h4 { font-size: 1.10em; padding: .25em 1em .25em 1em; background: var(-\-h4-bg-color); }
         .chapter h5 { font-size: 1.0em; padding: .25em 1em .25em 1em; background: var(-\-h4-bg-color); }
         .chapter h6 { font-size: 1.0em; padding: .25em 1em .25em 1em; background: var(-\-h4-bg-color); }
-        .chapter pre { background: var(-\-code-bg-color); margin: 0pt 10pt 0pt 10pt; padding: 10pt; border-radius: 5pt; border: solid 1pt var(-\-code-border-color); }
+        .chapter pre { background: var(-\-code-bg-color); margin: 0pt 10pt 0pt 10pt; padding: 10pt; overflow-x: auto; border-radius: 5pt; border: solid 1pt var(-\-code-border-color); }
         table { width: 100%; margin: 0em 1em 0em 0em; border-collapse: separate; border-spacing: 0em; border-radius: .5em;}
         table tbody tr td { border: solid 1pt var(-\-table-header-bg-color); padding: .25em; border-top: none; border-left: 0; }
         table thead tr th { background: var(-\-table-header-bg-color); color: var(-\-h2-fg-color); padding: .5em .25em .5em .25em; }
@@ -166,6 +169,23 @@
         table tbody tr td:first-child { border-left: solid 1pt var(-\-table-header-bg-color); }
         section[role=doc-endnotes] ol { padding-left: .5em; }
         a { color: var(-\-text-anchor-color); }
+        \@media (max-width: 600px) {
+          body { margin: 0em; padding: 0em; }
+          .chapter, .table-of-contents { border-radius: 0; border-left: 0; border-right: 0; }
+          .chapter h2, .table-of-contents h2 { border-radius: 0; font-size: 1.3em; }
+          .chapter h3, .chapter h4, .chapter h5, .chapter h6 { padding-left: 12px; padding-right: 12px; }
+          .chapter p, .chapter table { padding: 0px 12px; }
+          .chapter ul, .chapter ol { padding-left: 1.75em; padding-right: 12px; }
+          .chapter pre { margin: 0px 8px; padding: 8px; font-size: .85em; }
+          .chapter table { font-size: .9em; display: block; overflow-x: auto; margin: 0em; }
+          .chapter td:last-child { min-width: 12em; }
+          figure { margin: 1em 8px; }
+          figure > p:has(> img) { overflow-x: auto; padding: 0em; }
+          figure img { min-width: 560px; }
+          .table-of-contents nav > ol > li > ol > li > ol { display: none; }
+          .table-of-contents nav > ol > li > ol > li > a,
+          .table-of-contents nav > ol > li > ol > li > div > a { padding: .4em 0em; }
+        }
     ]
 }
 
