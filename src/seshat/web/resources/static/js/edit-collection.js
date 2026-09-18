@@ -23,7 +23,8 @@ function render_references_for_collection (collection_id) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         return response.json();
     }).then(function (references) {
-        jQuery("#references-list tbody").empty();
+        let table_body = document.querySelector("#references-list tbody");
+        table_body.replaceChildren();
         for (let url of references) {
             let encoded_url = encodeURIComponent(url);
 	    encoded_url = encoded_url.replaceAll("'", "%27");
@@ -37,7 +38,7 @@ function render_references_for_collection (collection_id) {
                       remove_reference_event);
             column2.append(anchor);
             row.append(column1, column2);
-            jQuery("#references-list tbody").append(row);
+            table_body.append(row);
         }
         jQuery("#references-list").show();
     }).catch(function () {
@@ -60,7 +61,8 @@ function render_datasets_for_collection (collection_id) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         return response.json();
     }).then(function (datasets) {
-        jQuery("#articles-list tbody").empty();
+        let table_body = document.querySelector("#articles-list tbody");
+        table_body.replaceChildren();
         for (let dataset of datasets) {
             let row = document.createElement("tr");
             let column1 = document.createElement("td");
@@ -77,7 +79,7 @@ function render_datasets_for_collection (collection_id) {
             }), { "dataset_uuid": dataset.uuid, "collection_id": collection_id },
                   remove_dataset_event));
             row.append(column1, column2);
-            jQuery("#articles-list tbody").append(row);
+            table_body.append(row);
         }
         jQuery("#articles-list").show();
     }).catch(function () {
@@ -119,7 +121,8 @@ function render_authors_for_collection (collection_id) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         return response.json();
     }).then(function (authors) {
-        jQuery("#authors-list tbody").empty();
+        let table_body = document.querySelector("#authors-list tbody");
+        table_body.replaceChildren();
         let number_of_items = authors.length;
         for (let index = 0; index < number_of_items; index++) {
             let author = authors[index];
@@ -182,7 +185,7 @@ function render_authors_for_collection (collection_id) {
                                         remove_author_event));
 
             row.append(column1, column2, column3, column4, column5);
-            jQuery("#authors-list tbody").append(row);
+            table_body.append(row);
         }
         jQuery("#authors-list").show();
     }).catch(function () {
@@ -199,7 +202,8 @@ function render_funding_for_collection (collection_id) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         return response.json();
     }).then(function (funders) {
-        jQuery("#funding-list tbody").empty();
+        let table_body = document.querySelector("#funding-list tbody");
+        table_body.replaceChildren();
         for (let funding of funders) {
             let row = document.createElement("tr");
             let column1 = create_element("td", {}, funding.title);
@@ -212,7 +216,7 @@ function render_funding_for_collection (collection_id) {
                   remove_funding_event));
 
             row.append(column1, column2);
-            jQuery("#funding-list tbody").append(row);
+            table_body.append(row);
         }
         jQuery("#funding-list").show();
     }).catch(function () {
@@ -239,7 +243,8 @@ function render_tags_for_collection (collection_id) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         return response.json();
     }).then(function (tags) {
-        jQuery("#tags-list").empty();
+        let list = document.getElementById("tags-list");
+        list.replaceChildren();
         for (let tag of tags) {
             let row = document.createElement("li");
             let anchor = create_element("a", { "href": "#", "class": "fas fa-trash-can" });
@@ -248,7 +253,7 @@ function render_tags_for_collection (collection_id) {
             let label = document.createElement("span");
             label.innerHTML = `${tag} &nbsp; `;
             row.append(label, anchor);
-            jQuery("#tags-list").append(row);
+            list.append(row);
         }
         jQuery("#tags-list").show();
     }).catch(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
@@ -503,7 +508,7 @@ function add_dataset_event (event) {
 function autocomplete_dataset (event, collection_id) {
     let current_text = document.getElementById("article-search").value.trim();
     if (current_text == "") {
-        jQuery("#articles-ac").remove();
+        document.getElementById("articles-ac")?.remove();
         document.getElementById("article-search")?.classList.remove("input-for-ac");
     } else if (current_text.length > 2) {
         fetch(`/v2/articles/search`, {
@@ -514,7 +519,7 @@ function autocomplete_dataset (event, collection_id) {
             if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             return response.json();
         }).then(function (data) {
-            jQuery("#articles-ac").remove();
+            document.getElementById("articles-ac")?.remove();
             let list = document.createElement("ul");
             for (let item of data) {
                 let row = document.createElement("li");
@@ -534,7 +539,7 @@ function autocomplete_dataset (event, collection_id) {
             let wrapper = create_element("div", { "id": "articles-ac", "class": "autocomplete" });
             wrapper.append(list);
             document.getElementById("article-search").classList.add("input-for-ac");
-            jQuery("#article-search").after(wrapper);
+            document.getElementById("article-search").after(wrapper);
         }).catch(function (error) { console.log(`Error: ${error.message}`); });
     }
 }
@@ -556,7 +561,7 @@ function submit_new_author (collection_id) {
         body:    JSON.stringify({ "authors": authors })
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
-        jQuery("#authors-ac").remove();
+        document.getElementById("authors-ac")?.remove();
         document.getElementById("authors")?.classList.remove("input-for-ac");
         render_authors_for_collection (collection_id);
     }).catch(function () {
@@ -578,7 +583,7 @@ function submit_new_funding (collection_id) {
         })
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
-        jQuery("#funding-ac").remove();
+        document.getElementById("funding-ac")?.remove();
         document.getElementById("funding")?.classList.remove("input-for-ac");
         render_funding_for_collection (collection_id);
     }).catch(function () { show_message ("failure", `<p>Failed to add funding.</p>`); });

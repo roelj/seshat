@@ -14,10 +14,10 @@ function save_session (session_id) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         window.location.replace("/my/dashboard");
     }).catch(function () {
-        document.getElementById("message").classList.add("failure");
-        jQuery("#message")
-            .append("<p>Please provide a token name</p>")
-            .fadeIn(250);
+        let message = document.getElementById("message");
+        message.classList.add("failure");
+        message.insertAdjacentHTML("beforeend", "<p>Please provide a token name</p>");
+        jQuery(message).fadeIn(250);
     });
 }
 

@@ -54,10 +54,10 @@ function submit_access_request (event) {
 }
 
 function prompt_download_all_request (event) {
-    document.getElementById("download-all-files-message").classList.add("success");
-    jQuery("#download-all-files-message")
-        .append("<p>Your download is being prepared. This may take a while.</p>")
-        .fadeIn(250);
+    let download_message = document.getElementById("download-all-files-message");
+    download_message.classList.add("success");
+    download_message.insertAdjacentHTML("beforeend", "<p>Your download is being prepared. This may take a while.</p>");
+    jQuery(download_message).fadeIn(250);
     setTimeout(function() {
         jQuery("#download-all-files-message").fadeOut(500, function() {
             let message = document.getElementById("message");
@@ -96,15 +96,16 @@ function render_draft_collections () {
         if (!response.ok) { throw response; }
         return response.json();
     }).then(function (records) {
-        jQuery("#collect ul").remove();
-        jQuery("#collect").append("<ul></ul>");
+        document.querySelector("#collect ul")?.remove();
+        let list = document.createElement("ul");
+        document.getElementById("collect").append(list);
         for (let collection of records) {
             let item = create_element("a", { "href": "#", "class": "corporate-identity" }, collection.title);
             item.addEventListener("click", function (event) {
                 add_dataset_to_collection (dataset_uuid, collection.uuid);
                 stop_event_propagation (event);
             });
-            jQuery("#collect ul").append(item);
+            list.append(item);
         }
     }).catch(function (error) {
         if (error.status == 403) {

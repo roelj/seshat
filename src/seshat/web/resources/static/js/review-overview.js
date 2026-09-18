@@ -35,10 +35,12 @@ function assign_reviewer (event) {
         headers: { "Accept": "application/json" }
     }).then(function (response) {
         if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
-        jQuery(`#${dataset_uuid}_status .fa-hourglass`)
-            .replaceWith('<span class="fas fa-glasses" title="Assigned to ' +
-                         'reviewer"><span style="font-size:0pt">assigned</span>' +
-                         '</span>');
+        let hourglass = document.getElementById(`${dataset_uuid}_status`)?.querySelector(".fa-hourglass");
+        if (hourglass) {
+            hourglass.outerHTML = '<span class="fas fa-glasses" title="Assigned to ' +
+                                  'reviewer"><span style="font-size:0pt">assigned</span>' +
+                                  '</span>';
+        }
     }).catch(function () {
         show_message ("failure", "<p>Failed to assign reviewer.</p>");
     });
@@ -107,7 +109,7 @@ function copy_to_clipboard_event (event) {
 }
 
 function render_overview_table () {
-    jQuery("#overview-table tbody").empty();
+    document.querySelector("#overview-table tbody")?.replaceChildren();
     fetch("/v3/reviews", {
         method:  "GET",
         headers: { "Accept": "application/json" }
@@ -120,7 +122,7 @@ function render_overview_table () {
         let status = "";
         let reviewer_html = "";
         let title_html = "";
-        let table_body = jQuery("#overview-table tbody");
+        let table_body = document.querySelector("#overview-table tbody");
         let copy_button = null;
         let row = null;
         for (let review of reviews) {
@@ -186,7 +188,7 @@ function render_overview_table () {
                         create_element("td", {}, or_empty (published_date)),
                         reviewer_cell,
                         copy_cell);
-            table_body.append (row);
+            table_body?.append (row);
         }
 	let table = document.getElementById("overview-table");
 	if (table !== null) {

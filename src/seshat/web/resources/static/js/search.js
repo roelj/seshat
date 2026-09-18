@@ -244,7 +244,9 @@ function toggle_sort_by(sort_by) {
 function register_event_handlers() {
     // reset all checkboxes if the reset button is clicked.
     document.getElementById("search-filter-reset-button")?.addEventListener("click", function() {
-        jQuery(`#search-box-wrapper input [type='hidden']`).remove();
+        document.querySelectorAll(`#search-box-wrapper input [type='hidden']`).forEach(function (element) {
+            element.remove();
+        });
         document.querySelectorAll(".search-filter-content input[type='checkbox']").forEach(function (checkbox) {
             checkbox.checked = false;
             document.querySelectorAll(`.search-filter-content input[type='text']`).forEach(function (input) {
@@ -453,7 +455,7 @@ function load_search_filters_from_url() {
                     "name": (is_other) ? `${filter_name}_other` : filter_name,
                     "value": values
                 });
-                jQuery(`#search-box-wrapper form`).append(field);
+                document.querySelector(`#search-box-wrapper form`)?.append(field);
             } else if (filter_name === "search") {
                 let search_for = document.getElementById("search-box")?.value;
                 if (search_for && search_for.length > 0 && search_for.length > max_parameter_length) {
@@ -867,7 +869,7 @@ function sort_search_results(sort_by) {
             list_items.reverse();
         }
         list_items.forEach(function (row) {
-            search_results_list.append(row);
+            search_results_list[0].tBodies[0].append(row);
         });
     } catch (error) {}
 
@@ -905,7 +907,7 @@ function sort_search_results(sort_by) {
             tile_items.reverse();
         }
         tile_items.forEach(function (tile) {
-            search_results_tiles.append(tile);
+            search_results_tiles[0].append(tile);
         });
     } catch (error) {}
 }
