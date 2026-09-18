@@ -16,12 +16,13 @@ function clear_accounts_cache (event) {
         event.preventDefault();
         event.stopPropagation();
     }
-    jQuery.ajax({
-        url:         "/v3/admin/accounts/clear-cache",
-        type:        "GET",
-        accept:      "application/json",
-    }).done(function () { location.reload();
-    }).fail(function () {
+    fetch("/v3/admin/accounts/clear-cache", {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        location.reload();
+    }).catch(function () {
         show_message ("failure", "<p>Failed to clear the accounts cache.</p>");
     });
 }

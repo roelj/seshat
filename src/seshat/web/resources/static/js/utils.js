@@ -57,6 +57,13 @@ function value_from_quill (identifier) {
     return value;
 }
 
+// Resolves to the JSON body of a failed fetch() response, or to null when
+// there is none (network failure, or the body isn't valid JSON).
+function json_from_error (error) {
+    if (!(error instanceof Response)) { return Promise.resolve(null); }
+    return error.json().catch(function () { return null; });
+}
+
 function stop_event_propagation (event) {
     if (event !== null) {
         event.preventDefault();
@@ -116,17 +123,18 @@ function delete_dataset (dataset_uuid, event) {
     if (confirm("Deleting this draft dataset is unrecoverable. "+
                 "Do you want to continue?"))
     {
-        jQuery.ajax({
-            type:        "DELETE",
-            url:         `/v2/account/articles/${dataset_uuid}`
-        }).done(function () { window.location.pathname = "/my/datasets"; })
-          .fail(function (jqXHR, textStatus, errorThrown) {
-              if (jqXHR.status == 403) {
-                  show_message ("failure", "<p>No permission to remove dataset.</p>");
-              } else {
-                  show_message ("failure", "<p>Failed to remove dataset.</p>");
-              }
-          });
+        fetch(`/v2/account/articles/${dataset_uuid}`, {
+            method: "DELETE"
+        }).then(function (response) {
+            if (!response.ok) { throw response; }
+            window.location.pathname = "/my/datasets";
+        }).catch(function (error) {
+            if (error.status == 403) {
+                show_message ("failure", "<p>No permission to remove dataset.</p>");
+            } else {
+                show_message ("failure", "<p>Failed to remove dataset.</p>");
+            }
+        });
     }
 }
 
@@ -135,17 +143,18 @@ function delete_collection (collection_uuid, event) {
     if (confirm("Deleting this draft collection is unrecoverable. "+
                 "Do you want to continue?"))
     {
-        jQuery.ajax({
-            type:        "DELETE",
-            url:         `/v2/account/collections/${collection_uuid}`
-        }).done(function () { window.location.pathname = "/my/collections"; })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-		if (jqXHR.status == 403) {
-                    show_message ("failure", "<p>No permission to remove collection.</p>");
-		} else {
-                    show_message ("failure", "<p>Failed to remove collection.</p>");
-		}
-            });
+        fetch(`/v2/account/collections/${collection_uuid}`, {
+            method: "DELETE"
+        }).then(function (response) {
+            if (!response.ok) { throw response; }
+            window.location.pathname = "/my/collections";
+        }).catch(function (error) {
+	    if (error.status == 403) {
+                show_message ("failure", "<p>No permission to remove collection.</p>");
+	    } else {
+                show_message ("failure", "<p>Failed to remove collection.</p>");
+	    }
+        });
     }
 }
 
@@ -154,17 +163,18 @@ function delete_dataset_private_link (dataset_uuid, link_id, event) {
     if (confirm("Deleting this private link is unrecoverable. "+
                 "Do you want to continue?"))
     {
-        jQuery.ajax({
-            type:        "DELETE",
-            url:         `/v2/account/articles/${dataset_uuid}/private_links/${link_id}`
-        }).done(function () { location.reload(); })
-          .fail(function (jqXHR, textStatus, errorThrown) {
-              if (jqXHR.status == 403) {
-                  show_message ("failure", "<p>No permission to remove private link.</p>");
-              } else {
-                  show_message ("failure", "<p>Failed to remove private link.</p>");
-              }
-          });
+        fetch(`/v2/account/articles/${dataset_uuid}/private_links/${link_id}`, {
+            method: "DELETE"
+        }).then(function (response) {
+            if (!response.ok) { throw response; }
+            location.reload();
+        }).catch(function (error) {
+            if (error.status == 403) {
+                show_message ("failure", "<p>No permission to remove private link.</p>");
+            } else {
+                show_message ("failure", "<p>Failed to remove private link.</p>");
+            }
+        });
     }
 }
 
@@ -173,17 +183,18 @@ function delete_collection_private_link (collection_uuid, link_id, event) {
     if (confirm("Deleting this private link is unrecoverable. "+
                 "Do you want to continue?"))
     {
-        jQuery.ajax({
-            type:        "DELETE",
-            url:         `/v2/account/collections/${collection_uuid}/private_links/${link_id}`
-        }).done(function () { location.reload(); })
-          .fail(function (jqXHR, textStatus, errorThrown) {
-              if (jqXHR.status == 403) {
-                  show_message ("failure", "<p>No permission to remove private link.</p>");
-              } else {
-                  show_message ("failure", "<p>Failed to remove private link.</p>");
-              }
-          });
+        fetch(`/v2/account/collections/${collection_uuid}/private_links/${link_id}`, {
+            method: "DELETE"
+        }).then(function (response) {
+            if (!response.ok) { throw response; }
+            location.reload();
+        }).catch(function (error) {
+            if (error.status == 403) {
+                show_message ("failure", "<p>No permission to remove private link.</p>");
+            } else {
+                show_message ("failure", "<p>Failed to remove private link.</p>");
+            }
+        });
     }
 }
 

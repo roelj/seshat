@@ -18,16 +18,15 @@ function save_profile (notify=true, on_success=function () {}) {
         "categories":     category_ids
     };
 
-    jQuery.ajax({
-        url:         "/v3/profile",
-        type:        "PUT",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify(form_data),
-    }).done(function () {
+    fetch("/v3/profile", {
+        method:  "PUT",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(form_data)
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         if (notify) { show_message ("success", "<p>Saved changes.</p>"); }
         on_success ();
-    }).fail(function () {
+    }).catch(function () {
         if (notify) {
             show_message ("failure", "<p>Failed to save your profile. Please try again at a later time.</p>");
         }
@@ -35,12 +34,14 @@ function save_profile (notify=true, on_success=function () {}) {
 }
 
 function render_categories_for_profile () {
-    jQuery.ajax({
-        url:         "/v3/profile/categories",
-        data:        { "limit": 10000 },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (categories) {
+    let parameters = build_query_parameters ({ "limit": 10000 });
+    fetch(`/v3/profile/categories?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (categories) {
         for (let category of categories) {
             let checkbox = document.getElementById(`category_${category["uuid"]}`);
             let parent   = document.getElementById(`category_${category["parent_uuid"]}`);
@@ -49,22 +50,22 @@ function render_categories_for_profile () {
             if (parent !== null)   { parent.checked = true; }
             if (children !== null) { children.style.display = "block"; }
         }
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "Failed to retrieve categories.");
     });
 }
 
 function remove_profile_image () {
-    jQuery.ajax({
-        url:         "/v3/profile/picture",
-        type:        "DELETE",
-        accepts:     { json: "application/json" }
-    }).done (function () {
+    fetch("/v3/profile/picture", {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         document.getElementById("upload-profile-image")?.classList.remove("profile-image");
         for (let button of document.querySelectorAll(".dz-button")) {
             button.style.display = "inline-block";
         }
-    }).fail (function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to remove profile image.</p>");
     });
 }

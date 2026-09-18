@@ -6,15 +6,14 @@ function save_session (session_id) {
     event.preventDefault();
     event.stopPropagation();
 
-    jQuery.ajax({
-        url:         `/my/sessions/${session_id}/edit`,
-        type:        "PUT",
-        contentType: "application/json",
-        accept:      "application/json",
-        data:        JSON.stringify({ "name": jQuery("#name").val() })
-    }).done(function () {
+    fetch(`/my/sessions/${session_id}/edit`, {
+        method:  "PUT",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "name": jQuery("#name").val() })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         window.location.replace("/my/dashboard");
-    }).fail(function () {
+    }).catch(function () {
         jQuery("#message")
             .addClass("failure")
             .append("<p>Please provide a token name</p>")

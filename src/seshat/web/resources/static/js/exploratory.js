@@ -130,12 +130,14 @@ function node_mousedown () {
 
     // Load the next column
     let value = text.text();
-    jQuery.ajax({
-        url:         "/v3/explore/properties",
-        type:        "GET",
-        accepts:     { json: "application/json" },
-        data:        { "uri": `${encodeURIComponent(longform_uri(value))}` },
-    }).done(function (properties) {
+    let parameters = build_query_parameters ({ "uri": `${encodeURIComponent(longform_uri(value))}` });
+    fetch(`/v3/explore/properties?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (properties) {
         draw_column_title (1, "Properties");
         d3.selectAll(".column-1").remove();
         for (let index in properties) {
@@ -144,20 +146,20 @@ function node_mousedown () {
         }
         resize_svg();
         draw_grid ();
-    }).fail(function () {
+    }).catch(function () {
         console.log ("Failed to gather properties.");
     });
 }
 
 function clear_exploratory_cache (event) {
     stop_event_propagation (event);
-    jQuery.ajax({
-        url:         "/v3/explore/clear-cache",
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function () {
+    fetch("/v3/explore/clear-cache", {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         location.reload();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to clear the exploratory cache.</p>");
     });
 }
@@ -166,11 +168,13 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("remove-cache")?.addEventListener("click", function (event) {
         clear_exploratory_cache (event);
     });
-    jQuery.ajax({
-        url:         "/v3/explore/types",
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (types) {
+    fetch("/v3/explore/types", {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (types) {
         draw_column_title (0, "Types");
         d3.selectAll(".column-0").remove();
         for (let index in types) {
@@ -179,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         resize_svg();
         draw_grid ();
-    }).fail(function () {
+    }).catch(function () {
         console.log ("Failed to gather types.");
     });
 });

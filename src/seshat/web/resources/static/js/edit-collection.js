@@ -13,12 +13,14 @@ function remove_reference_event (event) {
 }
 
 function render_references_for_collection (collection_id) {
-    jQuery.ajax({
-        url:         `/v3/collections/${collection_id}/references`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (references) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v3/collections/${collection_id}/references?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (references) {
         jQuery("#references-list tbody").empty();
         for (let url of references) {
             let encoded_url = encodeURIComponent(url);
@@ -36,7 +38,7 @@ function render_references_for_collection (collection_id) {
             jQuery("#references-list tbody").append(row);
         }
         jQuery("#references-list").show();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve references.</p>");
     });
 }
@@ -48,12 +50,14 @@ function remove_dataset_event (event) {
 }
 
 function render_datasets_for_collection (collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/articles`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (datasets) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v2/account/collections/${collection_id}/articles?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (datasets) {
         jQuery("#articles-list tbody").empty();
         for (let dataset of datasets) {
             let row = jQuery("<tr/>");
@@ -74,21 +78,20 @@ function render_datasets_for_collection (collection_id) {
             jQuery("#articles-list tbody").append(row);
         }
         jQuery("#articles-list").show();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure","<p>Failed to retrieve dataset details.</p>");
     });
 }
 
 function reorder_author (collection_id, author_uuid, direction) {
-    jQuery.ajax({
-        url:  `/v3/collections/${collection_id}/reorder-authors`,
-        data: JSON.stringify({ "author":  author_uuid, "direction": direction }),
-        type: "POST",
-        contentType: "application/json",
-        accepts: { json: "application/json" }
-    }).done (function () {
+    fetch(`/v3/collections/${collection_id}/reorder-authors`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "author":  author_uuid, "direction": direction })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_authors_for_collection (collection_id);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to change the order of the authors.</p>");
     });
 }
@@ -106,12 +109,14 @@ function remove_author_event (event) {
 }
 
 function render_authors_for_collection (collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/authors`,
-        data:        { "limit": 10000 },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (authors) {
+    let parameters = build_query_parameters ({ "limit": 10000 });
+    fetch(`/v2/account/collections/${collection_id}/authors?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (authors) {
         jQuery("#authors-list tbody").empty();
         let number_of_items = authors.length;
         for (let index = 0; index < number_of_items; index++) {
@@ -178,18 +183,20 @@ function render_authors_for_collection (collection_id) {
             jQuery("#authors-list tbody").append(row);
         }
         jQuery("#authors-list").show();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve author details.</p>");
     });
 }
 
 function render_funding_for_collection (collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/funding`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (funders) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v2/account/collections/${collection_id}/funding?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (funders) {
         jQuery("#funding-list tbody").empty();
         for (let funding of funders) {
             let row = jQuery("<tr/>");
@@ -206,7 +213,7 @@ function render_funding_for_collection (collection_id) {
             jQuery("#funding-list tbody").append(row);
         }
         jQuery("#funding-list").show();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve funding details.</p>");
     });
 }
@@ -222,12 +229,14 @@ function remove_tag_event (event) {
 }
 
 function render_tags_for_collection (collection_id) {
-    jQuery.ajax({
-        url:         `/v3/collections/${collection_id}/tags`,
-        data:        { "limit": 10000 },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (tags) {
+    let parameters = build_query_parameters ({ "limit": 10000 });
+    fetch(`/v3/collections/${collection_id}/tags?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (tags) {
         jQuery("#tags-list").empty();
         for (let tag of tags) {
             let row = jQuery("<li/>");
@@ -238,51 +247,48 @@ function render_tags_for_collection (collection_id) {
             jQuery("#tags-list").append(row);
         }
         jQuery("#tags-list").show();
-    }).fail(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
+    }).catch(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
 }
 
 function add_author (author_id, collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/authors`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "authors": [{ "uuid": author_id }] }),
-    }).done(function () {
+    fetch(`/v2/account/collections/${collection_id}/authors`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "authors": [{ "uuid": author_id }] })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_authors_for_collection (collection_id);
         jQuery("#authors").val("");
         autocomplete_author(null, collection_id);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure",`<p>Failed to add ${author_id}.</p>`);
     });
 }
 
 function add_funding (funding_uuid, collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/funding`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "funders": [{ "uuid": funding_uuid }] }),
-    }).done(function () {
+    fetch(`/v2/account/collections/${collection_id}/funding`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "funders": [{ "uuid": funding_uuid }] })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_funding_for_collection (collection_id);
         jQuery("#funding").val("");
         autocomplete_funding(null, collection_id);
-    }).fail(function () { show_message ("failure", `<p>Failed to add ${funding_uuid}.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add ${funding_uuid}.</p>`); });
 }
 
 function add_dataset (dataset_id, collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/articles`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "articles": [dataset_id] }),
-    }).done(function () {
+    fetch(`/v2/account/collections/${collection_id}/articles`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "articles": [dataset_id] })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_datasets_for_collection (collection_id);
         jQuery("#article-search").val("");
         autocomplete_dataset(null, collection_id);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure",`<p>Failed to add ${dataset_id}.</p>`);
     });
 }
@@ -290,16 +296,15 @@ function add_dataset (dataset_id, collection_id) {
 function add_reference (collection_id) {
     let url = jQuery("#references").val().trim();
     if (url != "") {
-        jQuery.ajax({
-            url:         `/v3/collections/${collection_id}/references`,
-            type:        "POST",
-            contentType: "application/json",
-            accepts:     { json: "application/json" },
-            data:        JSON.stringify({ "references": [{ "url": url }] }),
-        }).done(function () {
+        fetch(`/v3/collections/${collection_id}/references`, {
+            method:  "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body:    JSON.stringify({ "references": [{ "url": url }] })
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             render_references_for_collection (collection_id);
             jQuery("#references").val("");
-        }).fail(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
+        }).catch(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
     }
 }
 
@@ -316,67 +321,70 @@ function add_tag (collection_id) {
     } else {
         tags = [tag];
     }
-    jQuery.ajax({
-        url:         `/v3/collections/${collection_id}/tags`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "tags": tags }),
-    }).done(function () {
+    fetch(`/v3/collections/${collection_id}/tags`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "tags": tags })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_tags_for_collection (collection_id);
         jQuery("#tag").val("");
         autocomplete_tags(null, collection_id);
-    }).fail(function () { show_message ("failure", `<p>Failed to add ${tag}.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add ${tag}.</p>`); });
 }
 
 function remove_author (author_id, collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/authors/${author_id}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_authors_for_collection (collection_id); })
-      .fail(function () {
-          show_message ("failure",`<p>Failed to remove ${author_id}</p>`);
-      });
+    fetch(`/v2/account/collections/${collection_id}/authors/${author_id}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_authors_for_collection (collection_id);
+    }).catch(function () {
+        show_message ("failure",`<p>Failed to remove ${author_id}</p>`);
+    });
 }
 
 function remove_funding (funding_id, collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/funding/${funding_id}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_funding_for_collection (collection_id); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${funding_id}.</p>`); });
+    fetch(`/v2/account/collections/${collection_id}/funding/${funding_id}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_funding_for_collection (collection_id);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${funding_id}.</p>`); });
 }
 
 function remove_reference (url, collection_id) {
-    jQuery.ajax({
-        url:         `/v3/collections/${collection_id}/references?url=${url}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_references_for_collection (collection_id); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${url}</p>`); });
+    fetch(`/v3/collections/${collection_id}/references?url=${url}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_references_for_collection (collection_id);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${url}</p>`); });
 }
 
 function remove_dataset (dataset_id, collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/articles/${dataset_id}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () {
+    fetch(`/v2/account/collections/${collection_id}/articles/${dataset_id}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_datasets_for_collection (collection_id);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure",`<p>Failed to remove ${dataset_id}.</p>`);
     });
 }
 
 function remove_tag (tag, collection_id) {
-    jQuery.ajax({
-        url:         `/v3/collections/${collection_id}/tags?tag=${tag}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_tags_for_collection (collection_id); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${tag}.</p>`); });
+    fetch(`/v3/collections/${collection_id}/tags?tag=${tag}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_tags_for_collection (collection_id);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${tag}.</p>`); });
 }
 
 function gather_form_data () {
@@ -423,23 +431,23 @@ function save_collection (collection_id, event, notify=true, on_success=function
     add_reference (collection_id);
 
     let form_data = gather_form_data();
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}`,
-        type:        "PUT",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify(form_data),
-    }).done(function () {
+    fetch(`/v2/account/collections/${collection_id}`, {
+        method:  "PUT",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(form_data)
+    }).then(function (response) {
+        if (!response.ok) { throw response; }
         if (notify) {
             show_message ("success", "<p>Saved changes.</p>");
         }
         on_success ();
-    }).fail(function (jqXHR, textStatus, errorThrown) {
+    }).catch(function (error) {
         if (notify) {
-            let json = jqXHR.responseJSON;
-            let message = "<p>Failed to save draft. Please try again at a later time.</p>";
-            if (json) { message = `<p>Failed to save draft: ${json.message}</p>`; }
-            show_message ("failure", message);
+            json_from_error (error).then(function (json) {
+                let message = "<p>Failed to save draft. Please try again at a later time.</p>";
+                if (json) { message = `<p>Failed to save draft: ${json.message}</p>`; }
+                show_message ("failure", message);
+            });
         }
     });
 }
@@ -449,33 +457,34 @@ function publish_collection (collection_id, event) {
     jQuery("#content").addClass("loader-top");
     jQuery("#content-wrapper").css('opacity', '0.15');
     save_collection (collection_id, event, false, function() {
-        jQuery.ajax({
-            url:         `/v3/collections/${collection_id}/publish`,
-            type:        "POST",
-            accepts:     { json: "application/json" },
-        }).done(function () {
+        fetch(`/v3/collections/${collection_id}/publish`, {
+            method:  "POST",
+            headers: { "Accept": "application/json" }
+        }).then(function (response) {
+            if (!response.ok) { throw response; }
             window.location.replace(`/my/collections/published/${collection_id}`);
-        }).fail(function (response, text_status, error_code) {
+        }).catch(function (error) {
             jQuery(".missing-required").removeClass("missing-required");
-            let error_messages = JSON.parse (response.responseText);
-            let error_message = "<p>Please fill in all required fields.</p>";
-            if (error_messages != null && error_messages.length > 0) {
-                for (let message of error_messages) {
-                    if (message.field_name == "license_id") {
-                        jQuery("#license_open").addClass("missing-required");
-                        jQuery("#license_embargoed").addClass("missing-required");
-                    } else if (message.field_name == "group_id") {
-                        jQuery("#groups-wrapper").addClass("missing-required");
-                    } else if (message.field_name == "categories") {
-                        jQuery("#categories-wrapper").addClass("missing-required");
-                    } else {
-                        jQuery(`#${message.field_name}`).addClass("missing-required");
+            json_from_error (error).then(function (error_messages) {
+                let error_message = "<p>Please fill in all required fields.</p>";
+                if (error_messages != null && error_messages.length > 0) {
+                    for (let message of error_messages) {
+                        if (message.field_name == "license_id") {
+                            jQuery("#license_open").addClass("missing-required");
+                            jQuery("#license_embargoed").addClass("missing-required");
+                        } else if (message.field_name == "group_id") {
+                            jQuery("#groups-wrapper").addClass("missing-required");
+                        } else if (message.field_name == "categories") {
+                            jQuery("#categories-wrapper").addClass("missing-required");
+                        } else {
+                            jQuery(`#${message.field_name}`).addClass("missing-required");
+                        }
                     }
                 }
-            }
-            show_message ("failure", `${error_message}`);
-            jQuery("#content-wrapper").css('opacity', '1.0');
-            jQuery("#content").removeClass("loader-top");
+                show_message ("failure", `${error_message}`);
+                jQuery("#content-wrapper").css('opacity', '1.0');
+                jQuery("#content").removeClass("loader-top");
+            });
         });
     });
 }
@@ -491,14 +500,14 @@ function autocomplete_dataset (event, collection_id) {
         jQuery("#articles-ac").remove();
         jQuery("#article-search").removeClass("input-for-ac");
     } else if (current_text.length > 2) {
-        jQuery.ajax({
-            url:         `/v2/articles/search`,
-            type:        "POST",
-            contentType: "application/json",
-            accepts:     { json: "application/json" },
-            data:        JSON.stringify({ "search_for": current_text, "is_latest": true }),
-            dataType:    "json"
-        }).done(function (data) {
+        fetch(`/v2/articles/search`, {
+            method:  "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body:    JSON.stringify({ "search_for": current_text, "is_latest": true })
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+            return response.json();
+        }).then(function (data) {
             jQuery("#articles-ac").remove();
             let list = jQuery("<ul/>");
             for (let item of data) {
@@ -521,7 +530,7 @@ function autocomplete_dataset (event, collection_id) {
                 .after(jQuery("<div/>", {
                     "id": "articles-ac",
                     "class": "autocomplete" }).html(list));
-        });
+        }).catch(function (error) { console.log(`Error: ${error.message}`); });
     }
 }
 
@@ -536,40 +545,38 @@ function submit_new_author (collection_id) {
         "orcid":      jQuery("#author_orcid").val()
     }];
 
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/authors`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "authors": authors }),
-    }).done(function () {
+    fetch(`/v2/account/collections/${collection_id}/authors`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "authors": authors })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#authors-ac").remove();
         jQuery("#authors").removeClass("input-for-ac");
         render_authors_for_collection (collection_id);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to add author.</p>");
     });
 }
 
 function submit_new_funding (collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/funding`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({
+    fetch(`/v2/account/collections/${collection_id}/funding`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({
             "funders": [{
                 "title":       jQuery("#funding_title").val(),
                 "grant_code":  jQuery("#funding_grant_code").val(),
                 "funder_name": jQuery("#funding_funder_name").val(),
                 "url":         jQuery("#funding_url").val()
             }]
-        }),
-    }).done(function () {
+        })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#funding-ac").remove();
         jQuery("#funding").removeClass("input-for-ac");
         render_funding_for_collection (collection_id);
-    }).fail(function () { show_message ("failure", `<p>Failed to add funding.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add funding.</p>`); });
 }
 
 function activate (collection_id) {
@@ -606,11 +613,13 @@ function activate (collection_id) {
         return autocomplete_dataset (event, collection_id);
     });
 
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}`,
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (data) {
+    fetch(`/v2/account/collections/${collection_id}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (data) {
         render_categories_for_collection (collection_id, data["categories"]);
         render_authors_for_collection (collection_id);
         render_references_for_collection (collection_id);
@@ -634,7 +643,7 @@ function activate (collection_id) {
         jQuery("#expand-categories-button").on("click", toggle_categories);
         jQuery(".collection-content-loader").hide();
         jQuery(".collection-content").fadeIn(200);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure","<p>Failed to retrieve collection.</p>");
     });
 }

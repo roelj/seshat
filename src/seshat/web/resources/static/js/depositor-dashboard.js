@@ -17,14 +17,12 @@ function submit_storage_request (event) {
         "new-quota": or_null(document.getElementById("new-quota").value),
         "reason":    value_from_quill("#quota-reason")
     };
-    jQuery.ajax({
-        url:         `/v3/profile/quota-request`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify(data),
-        dataType:    "json"
-    }).done(function () {
+    fetch(`/v3/profile/quota-request`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(data)
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         show_message ("success", "<p>Quota request has been sent.</p>");
         for (let element of document.querySelectorAll(".quota-requested")) { element.remove(); }
         for (let element of document.querySelectorAll(".storage-usage")) {
@@ -34,7 +32,7 @@ function submit_storage_request (event) {
             element.after(pending);
         }
         toggle_storage_request(null);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Quota request could not be sent.</p>");
     });
 }
@@ -43,13 +41,14 @@ function delete_session (event) {
     stop_event_propagation (event);
     let session_uuid = event.currentTarget.id;
     if (session_uuid.startsWith("session-")) { session_uuid = session_uuid.slice(8) }
-    jQuery.ajax({
-	type: "DELETE",
-	url: `/v3/sessions/${session_uuid}`
-    }).done(function () { window.location.pathname = "/my/dashboard"; })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-          show_message ("failure", "<p>Failed to remove session.</p>");
-      });
+    fetch(`/v3/sessions/${session_uuid}`, {
+	method: "DELETE"
+    }).then(function (response) {
+	if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+	window.location.pathname = "/my/dashboard";
+    }).catch(function () {
+	show_message ("failure", "<p>Failed to remove session.</p>");
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {

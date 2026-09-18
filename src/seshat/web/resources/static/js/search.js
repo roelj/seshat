@@ -644,14 +644,14 @@ function load_search_results() {
     jQuery("#search-loader").show();
     jQuery("#search-error").hide();
 
-    jQuery.ajax({
-        url:         target_api_url,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify(request_params),
-        dataType:    "json"
-    }).done(function (data) {
+    fetch(target_api_url, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(request_params)
+    }).then(function (response) {
+        if (!response.ok) { throw response; }
+        return response.json();
+    }).then(function (data) {
         try {
             if (data.length == 0) {
                 let error_message = `No search results...`;
@@ -667,13 +667,14 @@ function load_search_results() {
             jQuery("#search-error").html(error_message);
             jQuery("#search-error").show();
         }
-    }).fail(function (jqXHR, status, error) {
+    }).catch(function (error) {
+        // An HTTP error gives us the response; anything else is an exception.
         let error_message = `Failed to get search results` +
-                            `<br><br>status: ${status}` +
-                            `<br>reason: ${error}`;
+                            `<br><br>status: ${error.status ?? "error"}` +
+                            `<br>reason: ${error.statusText ?? error.message}`;
         jQuery("#search-error").html(error_message);
         jQuery("#search-error").show();
-    }).always(function () {
+    }).finally(function () {
         jQuery("#search-loader").hide();
     });
 }

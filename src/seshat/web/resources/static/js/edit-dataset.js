@@ -4,16 +4,16 @@ function decline_dataset (dataset_uuid, event) {
     jQuery("#content").addClass("loader-top");
     jQuery("#content-wrapper").css("opacity", "0.15");
     save_dataset (dataset_uuid, event, false, function() {
-        jQuery.ajax({
-            accepts:     { json: "application/json" },
-            type:        "POST",
-            url:         `/v3/datasets/${dataset_uuid}/decline`
-        }).done(function () {
+        fetch(`/v3/datasets/${dataset_uuid}/decline`, {
+            method:  "POST",
+            headers: { "Accept": "application/json" }
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
             window.location.replace("/logout");
-        }).fail(function (response, text_status, error_code) {
+        }).catch(function (error) {
             show_message ("failure",
                           `<p>Could not decline due to error ` +
-                          `<code>${error_code}</code>.</p>`);
+                          `<code>${error.message}</code>.</p>`);
             jQuery("#content-wrapper").css("opacity", "1.0");
             jQuery("#content").removeClass("loader-top");
         });
@@ -31,13 +31,14 @@ function preview_dataset (dataset_uuid, event) {
     if (day < 10) { day = `0${day}`; }
 
     save_dataset (dataset_uuid, event, false, function() {
-        jQuery.ajax({
-            accepts:     { json: "application/json" },
-            contentType: "application/json",
-            data:        JSON.stringify({ "expires_date": `${year}-${month}-${day}` }),
-            type:        "POST",
-            url:         `/v2/account/articles/${dataset_uuid}/private_links`
-        }).done(function (data) {
+        fetch(`/v2/account/articles/${dataset_uuid}/private_links`, {
+            method:  "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body:    JSON.stringify({ "expires_date": `${year}-${month}-${day}` })
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
+            return response.json();
+        }).then(function (data) {
             let preview_window = window.open(data["location"], '_blank');
             if (preview_window) { preview_window.focus(); }
             else {
@@ -45,10 +46,10 @@ function preview_dataset (dataset_uuid, event) {
                               "<p>Cannot open preview window because your " +
                               "browser disabled pop-ups.</p>");
             }
-        }).fail(function (response, text_status, error_code) {
+        }).catch(function (error) {
             show_message ("failure",
                           `<p>Could not create a private link due to error ` +
-                          `<code>${error_code}</code>.</p>`);
+                          `<code>${error.message}</code>.</p>`);
         });
     });
 }
@@ -146,53 +147,52 @@ function save_dataset (dataset_uuid, event, notify=true, on_success=function () 
         submit_external_link (dataset_uuid);
     }
     let form_data = gather_form_data();
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}`,
-        type:        "PUT",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify(form_data),
-    }).done(function () {
+    fetch(`/v2/account/articles/${dataset_uuid}`, {
+        method:  "PUT",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(form_data)
+    }).then(function (response) {
+        if (!response.ok) { throw response; }
         if (notify) {
             show_message ("success", "<p>Saved changes.</p>");
         }
         on_success ();
-    }).fail(function (jqXHR, textStatus, errorThrown) {
+    }).catch(function (error) {
         if (notify) {
-            let json = jqXHR.responseJSON;
-            let message = "<p>Failed to save draft. Please try again at a later time.</p>";
-            if (json) { message = `<p>Failed to save draft: ${json.message}</p>`; }
-            show_message ("failure", message);
+            json_from_error (error).then(function (json) {
+                let message = "<p>Failed to save draft. Please try again at a later time.</p>";
+                if (json) { message = `<p>Failed to save draft: ${json.message}</p>`; }
+                show_message ("failure", message);
+            });
         }
     });
 }
 
 function delete_all_files (dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/files`,
-        data:        JSON.stringify({ "remove_all": true }),
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-        contentType: "application/json",
-    }).done(function () {
+    fetch(`/v2/account/articles/${dataset_uuid}/files`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "remove_all": true })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#remove-all-files").text(`Remove all files.`);
         render_files_for_dataset (dataset_uuid, null);
         jQuery("#thumbnails-wrapper").hide();
         jQuery("#thumbnail-files-wrapper").hide();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to remove files.</p>");
     });
 }
 
 function repair_md5_sums (dataset_uuid, event) {
     save_dataset (dataset_uuid, event, false, function() {
-        jQuery.ajax({
-            url:         `/v3/datasets/${dataset_uuid}/repair_md5s`,
-            type:        "GET",
-            accepts:     { json: "application/json" },
-        }).done(function (record) {
+        fetch(`/v3/datasets/${dataset_uuid}/repair_md5s`, {
+            method:  "GET",
+            headers: { "Accept": "application/json" }
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             location.reload();
-        }).fail(function () {
+        }).catch(function () {
             show_message ("failure", "<p>Failed to repair MD5 checksums.</p>");
         });
     });
@@ -205,11 +205,13 @@ function render_licenses (dataset) {
     try { chosen_license = dataset.license.value; }
     catch (error) {}
 
-    jQuery.ajax({
-        url:         "/v2/licenses",
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (licenses) {
+    fetch("/v2/licenses", {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (licenses) {
         for (let license of licenses) {
             // Skip legacy licenses; render them last.
             if (license.type == "legacy") { continue; }
@@ -217,24 +219,26 @@ function render_licenses (dataset) {
             let html = `<option value="${license.value}"${selected}>${license.name}</option>`;
             jQuery(".license-selector").append(html);
         }
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve license list.</p>");
     });
 }
 
 function render_categories_for_dataset (dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/categories`,
-        data:        { "limit": 10000 },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (categories) {
+    let parameters = build_query_parameters ({ "limit": 10000 });
+    fetch(`/v2/account/articles/${dataset_uuid}/categories?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (categories) {
         for (let category of categories) {
             jQuery(`#category_${category["uuid"]}`).prop("checked", true);
             jQuery(`#category_${category["parent_uuid"]}`).prop("checked", true);
             jQuery(`#subcategories_${category["parent_uuid"]}`).show();
         }
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve categories.</p>");
     });
 }
@@ -245,12 +249,14 @@ function remove_reference_event (event) {
 }
 
 function render_references_for_dataset (dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/references`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (references) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v3/datasets/${dataset_uuid}/references?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (references) {
         jQuery("#references-list tbody").empty();
         for (let url of references) {
             let encoded_url = encodeURIComponent(url);
@@ -268,7 +274,7 @@ function render_references_for_dataset (dataset_uuid) {
             jQuery("#references-list tbody").append(row);
         }
         jQuery("#references-list").show();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve references.</p>");
     });
 }
@@ -288,12 +294,14 @@ function update_collaborator_event (event) {
 }
 
 function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, callback=function () {}) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/collaborators`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (collaborators) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v3/datasets/${dataset_uuid}/collaborators?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (collaborators) {
         jQuery("#collaborators-form tbody").empty();
 
         for (let collaborator of collaborators) {
@@ -385,7 +393,7 @@ function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, call
         });
         jQuery("#collaborators-form").show();
         callback ();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve collaborators.</p>");
     });
 }
@@ -405,18 +413,17 @@ function update_collaborator (collaborator_uuid, dataset_uuid, may_edit_metadata
             "account": or_null(jQuery("#account_uuid").val())
         };
 
-        jQuery.ajax({
-            url: `/v3/datasets/${dataset_uuid}/collaborators/${collaborator_uuid}`,
-            type: "PUT",
-            contentType: "application/json",
-            data: JSON.stringify(update_form_data),
-        }).done(function () {
+        fetch(`/v3/datasets/${dataset_uuid}/collaborators/${collaborator_uuid}`, {
+            method:  "PUT",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify(update_form_data)
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             render_collaborators_for_dataset(dataset_uuid, may_edit_metadata);
             jQuery("#update_collaborator").val("");
-        })
-            .fail(function () {
-                show_message("failure", `<p>Failed to update ${collaborator_uuid}</p>`);
-            });
+        }).catch(function () {
+            show_message("failure", `<p>Failed to update ${collaborator_uuid}</p>`);
+        });
     }
 }
 
@@ -434,25 +441,25 @@ function add_collaborator (dataset_uuid, may_edit_metadata) {
         "account": or_null(jQuery("#account_uuid").val())
     };
 
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/collaborators`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify(form_data),
-    }).done(function () {
+    fetch(`/v3/datasets/${dataset_uuid}/collaborators`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(form_data)
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_collaborators_for_dataset(dataset_uuid, may_edit_metadata);
         jQuery("#add_collaborator").val("");
-    }).fail(function () { show_message ("failure", `<p>Failed to add collaborator.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add collaborator.</p>`); });
 }
 
 function remove_collaborator (collaborator_uuid, dataset_uuid, may_edit_metadata) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/collaborators/${collaborator_uuid}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_collaborators_for_dataset (dataset_uuid, may_edit_metadata); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${collaborator_uuid}</p>`); });
+    fetch(`/v3/datasets/${dataset_uuid}/collaborators/${collaborator_uuid}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_collaborators_for_dataset (dataset_uuid, may_edit_metadata);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${collaborator_uuid}</p>`); });
 }
 
 function remove_tag_event (event) {
@@ -461,12 +468,14 @@ function remove_tag_event (event) {
 }
 
 function render_tags_for_dataset (dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/tags`,
-        data:        { "limit": 10000 },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (tags) {
+    let parameters = build_query_parameters ({ "limit": 10000 });
+    fetch(`/v3/datasets/${dataset_uuid}/tags?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (tags) {
         jQuery("#tags-list").empty();
         for (let tag of tags) {
             let row = jQuery("<li/>");
@@ -476,7 +485,7 @@ function render_tags_for_dataset (dataset_uuid) {
             jQuery("#tags-list").append(row);
         }
         jQuery("#tags-list").show();
-    }).fail(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
+    }).catch(function () { show_message ("failure", "<p>Failed to retrieve tags.</p>"); });
 }
 
 function cancel_edit_author (author_uuid, dataset_uuid) {
@@ -491,15 +500,14 @@ function cancel_edit_author (author_uuid, dataset_uuid) {
 }
 
 function reorder_author (dataset_uuid, author_uuid, direction) {
-    jQuery.ajax({
-        url:  `/v3/datasets/${dataset_uuid}/reorder-authors`,
-        data: JSON.stringify({ "author":  author_uuid, "direction": direction }),
-        type: "POST",
-        contentType: "application/json",
-        accepts: { json: "application/json" }
-    }).done (function () {
+    fetch(`/v3/datasets/${dataset_uuid}/reorder-authors`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "author":  author_uuid, "direction": direction })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_authors_for_dataset (dataset_uuid);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to change the order of the authors.</p>");
     });
 }
@@ -511,16 +519,15 @@ function update_author (author_uuid, dataset_uuid) {
         "email": jQuery("#edit_author_email").val(),
         "orcid": jQuery("#edit_author_orcid").val()
     };
-    jQuery.ajax({
-        url:         `/v3/authors/${author_uuid}`,
-        data:        JSON.stringify(record),
-        type:        "PUT",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-    }).done(function () {
+    fetch(`/v3/authors/${author_uuid}`, {
+        method:  "PUT",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(record)
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         cancel_edit_author (author_uuid, dataset_uuid);
         render_authors_for_dataset (dataset_uuid);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to update author details.</p>");
     });
 }
@@ -541,11 +548,13 @@ function update_author_event (event) {
 }
 
 function edit_author (author_uuid, dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/authors/${author_uuid}`,
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (author) {
+    fetch(`/v3/datasets/${dataset_uuid}/authors/${author_uuid}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (author) {
         let row = jQuery("<tr/>", { "id": "author-inline-edit-form" });
         let column1 = jQuery("<td/>", { "colspan": "5" });
         column1.append (jQuery("<label/>", { "for": "author_first_name" }).text("First name"));
@@ -571,7 +580,7 @@ function edit_author (author_uuid, dataset_uuid) {
             .addClass("fa-lg")
             .on("click", { "author_uuid": author_uuid, "dataset_uuid": dataset_uuid },
                 cancel_edit_author_event);
-    });
+    }).catch(function (error) { console.log(`Error: ${error.message}`); });
 }
 
 function reorder_author_event (event) {
@@ -587,12 +596,14 @@ function remove_author_event (event) {
 }
 
 function render_authors_for_dataset (dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/authors`,
-        data:        { "limit": 10000 },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (authors) {
+    let parameters = build_query_parameters ({ "limit": 10000 });
+    fetch(`/v3/datasets/${dataset_uuid}/authors?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (authors) {
         jQuery("#authors-list tbody").empty();
         let number_of_items = authors.length;
         for (let index = 0; index < number_of_items; index++) {
@@ -658,7 +669,7 @@ function render_authors_for_dataset (dataset_uuid) {
             jQuery("#authors-list tbody").append(row);
         }
         jQuery("#authors-list").show();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve author details.</p>");
     });
 }
@@ -669,12 +680,14 @@ function remove_funding_event (event) {
 }
 
 function render_funding_for_dataset (dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/funding`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (funders) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v2/account/articles/${dataset_uuid}/funding?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (funders) {
         jQuery("#funding-list tbody").empty();
         for (let funding of funders) {
             let row = jQuery("<tr/>");
@@ -688,18 +701,20 @@ function render_funding_for_dataset (dataset_uuid) {
             jQuery("#funding-list tbody").append(row);
         }
         jQuery("#funding-list").show();
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve funding details.</p>");
     });
 }
 
 function render_git_branches_for_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}.git/branches`,
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (data) {
+    fetch(`/v3/datasets/${dataset_uuid}.git/branches`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw response; }
+        return response.json();
+    }).then(function (data) {
         let branches = data["branches"];
         let default_branch = data["default-branch"];
         jQuery("#git-branches").empty();
@@ -714,8 +729,8 @@ function render_git_branches_for_dataset (dataset_uuid, event) {
         } else {
             jQuery("#git-branches").append('<option value="" disabled="disabled" selected="selected">No branches found</option>');
         }
-    }).fail(function (jqXHR) {
-	if (jqXHR.status !== 404) {
+    }).catch(function (error) {
+	if (error.status !== 404) {
             show_message ("failure", "<p>Failed to retrieve Git branches.</p>");
 	}
         jQuery("#git-branches").empty();
@@ -726,38 +741,39 @@ function render_git_branches_for_dataset (dataset_uuid, event) {
 function set_default_git_branch (dataset_uuid, event) {
     stop_event_propagation (event);
     let branch_name = jQuery("#git-branches").val();
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}.git/set-default-branch`,
-        data:        JSON.stringify({ "branch": branch_name }),
-        type:        "PUT",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-    }).done(function () {
+    fetch(`/v3/datasets/${dataset_uuid}.git/set-default-branch`, {
+        method:  "PUT",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "branch": branch_name })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         show_message ("success", `<p>Default Git branch set to <strong>${escape_html(branch_name)}</strong>.</p>`);
         render_git_files_for_dataset (dataset_uuid, event);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to retrieve Git file details.</p>");
     });
 }
 
 function render_git_files_for_dataset (dataset_uuid, event) {
     stop_event_propagation (event);
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}.git/files`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (files) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v3/datasets/${dataset_uuid}.git/files?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw response; }
+        return response.json();
+    }).then(function (files) {
         jQuery("#git-files").empty();
         for (let file of files) {
             jQuery("#git-files").append(jQuery("<li/>").text(file));
         }
         jQuery("#git-files-label").show();
         jQuery("#git-files-wrapper").show();
-    }).fail(function (jqXHR) {
+    }).catch(function (error) {
         jQuery("#git-files-label").hide();
         jQuery("#git-files-wrapper").hide();
-	if (jqXHR.status !== 404) {
+	if (error.status !== 404) {
             show_message ("failure", "<p>Failed to retrieve Git file details.</p>");
 	}
     });
@@ -769,12 +785,14 @@ function remove_file_event (event) {
 }
 
 function render_files_for_dataset (dataset_uuid, fileUploader) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/files`,
-        data:        { "limit": 10000, "order": "id", "order_direction": "asc" },
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (files) {
+    let parameters = build_query_parameters ({ "limit": 10000, "order": "id", "order_direction": "asc" });
+    fetch(`/v2/account/articles/${dataset_uuid}/files?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw response; }
+        return response.json();
+    }).then(function (files) {
         if (fileUploader !== null) {
             fileUploader.removeAllFiles();
         }
@@ -833,8 +851,8 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
             jQuery("input[name='record_type']").attr('disabled', false);
             render_files_for_thumbnail (dataset_uuid);
         }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403) {
+    }).catch(function (error) {
+        if (error.status == 403) {
             let html = '<tr class="notice-box"><td colspan="2">You do not have permission to view the files.</td><td></td></tr>';
             jQuery("#files tbody").empty().append(html);
         } else {
@@ -858,12 +876,14 @@ function render_files_for_thumbnail (dataset_uuid) {
         return html;
     }
 
-    jQuery.ajax({
-        url: `/v3/datasets/${dataset_uuid}/image-files`,
-        data: { "limit": 10000 },
-        type: "GET",
-        accepts: { json: "application/json" },
-    }).done(function (files) {
+    let parameters = build_query_parameters ({ "limit": 10000 });
+    fetch(`/v3/datasets/${dataset_uuid}/image-files?${parameters}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (files) {
         jQuery("#thumbnails-wrapper").empty();
         if (files.length > 0) {
             jQuery("#thumbnails-wrapper").show();
@@ -889,13 +909,14 @@ function render_files_for_thumbnail (dataset_uuid) {
 
                 let selected_thumb = jQuery('input[name="thumbnail"]:checked');
                 selected_thumb.closest('.thumbnail-item').addClass("thumbnail-active");
-                jQuery.ajax({
-                    url: `/v3/datasets/${dataset_uuid}/update-thumbnail`,
-                    type: "PUT",
-                    contentType: "application/json",
-                    accepts:     { json: "application/json" },
-                    data:        JSON.stringify({ "uuid": `${selected_thumb.val()}` })
-                }).fail(function () {
+                fetch(`/v3/datasets/${dataset_uuid}/update-thumbnail`, {
+                    method:  "PUT",
+                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                    body:    JSON.stringify({ "uuid": `${selected_thumb.val()}` })
+                }).then(function (response) {
+                    if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+
+                }).catch(function () {
                     show_message ("failure", "<p>Failed to set thumbnail.</p>");
                 });
             });
@@ -903,37 +924,35 @@ function render_files_for_thumbnail (dataset_uuid) {
             jQuery("#thumbnails-wrapper").hide();
             jQuery("#thumbnail-files-wrapper").hide();
         }
-    }).fail(function () {
+    }).catch(function () {
         show_message("failure", "<p>Failed to retrieve thumbnail file details.</p>");
     });
 }
 
 function add_author (author_uuid, dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/authors`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "authors": [{ "uuid": author_uuid }] }),
-    }).done(function () {
+    fetch(`/v2/account/articles/${dataset_uuid}/authors`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "authors": [{ "uuid": author_uuid }] })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_authors_for_dataset (dataset_uuid);
         jQuery("#authors").val("");
         autocomplete_author(null, dataset_uuid);
-    }).fail(function () { show_message ("failure", `<p>Failed to add ${author_uuid}.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add ${author_uuid}.</p>`); });
 }
 
 function add_funding (funding_uuid, dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/funding`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "funders": [{ "uuid": funding_uuid }] }),
-    }).done(function () {
+    fetch(`/v2/account/articles/${dataset_uuid}/funding`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "funders": [{ "uuid": funding_uuid }] })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_funding_for_dataset (dataset_uuid);
         jQuery("#funding").val("");
         autocomplete_funding(null, dataset_uuid);
-    }).fail(function () { show_message ("failure", `<p>Failed to add ${funding_uuid}.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add ${funding_uuid}.</p>`); });
 }
 
 function submit_external_link (dataset_uuid) {
@@ -942,32 +961,30 @@ function submit_external_link (dataset_uuid) {
         jQuery("#external_url").css("background", "#cc0000");
         return false;
     }
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/files`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "link": url }),
-    }).done(function () {
+    fetch(`/v2/account/articles/${dataset_uuid}/files`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "link": url })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#external_url").val("");
         jQuery("#external_link_field").hide();
         render_files_for_dataset (dataset_uuid, null);
-    }).fail(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
 }
 
 function add_reference (dataset_uuid) {
     let url = jQuery("#references").val().trim();
     if (url != "") {
-        jQuery.ajax({
-            url:         `/v3/datasets/${dataset_uuid}/references`,
-            type:        "POST",
-            contentType: "application/json",
-            accepts:     { json: "application/json" },
-            data:        JSON.stringify({ "references": [{ "url": url }] }),
-        }).done(function () {
+        fetch(`/v3/datasets/${dataset_uuid}/references`, {
+            method:  "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body:    JSON.stringify({ "references": [{ "url": url }] })
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
             render_references_for_dataset (dataset_uuid);
             jQuery("#references").val("");
-        }).fail(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
+        }).catch(function () { show_message ("failure", `<p>Failed to add ${url}.</p>`); });
     }
 }
 
@@ -984,17 +1001,16 @@ function add_tag (dataset_uuid) {
     } else {
         tags = [tag];
     }
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/tags`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "tags": tags }),
-    }).done(function () {
+    fetch(`/v3/datasets/${dataset_uuid}/tags`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "tags": tags })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         render_tags_for_dataset (dataset_uuid);
         jQuery("#tag").val("");
         autocomplete_tags(null, dataset_uuid);
-    }).fail(function () { show_message ("failure", `<p>Failed to add ${tag}.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add ${tag}.</p>`); });
 }
 
 function submit_new_author (dataset_uuid) {
@@ -1018,41 +1034,39 @@ function submit_new_author (dataset_uuid) {
         "orcid_id":   jQuery("#author_orcid").val()
     }];
 
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/authors`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({
+    fetch(`/v2/account/articles/${dataset_uuid}/authors`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({
             "authors": authors
-        }),
-    }).done(function () {
+        })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#authors-ac").remove();
         jQuery("#authors").removeClass("input-for-ac");
         jQuery("#authors").val("");
         render_authors_for_dataset (dataset_uuid);
-    }).fail(function () { show_message ("failure", `<p>Failed to add author.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add author.</p>`); });
 }
 
 function submit_new_funding (dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/funding`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({
+    fetch(`/v2/account/articles/${dataset_uuid}/funding`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({
             "funders": [{
                 "title":       jQuery("#funding_title").val(),
                 "grant_code":  jQuery("#funding_grant_code").val(),
                 "funder_name": jQuery("#funding_funder_name").val(),
                 "url":         jQuery("#funding_url").val()
             }]
-        }),
-    }).done(function () {
+        })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery("#funding-ac").remove();
         jQuery("#funding").removeClass("input-for-ac");
         render_funding_for_dataset (dataset_uuid);
-    }).fail(function () { show_message ("failure", `<p>Failed to add funding.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to add funding.</p>`); });
 }
 
 function toggle_record_type () {
@@ -1102,11 +1116,13 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
     jQuery(".article-content").hide();
     jQuery(".article-content-loader").show();
     jQuery(".article-content-loader").addClass("loader");
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}`,
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (data) {
+    fetch(`/v2/account/articles/${dataset_uuid}`, {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (data) {
         render_authors_for_dataset (dataset_uuid);
         render_references_for_dataset (dataset_uuid);
         render_tags_for_dataset (dataset_uuid);
@@ -1449,7 +1465,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             toggle_collaborators (dataset_uuid, !is_shared_with_me, event)
         });
         callback ();
-    }).fail(function () { show_message ("failure", `<p>Failed to retrieve article ${dataset_uuid}.</p>`); });
+    }).catch(function () { show_message ("failure", `<p>Failed to retrieve article ${dataset_uuid}.</p>`); });
 }
 
 function toggle_api_upload_text (event) {
@@ -1501,41 +1517,37 @@ function perform_upload (files, current_file, dataset_uuid) {
         return;
     }
 
-    jQuery.ajax({
-        xhr: function () {
-            let xhr = new window.XMLHttpRequest();
-            xhr.upload.addEventListener("progress", function (evt) {
-                if (evt.lengthComputable) {
-                    let completed = Number.parseInt(evt.loaded / evt.total * 100);
-                    if (completed === 100) {
-                        show_message ("notice", `<p>Computing MD5 ... ${current_file}/${total_files}.</p>`);
-                    }
-                }
-            }, false);
-            return xhr;
-        },
-        url:         `/v3/datasets/${dataset_uuid}/upload`,
-        type:        "POST",
-        data:        data,
-        processData: false,
-        contentType: false
-    }).done(function () {
-        if (current_file < total_files) {
-            return perform_upload (files, current_file + 1, dataset_uuid);
+    let request = new XMLHttpRequest();
+    request.upload.addEventListener("progress", function (evt) {
+        if (evt.lengthComputable) {
+            let completed = Number.parseInt(evt.loaded / evt.total * 100);
+            if (completed === 100) {
+                show_message ("notice", `<p>Computing MD5 ... ${current_file}/${total_files}.</p>`);
+            }
+        }
+    }, false);
+    request.addEventListener("load", function () {
+        if (request.status < 200 || request.status >= 300) {
+            show_message ("failure", "<p>Uploading file(s) failed.</p>");
+        } else if (current_file < total_files) {
+            perform_upload (files, current_file + 1, dataset_uuid);
         } else {
             render_files_for_dataset (dataset_uuid, null);
         }
-    }).fail(function () {
+    });
+    request.addEventListener("error", function () {
         show_message ("failure", "<p>Uploading file(s) failed.</p>");
     });
+    request.open("POST", `/v3/datasets/${dataset_uuid}/upload`);
+    request.send(data);
 }
 
 function remove_file (file_id, dataset_uuid, rerender=true) {
-    return jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/files/${file_id}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () {
+    return fetch(`/v2/account/articles/${dataset_uuid}/files/${file_id}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         if (rerender) {
             render_files_for_dataset (dataset_uuid, null);
             if (jQuery("#external_link").prop("checked")) {
@@ -1543,46 +1555,50 @@ function remove_file (file_id, dataset_uuid, rerender=true) {
             }
         }
         return true;
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", `<p>Failed to remove ${file_id}.</p>`);
         return false;
     });
 }
 
 function remove_author (author_id, dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/authors/${author_id}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_authors_for_dataset (dataset_uuid); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${author_id}</p>`); });
+    fetch(`/v2/account/articles/${dataset_uuid}/authors/${author_id}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_authors_for_dataset (dataset_uuid);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${author_id}</p>`); });
 }
 
 function remove_funding (funding_id, dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v2/account/articles/${dataset_uuid}/funding/${funding_id}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_funding_for_dataset (dataset_uuid); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${funding_id}.</p>`); });
+    fetch(`/v2/account/articles/${dataset_uuid}/funding/${funding_id}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_funding_for_dataset (dataset_uuid);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${funding_id}.</p>`); });
 }
 
 function remove_reference (url, dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/references?url=${url}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_references_for_dataset (dataset_uuid); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${url}</p>`); });
+    fetch(`/v3/datasets/${dataset_uuid}/references?url=${url}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_references_for_dataset (dataset_uuid);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${url}</p>`); });
 }
 
 function remove_tag (tag, dataset_uuid) {
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/tags?tag=${tag}`,
-        type:        "DELETE",
-        accepts:     { json: "application/json" },
-    }).done(function () { render_tags_for_dataset (dataset_uuid); })
-      .fail(function () { show_message ("failure", `<p>Failed to remove ${tag}.</p>`); });
+    fetch(`/v3/datasets/${dataset_uuid}/tags?tag=${tag}`, {
+        method:  "DELETE",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        render_tags_for_dataset (dataset_uuid);
+    }).catch(function () { show_message ("failure", `<p>Failed to remove ${tag}.</p>`); });
 }
 
 function prettify_size (size) {
@@ -1609,44 +1625,44 @@ function submit_dataset (dataset_uuid, event) {
                 jQuery("#license_embargoed").val("2");
             }
         }
-        jQuery.ajax({
-            url:         `/v3/datasets/${dataset_uuid}/submit-for-review`,
-            type:        "PUT",
-            contentType: "application/json",
-            accepts:     { json: "application/json" },
-            data:        JSON.stringify(form_data),
-        }).done(function () {
+        fetch(`/v3/datasets/${dataset_uuid}/submit-for-review`, {
+            method:  "PUT",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body:    JSON.stringify(form_data)
+        }).then(function (response) {
+            if (!response.ok) { throw response; }
             window.location.replace("/my/datasets/submitted-for-review");
-        }).fail(function (response) {
+        }).catch(function (error) {
             jQuery(".missing-required").removeClass("missing-required");
-            let error_messages = JSON.parse (response.responseText);
-            let error_message = "<p>Please fill in all required fields.</p>";
-            if (error_messages != null && error_messages.length > 0) {
-                for (let message of error_messages) {
-                    if (message.field_name == "license_id") {
-                        jQuery("#license_open").addClass("missing-required");
-                        jQuery("#license_embargoed").addClass("missing-required");
-                    } else if (message.field_name == "group_id") {
-                        jQuery("#groups-wrapper").addClass("missing-required");
-                    } else if (message.field_name == "categories") {
-                        jQuery("#categories-wrapper").addClass("missing-required");
-                    } else if (message.field_name == "agreed_to_deposit_agreement") {
-                        jQuery("label[for='deposit_agreement']").addClass("missing-required");
-                    } else if (message.field_name == "agreed_to_publish") {
-                        jQuery("label[for='publish_agreement']").addClass("missing-required");
-                    } else if (message.field_name == "embargo_type") {
-                        jQuery("#record-type-wrapper").addClass("missing-required");
-                    } else if (message.field_name == "files") {
-                        show_message ("failure", `<p>${message.message}</p>`);
-                        jQuery("#dropzone-field").addClass("missing-required");
-                    } else {
-                        jQuery(`#${message.field_name}`).addClass("missing-required");
+            json_from_error (error).then(function (error_messages) {
+                let error_message = "<p>Please fill in all required fields.</p>";
+                if (error_messages != null && error_messages.length > 0) {
+                    for (let message of error_messages) {
+                        if (message.field_name == "license_id") {
+                            jQuery("#license_open").addClass("missing-required");
+                            jQuery("#license_embargoed").addClass("missing-required");
+                        } else if (message.field_name == "group_id") {
+                            jQuery("#groups-wrapper").addClass("missing-required");
+                        } else if (message.field_name == "categories") {
+                            jQuery("#categories-wrapper").addClass("missing-required");
+                        } else if (message.field_name == "agreed_to_deposit_agreement") {
+                            jQuery("label[for='deposit_agreement']").addClass("missing-required");
+                        } else if (message.field_name == "agreed_to_publish") {
+                            jQuery("label[for='publish_agreement']").addClass("missing-required");
+                        } else if (message.field_name == "embargo_type") {
+                            jQuery("#record-type-wrapper").addClass("missing-required");
+                        } else if (message.field_name == "files") {
+                            show_message ("failure", `<p>${message.message}</p>`);
+                            jQuery("#dropzone-field").addClass("missing-required");
+                        } else {
+                            jQuery(`#${message.field_name}`).addClass("missing-required");
+                        }
                     }
                 }
-            }
-            show_message ("failure", `${error_message}`);
-            jQuery("#content-wrapper").css('opacity', '1.0');
-            jQuery("#content").removeClass("loader-top");
+                show_message ("failure", `${error_message}`);
+                jQuery("#content-wrapper").css('opacity', '1.0');
+                jQuery("#content").removeClass("loader-top");
+            });
         });
     });
 }
@@ -1656,16 +1672,16 @@ function publish_dataset (dataset_uuid, event) {
     jQuery("#content").addClass("loader-top");
     jQuery("#content-wrapper").css('opacity', '0.15');
     save_dataset (dataset_uuid, event, false, function() {
-        jQuery.ajax({
-            url:         `/v3/datasets/${dataset_uuid}/publish`,
-            type:        "POST",
-            accepts:     { json: "application/json" },
-        }).done(function () {
+        fetch(`/v3/datasets/${dataset_uuid}/publish`, {
+            method:  "POST",
+            headers: { "Accept": "application/json" }
+        }).then(function (response) {
+            if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
             window.location.replace("/logout");
-        }).fail(function (response, text_status, error_code) {
+        }).catch(function (error) {
             show_message ("failure",
                           `<p>Could not publish due to error ` +
-                          `<code>${error_code}</code>.</p>`);
+                          `<code>${error.message}</code>.</p>`);
             jQuery("#content-wrapper").css('opacity', '1.0');
             jQuery("#content").removeClass("loader-top");
         });

@@ -1,13 +1,12 @@
 function add_dataset_to_collection (dataset_id, collection_id) {
-    jQuery.ajax({
-        url:         `/v2/account/collections/${collection_id}/articles`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify({ "articles": [dataset_id] }),
-    }).done(function () {
+    fetch(`/v2/account/collections/${collection_id}/articles`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify({ "articles": [dataset_id] })
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         show_message ("success", "<p>Dataset succesfully added to collection.</p>");
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to add dataset to collection.</p>");
     });
 }
@@ -41,17 +40,15 @@ function submit_access_request (event) {
         "version":    or_null(jQuery("#access-request-version").val()),
         "reason":     value_from_quill("#access-request-reason")
     };
-    jQuery.ajax({
-        url:         `/data_access_request`,
-        type:        "POST",
-        contentType: "application/json",
-        accepts:     { json: "application/json" },
-        data:        JSON.stringify(data),
-        dataType:    "json"
-    }).done(function () {
+    fetch(`/data_access_request`, {
+        method:  "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body:    JSON.stringify(data)
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         show_message ("success", "<p>Access request has been sent.</p>");
         toggle_access_request(null);
-    }).fail(function () {
+    }).catch(function () {
         show_message ("failure", "<p>Access request could not be sent.</p>");
     });
 }
@@ -88,12 +85,13 @@ function toggle_versions (event) {
 
 function render_draft_collections () {
     if (dataset_uuid == null) { return; }
-    jQuery.ajax({
-        url:         "/v2/account/collections",
-        type:        "GET",
-        accepts:     { json: "application/json" },
-        dataType:    "json"
-    }).done(function (records) {
+    fetch("/v2/account/collections", {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw response; }
+        return response.json();
+    }).then(function (records) {
         jQuery("#collect ul").remove();
         jQuery("#collect").append("<ul></ul>");
         for (let collection of records) {
@@ -105,8 +103,8 @@ function render_draft_collections () {
                 });
             jQuery("#collect ul").append(item);
         }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403) {
+    }).catch(function (error) {
+        if (error.status == 403) {
             show_message ("failure", "<p>No permission to list collections.</p>");
         } else {
             show_message ("failure", "<p>Failed to list collections for your account.</p>");

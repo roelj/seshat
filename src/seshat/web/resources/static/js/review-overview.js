@@ -14,12 +14,13 @@ function update_item_count () {
 
 function clear_reviews_cache (event) {
     stop_event_propagation (event);
-    jQuery.ajax({
-        url:         "/v3/admin/reviews/clear-cache",
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function () { location.reload();
-    }).fail(function () {
+    fetch("/v3/admin/reviews/clear-cache", {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        location.reload();
+    }).catch(function () {
         show_message ("failure", "<p>Failed to clear the reviews cache.</p>");
     });
 }
@@ -29,16 +30,16 @@ function assign_reviewer (event) {
     let dataset_uuid = identifiers[0];
     let reviewer_uuid = identifiers[1];
 
-    jQuery.ajax({
-        url:         `/v3/datasets/${dataset_uuid}/assign-reviewer/${reviewer_uuid}`,
-        type:        "PUT",
-        accepts:     { json: "application/json" }
-    }).done(function (response) {
+    fetch(`/v3/datasets/${dataset_uuid}/assign-reviewer/${reviewer_uuid}`, {
+        method:  "PUT",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
         jQuery(`#${dataset_uuid}_status .fa-hourglass`)
             .replaceWith('<span class="fas fa-glasses" title="Assigned to ' +
                          'reviewer"><span style="font-size:0pt">assigned</span>' +
                          '</span>');
-    }).fail(function (response) {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to assign reviewer.</p>");
     });
 }
@@ -108,11 +109,13 @@ function copy_to_clipboard_event (event) {
 
 function render_overview_table () {
     jQuery("#overview-table tbody").empty();
-    jQuery.ajax({
-        url:         "/v3/reviews",
-        type:        "GET",
-        accepts:     { json: "application/json" },
-    }).done(function (reviews) {
+    fetch("/v3/reviews", {
+        method:  "GET",
+        headers: { "Accept": "application/json" }
+    }).then(function (response) {
+        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+        return response.json();
+    }).then(function (reviews) {
         let published_date = null;
         let version = "new";
         let status = "";
@@ -202,7 +205,7 @@ function render_overview_table () {
             on_change (".reviewer-filter, .status-filter", apply_filters);
 	    table.style.display = "block";
 	}
-    }).fail(function (jqXHR, textStatus, errorThrown) {
+    }).catch(function () {
         show_message ("failure", "<p>Failed to render the overview table.</p>");
     });
 }
