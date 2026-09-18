@@ -45,7 +45,7 @@ function assign_reviewer (event) {
 }
 
 function apply_filters (event) {
-    jQuery('#overview-table tr').each(function(index, element) {
+    document.querySelectorAll('#overview-table tr').forEach(function (element) {
         jQuery(element).show();
     });
     filter_reviewer (event);
@@ -56,7 +56,7 @@ function apply_filters (event) {
 function filter_reviewer (event) {
     let value = jQuery(".reviewer-filter option:selected").val();
     let name  = cleanup_name(jQuery(".reviewer-filter option:selected").text());
-    jQuery('#overview-table tr').each(function(index, element) {
+    document.querySelectorAll('#overview-table tr').forEach(function (element) {
         let reviewer_element = jQuery(element).find(`td .reviewer-selector option:selected`);
         let status = jQuery(element).find(`td:nth-child(6)`).text().trim();
         if (jQuery(element).find("th").length > 0) {} // Skip the header.
@@ -74,7 +74,7 @@ function filter_reviewer (event) {
 
 function filter_status (event) {
     let value = jQuery(".status-filter option:selected").val();
-    jQuery('#overview-table tr').each(function(index, element) {
+    document.querySelectorAll('#overview-table tr').forEach(function (element) {
         let status = jQuery(element).find(`td:nth-child(6)`).text().trim();
         if (jQuery(element).find("th").length > 0) {} // Skip the header.
         else if (value == "all" || value == status) {}
