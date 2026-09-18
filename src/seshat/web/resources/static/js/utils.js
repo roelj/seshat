@@ -41,6 +41,61 @@ function is_visible (element) {
     return element !== null && element.getClientRects().length > 0;
 }
 
+const collapsed_box = { height: "0px", paddingTop: "0px", paddingBottom: "0px", marginTop: "0px", marginBottom: "0px" };
+
+function vertical_box (element) {
+    let style = getComputedStyle(element);
+    return { height: style.height, paddingTop: style.paddingTop, paddingBottom: style.paddingBottom,
+             marginTop: style.marginTop, marginBottom: style.marginBottom };
+}
+
+function has_display_none (element) {
+    return getComputedStyle(element).display === "none";
+}
+
+function animate_element (element, keyframes, duration, on_finish) {
+    if (typeof element.animate !== "function") { on_finish (); return; }
+    element.animate(keyframes, { duration: duration, easing: "ease-in-out" }).onfinish = on_finish;
+}
+
+function slide_down (element, duration, display = "", callback = function () {}) {
+    if (element === null) { return; }
+    if (!has_display_none (element)) { callback (); return; }
+    element.style.display = display;
+    element.style.overflow = "hidden";
+    animate_element (element, [collapsed_box, vertical_box (element)], duration, function () {
+        element.style.overflow = "";
+        callback ();
+    });
+}
+
+function slide_up (element, duration, callback = function () {}) {
+    if (element === null) { return; }
+    if (has_display_none (element)) { callback (); return; }
+    element.style.overflow = "hidden";
+    animate_element (element, [vertical_box (element), collapsed_box], duration, function () {
+        element.style.display = "none";
+        element.style.overflow = "";
+        callback ();
+    });
+}
+
+function fade_in (element, duration, display = "", callback = function () {}) {
+    if (element === null) { return; }
+    if (!has_display_none (element)) { callback (); return; }
+    element.style.display = display;
+    animate_element (element, [{ opacity: 0 }, { opacity: getComputedStyle(element).opacity }], duration, callback);
+}
+
+function fade_out (element, duration, callback = function () {}) {
+    if (element === null) { return; }
+    if (has_display_none (element)) { callback (); return; }
+    animate_element (element, [{ opacity: getComputedStyle(element).opacity }, { opacity: 0 }], duration, function () {
+        element.style.display = "none";
+        callback ();
+    });
+}
+
 function is_empty_object (item) {
     if (item === null || item === undefined) { return true; }
     return Object.keys(item).length === 0;

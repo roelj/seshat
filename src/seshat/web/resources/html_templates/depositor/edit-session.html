@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block headers %}
 <script src="/static/js/jquery-3.6.0.min.js"></script>
+<script src="/static/js/utils.js?cache=1774719208"></script>
 <script nonce="{{nonce}}">
 function save_session (session_id) {
     event.preventDefault();
@@ -17,7 +18,7 @@ function save_session (session_id) {
         let message = document.getElementById("message");
         message.classList.add("failure");
         message.insertAdjacentHTML("beforeend", "<p>Please provide a token name</p>");
-        jQuery(message).fadeIn(250);
+        fade_in (message, 250, "block");
     });
 }
 

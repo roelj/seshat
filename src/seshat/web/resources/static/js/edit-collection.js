@@ -657,7 +657,7 @@ function activate (collection_id) {
         });
         document.getElementById("expand-categories-button")?.addEventListener("click", toggle_categories);
         hide_elements (".collection-content-loader");
-        jQuery(".collection-content").fadeIn(200);
+        document.querySelectorAll(".collection-content").forEach(function (element) { fade_in (element, 200); });
     }).catch(function () {
         show_message ("failure","<p>Failed to retrieve collection.</p>");
     });

@@ -1491,7 +1491,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
         document.getElementById("cancel_embargo")?.addEventListener("click", toggle_embargo_options);
 
         hide_elements (".article-content-loader");
-        jQuery(".article-content").fadeIn(200);
+        document.querySelectorAll(".article-content").forEach(function (element) { fade_in (element, 200); });
         hide_elements ("#thumbnail-files-wrapper");
 
         hide_elements ("#api-upload-fold");
@@ -1507,9 +1507,9 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
 function toggle_api_upload_text (event) {
     stop_event_propagation (event);
     if (!is_visible (document.getElementById("api-upload-fold"))) {
-        jQuery("#api-upload-fold").slideDown(250);
+        slide_down (document.getElementById("api-upload-fold"), 250);
     } else {
-        jQuery("#api-upload-fold").slideUp(250);
+        slide_up (document.getElementById("api-upload-fold"), 250);
     }
 }
 function toggle_embargo_options (event) {

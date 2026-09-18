@@ -13,15 +13,16 @@ function add_dataset_to_collection (dataset_id, collection_id) {
 
 function toggle_access_request (event) {
     stop_event_propagation (event);
-    if (is_visible (document.getElementById("access-request-wrapper"))) {
-        jQuery("#access-request-wrapper").slideUp(150, function (){
+    let wrapper = document.getElementById("access-request-wrapper");
+    if (is_visible (wrapper)) {
+        slide_up (wrapper, 150, function (){
             let button = document.getElementById("access-request");
             button.classList.remove("close");
             button.classList.add("open");
             button.textContent = "Request access to data";
         });
     } else {
-       jQuery("#access-request-wrapper").slideDown(150, function (){
+        slide_down (wrapper, 150, "block", function (){
             let button = document.getElementById("access-request");
             button.classList.remove("open");
             button.classList.add("close");
@@ -56,9 +57,9 @@ function prompt_download_all_request (event) {
     let download_message = document.getElementById("download-all-files-message");
     download_message.classList.add("success");
     download_message.insertAdjacentHTML("beforeend", "<p>Your download is being prepared. This may take a while.</p>");
-    jQuery(download_message).fadeIn(250);
+    fade_in (download_message, 250, "block");
     setTimeout(function() {
-        jQuery("#download-all-files-message").fadeOut(500, function() {
+        fade_out (download_message, 500, function() {
             let message = document.getElementById("message");
             message.classList.remove("success");
             message.classList.add("transparent");
@@ -70,15 +71,15 @@ function prompt_download_all_request (event) {
 
 function toggle_versions (event) {
     stop_event_propagation (event);
-    let versions = jQuery("#versions");
-    if (is_visible (versions[0])) {
-        versions.slideUp(150, function () {
+    let versions = document.getElementById("versions");
+    if (is_visible (versions)) {
+        slide_up (versions, 150, function () {
             let arrow = document.getElementById("versions-arrow");
             arrow.classList.remove("fa-angle-up");
             arrow.classList.add("fa-angle-down");
         });
     } else {
-        versions.slideDown(150, function () {
+        slide_down (versions, 150, "block", function () {
             let arrow = document.getElementById("versions-arrow");
             arrow.classList.remove("fa-angle-down");
             arrow.classList.add("fa-angle-up");
