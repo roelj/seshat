@@ -55,7 +55,7 @@ function preview_dataset (dataset_uuid, event) {
 }
 
 function gather_form_data () {
-    let categories   = jQuery("input[name='categories']:checked");
+    let categories   = document.querySelectorAll("input[name='categories']:checked");
     let category_ids = [];
     for (let category of categories) {
         category_ids.push(category.value);
@@ -68,9 +68,7 @@ function gather_form_data () {
         defined_type_name = "dataset";
     }
 
-    let group_id = jQuery("input[name='groups']:checked")[0];
-    if (group_id !== undefined) { group_id = group_id["value"]; }
-    else { group_id = null; }
+    let group_id = document.querySelector("input[name='groups']:checked")?.value ?? null;
 
     let is_embargoed  = document.getElementById("embargoed_access").checked;
     let is_restricted = document.getElementById("restricted_access").checked;
@@ -1124,12 +1122,12 @@ function toggle_access_level () {
     if (document.getElementById("open_access").checked) {
         show_elements ("#open_access_form");
     } else if (document.getElementById("embargoed_access").checked) {
-        if (jQuery("#embargo_reason.ql-container").length === 0) {
+        if (document.querySelector("#embargo_reason.ql-container") === null) {
             new Quill('#embargo_reason', { modules: quill_modules, theme: 'snow' });
         }
         show_elements ("#embargoed_access_form", "block");
     } else if (document.getElementById("restricted_access").checked) {
-        if (jQuery("#restricted_access_reason.ql-container").length === 0) {
+        if (document.querySelector("#restricted_access_reason.ql-container") === null) {
             new Quill('#restricted_access_reason', { modules: quill_modules, theme: 'snow' });
             new Quill('#restricted_access_eula', { modules: quill_modules, theme: 'snow' });
         }

@@ -480,18 +480,18 @@ function load_search_filters_from_url() {
                 for (let value of values) {
                     let stripped_value = value.replace(/[^a-zA-Z0-9-_]/g, '');
                     let checkbox_id = `checkbox_${filter_name}_${stripped_value}`;
-                    let checkbox_id_element = jQuery(`#${checkbox_id}`);
-                    if (checkbox_id_element.length > 0) {
-                        document.getElementById(checkbox_id).checked = true;
+                    let checkbox_id_element = document.getElementById(checkbox_id);
+                    if (checkbox_id_element !== null) {
+                        checkbox_id_element.checked = true;
                         if (filter_name == "categories") {
                             if (enable_subcategories) {
-                                let checkbox_id_class = checkbox_id_element[0].className;
+                                let checkbox_id_class = checkbox_id_element.className;
                                 if (checkbox_id_class) {
                                     let classes = checkbox_id_class.split(" ");
                                     if (classes.includes("subcategory")) {
-                                        let parent_category_id = checkbox_id_element[0].parentElement.parentElement.id.split("_").pop();
+                                        let parent_category_id = checkbox_id_element.parentElement.parentElement.id.split("_").pop();
                                         toggle_checkbox_subcategories(parent_category_id, force_on=true);
-                                        document.getElementById(checkbox_id).checked = true;
+                                        checkbox_id_element.checked = true;
                                     }
                                 }
                             }
@@ -518,15 +518,15 @@ function load_search_filters_from_url() {
                 if (is_other && "enable_other" in filter_info[filter_name] && url_params[param_name] && url_params[param_name].length > 0) {
                     let other_value = url_params[param_name];
                     let input_text_id = `textinput_${filter_name}_other`;
-                    let input_text_id_element = jQuery(`#${input_text_id}`);
-                    if (input_text_id_element.length > 0) {
-                        input_text_id_element[0].value = other_value;
+                    let input_text_id_element = document.getElementById(input_text_id);
+                    if (input_text_id_element !== null) {
+                        input_text_id_element.value = other_value;
                         toggle_filter_input_text(input_text_id, true);
                     }
                     let checkbox_id = `checkbox_${filter_name}_other`;
-                    let checkbox_id_element = jQuery(`#${checkbox_id}`);
-                    if (checkbox_id_element.length > 0) {
-                        document.getElementById(checkbox_id).checked = true;
+                    let checkbox_id_element = document.getElementById(checkbox_id);
+                    if (checkbox_id_element !== null) {
+                        checkbox_id_element.checked = true;
                     }
                 }
             } else {
@@ -838,9 +838,12 @@ function sort_search_results(sort_by) {
         return parent.querySelectorAll(`:scope > ${selector}`)[index]?.textContent ?? "";
     }
 
-    let search_results_list = jQuery(".corporate-identity-table");
+    let search_results_list = document.querySelector(".corporate-identity-table");
     // the first <tr> is the header row, so find the second <tr>
-    let list_items = search_results_list.find("tr:gt(0)").get();
+    let list_items = [];
+    if (search_results_list !== null) {
+        list_items = [...search_results_list.querySelectorAll("tr")].slice(1);
+    }
 
     try {
         list_items.sort(function(a, b) {
@@ -869,15 +872,15 @@ function sort_search_results(sort_by) {
             list_items.reverse();
         }
         list_items.forEach(function (row) {
-            search_results_list[0].tBodies[0].append(row);
+            search_results_list.tBodies[0].append(row);
         });
     } catch (error) {}
 
     //
     // Sort the tile view
     //
-    let search_results_tiles = jQuery("#search-results-tile-view");
-    let tile_items = search_results_tiles.find(".tile-item").get();
+    let search_results_tiles = document.getElementById("search-results-tile-view");
+    let tile_items = [...search_results_tiles.querySelectorAll(".tile-item")];
 
     try {
         tile_items.sort(function(a, b) {
@@ -907,7 +910,7 @@ function sort_search_results(sort_by) {
             tile_items.reverse();
         }
         tile_items.forEach(function (tile) {
-            search_results_tiles[0].append(tile);
+            search_results_tiles.append(tile);
         });
     } catch (error) {}
 }

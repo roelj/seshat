@@ -60,12 +60,12 @@ function filter_reviewer (event) {
     let value = document.querySelector(".reviewer-filter").value;
     let name  = cleanup_name(document.querySelector(".reviewer-filter").selectedOptions[0].textContent);
     document.querySelectorAll('#overview-table tr').forEach(function (element) {
-        let reviewer_element = jQuery(element).find(`td .reviewer-selector option:selected`);
+        let reviewer_selector = element.querySelector("td .reviewer-selector");
         let status = (element.querySelector("td:nth-child(6)")?.textContent ?? "").trim();
-        if (jQuery(element).find("th").length > 0) {} // Skip the header.
+        if (element.querySelector("th") !== null) {} // Skip the header.
         else if (value == "all") {}
-        else if (value == "unassigned" && reviewer_element.length > 0 && reviewer_element[0].value == "") {}
-        else if (reviewer_element.length > 0 && reviewer_element[0].value.split(":").pop() == value) {}
+        else if (value == "unassigned" && reviewer_selector !== null && reviewer_selector.value == "") {}
+        else if (reviewer_selector !== null && reviewer_selector.value.split(":").pop() == value) {}
         else if (status == "approved") {
             let reviewer = element.querySelector("td:nth-child(10)")?.textContent ?? "";
             let reviewer_name = cleanup_name(reviewer);
@@ -79,7 +79,7 @@ function filter_status (event) {
     let value = document.querySelector(".status-filter").value;
     document.querySelectorAll('#overview-table tr').forEach(function (element) {
         let status = (element.querySelector("td:nth-child(6)")?.textContent ?? "").trim();
-        if (jQuery(element).find("th").length > 0) {} // Skip the header.
+        if (element.querySelector("th") !== null) {} // Skip the header.
         else if (value == "all" || value == status) {}
         else { element.style.display = "none"; }
     });

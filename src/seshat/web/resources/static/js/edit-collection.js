@@ -397,15 +397,13 @@ function remove_tag (tag, collection_id) {
 }
 
 function gather_form_data () {
-    let categories   = jQuery("input[name='categories']:checked");
+    let categories   = document.querySelectorAll("input[name='categories']:checked");
     let category_ids = [];
     for (let category of categories) {
         category_ids.push(category.value);
     }
 
-    let group_id = jQuery("input[name='groups']:checked")[0];
-    if (group_id !== undefined) { group_id = group_id["value"]; }
-    else { group_id = null; }
+    let group_id = document.querySelector("input[name='groups']:checked")?.value ?? null;
 
     let title = or_null(document.getElementById("title").value);
     if (title == "" || title == null) { title = "Untitled collection"; }
