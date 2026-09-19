@@ -490,7 +490,7 @@ function load_search_filters_from_url() {
                                     let classes = checkbox_id_class.split(" ");
                                     if (classes.includes("subcategory")) {
                                         let parent_category_id = checkbox_id_element.parentElement.parentElement.id.split("_").pop();
-                                        toggle_checkbox_subcategories(parent_category_id, force_on=true);
+                                        toggle_checkbox_subcategories(parent_category_id, true);
                                         checkbox_id_element.checked = true;
                                     }
                                 }
