@@ -5,10 +5,8 @@
 <script src="/static/js/edit-collection.js?cache={{startup_timestamp}}"></script>
 <script nonce="{{nonce}}">
 document.addEventListener("DOMContentLoaded", function () {
-    root_categories = []
     hide_elements (".subcategory-wrapper");
 {%- for category in categories %}
-    root_categories.push("{{category.uuid}}");
     document.getElementById("category_{{category.uuid}}")?.addEventListener("change", function () {
         if (this.checked) {
             document.getElementById("category_{{category.uuid}}").checked = true;

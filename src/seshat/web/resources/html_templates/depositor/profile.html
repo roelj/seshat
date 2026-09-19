@@ -7,13 +7,11 @@
 <script nonce="{{nonce}}">
 Dropzone.autoDiscover = false;
 document.addEventListener("DOMContentLoaded", function (){
-    root_categories = []
     document.querySelectorAll(".hide-for-javascript").forEach(function (element) {
         element.classList.remove("hide-for-javascript");
     });
     hide_elements (".subcategory-wrapper");
 {%- for category in categories %}
-    root_categories.push("{{category.uuid}}");
     document.getElementById("category_{{category.uuid}}")?.addEventListener("change", function () {
         if (this.checked) {
             document.getElementById("category_{{category.uuid}}").checked = true;
