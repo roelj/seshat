@@ -3819,11 +3819,16 @@ class WebServer:
 
         try:
             parameters = request.get_json()
-            email      = validator.string_value (parameters, "email", required=True)
-            name       = validator.string_value (parameters, "name", required=True)
-            dataset_id = validator.string_value (parameters, "dataset_id", required=True)
-            version    = validator.integer_value (parameters, "version", required=True)
-            reason     = validator.string_value (parameters, "reason", 0, 10000, required=True, strip_html=False)
+            errors = []
+            email      = validator.string_value (parameters, "email", required=True, error_list=errors)
+            name       = validator.string_value (parameters, "name", required=True, error_list=errors)
+            dataset_id = validator.string_value (parameters, "dataset_id", required=True, error_list=errors)
+            version    = validator.integer_value (parameters, "version", required=True, error_list=errors)
+            reason     = validator.string_value (parameters, "reason", 0, 10000, required=True,
+                                                 strip_html=False, error_list=errors)
+
+            if errors:
+                return self.error_400_list (request, errors)
 
             dataset = self.db.datasets (container_uuid=dataset_id, version=version)[0]
 
@@ -3858,8 +3863,6 @@ class WebServer:
                 reason          = reason)
 
             return self.respond_204 ()
-        except (validator.ValidationException, KeyError):
-            pass
         except IndexError:
             return self.error_400 (request, "Dataset does not exist", "DatasetDoesNotExist")
 

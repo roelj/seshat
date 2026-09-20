@@ -45,11 +45,21 @@ function submit_access_request (event) {
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body:    JSON.stringify(data)
     }).then(function (response) {
-        if (!response.ok) { throw new Error(`Error: ${response.status} ${response.statusText}`); }
+	if (!response.ok) { throw response; }
         show_message ("success", "<p>Access request has been sent.</p>");
         toggle_access_request(null);
-    }).catch(function () {
-        show_message ("failure", "<p>Access request could not be sent.</p>");
+    }).catch(function (error) {
+        document.querySelectorAll(".missing-required").forEach(function (element) {
+            element.classList.remove("missing-required");
+        });
+	json_from_error (error).then(function (error_messages) {
+	    if (error_messages != null && error_messages.length > 0) {
+		for (let message of error_messages) {
+		    document.getElementById(`access-request-${message.field_name}`)?.classList.add("missing-required");
+		}
+	    }
+	    show_message ("failure", "<p>Please fill in all required fields.</p>");
+	});
     });
 }
 
