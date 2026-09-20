@@ -917,14 +917,17 @@ class SparqlInterface:
         query = self.__query_from_template ("licenses")
         return self.__run_query (query, query, "licenses")
 
-    def latest_datasets_portal (self, page_size=30):
+    def latest_datasets_portal (self, page_size=30, use_cache=True):
         """Procedure to get the latest datasets."""
 
         query = self.__query_from_template ("latest_datasets_portal", {
             "page_size":   page_size
         })
 
-        return self.__run_query(query)
+        if use_cache:
+            return self.__run_query (query, query, "latest_datasets")
+
+        return self.__run_query (query)
 
     def collections_from_dataset (self, dataset_container_uuid):
         """Procedure to get the collections a dataset is part of."""
@@ -2326,6 +2329,7 @@ class SparqlInterface:
 
         if self.__run_logged_query (query):
             self.cache.invalidate_by_prefix ("repository_statistics")
+            self.cache.invalidate_by_prefix ("latest_datasets")
             self.cache.invalidate_by_prefix ("reviews")
             self.cache.invalidate_by_prefix (f"datasets_{account_uuid}")
             return True
