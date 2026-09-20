@@ -518,7 +518,10 @@ img { user-select: none; }
 .sticky-message { position: fixed !important; top: 70px; }
 .sticky-margin { margin-top: 60px; }
 .sticky-message p { margin: 0em; }
-.missing-required { border: solid 2pt var(--missing-required-border); background: var(--missing-required-background); }
+.missing-required {
+  border: solid 2pt var(--missing-required-border) !important;
+  background: var(--missing-required-background) !important;
+}
 .help-icon { margin: 0pt 0pt 0pt 5pt; }
 .help-icon .help-text { display: none; }
 .help-icon:hover { cursor: pointer; }
