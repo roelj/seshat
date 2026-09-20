@@ -1,6 +1,6 @@
 {% extends "prefixes.sparql" %}
 {% block query %}
-SELECT ?container_uuid ?published_date ?title (?dataset AS ?dataset_uri)
+SELECT ?container_uuid ?published_date ?title ?embargo_type (?dataset AS ?dataset_uri)
 WHERE {
   GRAPH <{{state_graph}}> {
     ?dataset_container rdf:type                       shst:DatasetContainer ;
@@ -8,7 +8,7 @@ WHERE {
     ?dataset           rdf:type                       shst:Dataset ;
                        shst:posted_date               ?published_date ;
                        shst:title                     ?title .
-
+    OPTIONAL { ?dataset shst:embargo_type             ?embargo_type . }
     BIND(STRAFTER(STR(?dataset_container), "container:") AS ?container_uuid)
   }
 }

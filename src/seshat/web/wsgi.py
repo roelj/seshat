@@ -3524,9 +3524,13 @@ class WebServer:
         try:
             records = self.db.latest_datasets_portal(15)
             for rec in records:
-                authors = self.db.authors (item_uri  = rec["dataset_uri"],
-                                           item_type = "dataset",
-                                           limit     = None)
+                authors = []
+                if rec.get("embargo_type") == "article":
+                    authors.append({"full_name": "Undisclosed due to embargo"})
+                else:
+                    authors = self.db.authors (item_uri  = rec["dataset_uri"],
+                                               item_type = "dataset",
+                                               limit     = None)
                 pub_date = rec['published_date'][:10]
                 url = f'/datasets/{rec["container_uuid"]}'
                 latest.append((url, rec['title'], pub_date, authors))
