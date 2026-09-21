@@ -2072,7 +2072,7 @@ class WebServer:
 
             if mfa_token is None:
                 response = redirect ("/my/dashboard", code=302)
-                response.set_cookie (key=self.session_cookie_key, value=token, samesite="Lax", secure=config.in_production)
+                response.set_cookie (key=self.session_cookie_key, value=token, samesite="Lax", secure=config.in_production, httponly=True)
                 return response
 
             ## Send e-mail
@@ -2084,7 +2084,7 @@ class WebServer:
                 "2fa_token", token = mfa_token)
 
             response = redirect (f"/my/sessions/{session_uuid}/activate", code=302)
-            response.set_cookie (key=self.session_cookie_key, value=token, samesite="Lax", secure=config.in_production)
+            response.set_cookie (key=self.session_cookie_key, value=token, samesite="Lax", secure=config.in_production, httponly=True)
             return response
 
         return self.error_500 ("Failed to complete the log in procedure for an unknown reason.")
@@ -2108,7 +2108,8 @@ class WebServer:
             self.db.delete_session (self.value_from_cookie (request, self.session_cookie_key))
             response.set_cookie (key    = self.session_cookie_key,
                                  value  = other_session_token,
-                                 secure = config.in_production)
+                                 secure = config.in_production,
+                                 httponly = True)
             response.delete_cookie (key = self.impersonator_cookie_key)
             response.delete_cookie (key = "redirect_to")
             return response
@@ -2154,11 +2155,13 @@ class WebServer:
         response.set_cookie (key    = self.impersonator_cookie_key,
                              value  = self.token_from_request (request),
                              samesite = "Strict",
-                             secure = config.in_production)
+                             secure = config.in_production,
+                             httponly = True)
         response.set_cookie (key    = "redirect_to",
                              value  = "/review/overview",
                              samesite = "Strict",
-                             secure = config.in_production)
+                             secure = config.in_production,
+                             httponly = True)
 
         # Create a new session for the user to be impersonated as.
         new_token, _, _ = self.db.insert_session (dataset["account_uuid"],
@@ -2167,7 +2170,8 @@ class WebServer:
         response.set_cookie (key    = self.session_cookie_key,
                              value  = new_token,
                              samesite = "Strict",
-                             secure = config.in_production)
+                             secure = config.in_production,
+                             httponly = True)
         return response
 
     def ui_admin_impersonate (self, request, account_uuid):
@@ -2187,11 +2191,13 @@ class WebServer:
         response.set_cookie (key    = self.impersonator_cookie_key,
                              value  = token,
                              samesite = "Strict",
-                             secure = config.in_production)
+                             secure = config.in_production,
+                             httponly = True)
         response.set_cookie (key    = "redirect_to",
                              value  = "/admin/users",
                              samesite = "Strict",
-                             secure = config.in_production)
+                             secure = config.in_production,
+                             httponly = True)
 
         # Create a new session for the user to be impersonated as.
         new_token, _, _ = self.db.insert_session (account_uuid,
@@ -2200,7 +2206,8 @@ class WebServer:
         response.set_cookie (key    = self.session_cookie_key,
                              value  = new_token,
                              samesite = "Strict",
-                             secure = config.in_production)
+                             secure = config.in_production,
+                             httponly = True)
         return response
 
     def ui_dashboard (self, request):
@@ -2251,7 +2258,7 @@ class WebServer:
 
         # 'Upgrade' SameSite from "Lax" to "Strict".
         token = self.value_from_cookie (request, self.session_cookie_key)
-        response.set_cookie (key=self.session_cookie_key, value=token, samesite="Strict", secure=config.in_production)
+        response.set_cookie (key=self.session_cookie_key, value=token, samesite="Strict", secure=config.in_production, httponly=True)
         return response
 
     def __datasets_with_storage_usage (self, datasets):
