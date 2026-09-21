@@ -9496,7 +9496,7 @@ class WebServer:
             if token is None:
                 continue
             if re.search(re_field, token) is not None:
-                matched = re.split(':', token)[1::2][0]
+                matched = re.split(':', token)[1]
                 if matched in fields:
                     try:
                         search_tokens[idx] = f"{token} {search_tokens[idx+1]}"
@@ -9531,7 +9531,7 @@ class WebServer:
                 continue
 
             if re.search(re_field, search_term) is not None:
-                field_name = re.split(':', search_term)[1::2][0]
+                field_name = re.split(':', search_term)[1]
                 value = next(filter(None, [s.strip() for s in re.split(':', search_term)[0::2]]))
 
                 if field_name in fields:
