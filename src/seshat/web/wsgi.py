@@ -46,7 +46,7 @@ from seshat.web.config import config
 ## for the documentation.
 try:
     from seshat.config import DOCUMENTATION_DIRECTORY
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     DOCUMENTATION_DIRECTORY=None
 
 ## Error handling for loading python3-saml is done in 'ui'.
@@ -55,13 +55,13 @@ try:
     from onelogin.saml2.auth import OneLogin_Saml2_Auth
     from onelogin.saml2.errors import OneLogin_Saml2_Error
     from xmlsec import Error as xmlsecError
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     pass
 
 ## Similarly, error handling for loading pyvips is done in 'ui'.
 try:
     import pyvips
-except (OSError, ImportError, ModuleNotFoundError):
+except (OSError, ImportError):
     pass
 
 def R (uri_path, endpoint):  # pylint: disable=invalid-name

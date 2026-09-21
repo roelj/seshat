@@ -22,14 +22,14 @@ try:
     from onelogin.saml2.auth import OneLogin_Saml2_Auth  # pylint: disable=unused-import
     from onelogin.saml2.errors import OneLogin_Saml2_Error  # pylint: disable=unused-import
     SAML2_DEPENDENCY_LOADED = True
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     SAML2_DEPENDENCY_LOADED = False
 
 PYVIPS_ERROR_MESSAGE = None  # pylint: disable=invalid-name
 try:
     import pyvips  # pylint: disable=unused-import
     PYVIPS_DEPENDENCY_LOADED = True
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     PYVIPS_DEPENDENCY_LOADED = False
 except OSError as pyvips_oserror_message:
     PYVIPS_DEPENDENCY_LOADED = False
@@ -53,7 +53,7 @@ except ModuleNotFoundError:
 try:
     import boto3  # pylint: disable=unused-import
     BOTO3_DEPENDENCY_LOADED = True
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     BOTO3_DEPENDENCY_LOADED = False
 
 # The 'waitress' module provides a production-grade WSGI server for the
@@ -63,7 +63,7 @@ except (ImportError, ModuleNotFoundError):
 try:
     from waitress import serve as waitress_serve
     WAITRESS_DEPENDENCY_LOADED = True
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     WAITRESS_DEPENDENCY_LOADED = False
 
 class ConfigFileNotFound(Exception):

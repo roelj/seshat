@@ -39,7 +39,7 @@ try:
     from botocore.exceptions import ResponseStreamingError, ReadTimeoutError
     from urllib3.exceptions import IncompleteRead
     S3_ENABLED = True
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     S3_ENABLED = False
 
 class LargePredictionSize (Exception):

@@ -13,7 +13,7 @@ try:
     from botocore.exceptions import ResponseStreamingError, ReadTimeoutError
     from botocore.config import Config
     from urllib3.exceptions import IncompleteRead
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     pass
 
 class S3DownloadStreamer:
