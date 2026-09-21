@@ -1330,8 +1330,8 @@ class SparqlInterface:
 
         authors       = rdf.uris_from_records (authors, "author", "uuid")
         categories    = rdf.uris_from_records (categories, "category", "uuid")
-        tags          = list(map(lambda tag: tag["tag"], tags))
-        references    = list(map(lambda reference: reference["url"], references))
+        tags          = [tag["tag"] for tag in tags]
+        references    = [reference["url"] for reference in references]
         files         = rdf.uris_from_records (files, "file", "uuid")
         funding_list  = rdf.uris_from_records (funding_list, "funding", "uuid")
         private_links = rdf.uris_from_records (private_links, "private_link", "uuid")
@@ -2755,8 +2755,8 @@ class SparqlInterface:
 
         authors       = rdf.uris_from_records (authors, "author", "uuid")
         categories    = rdf.uris_from_records (categories, "category", "uuid")
-        references    = list(map(lambda reference: reference["url"], references))
-        tags          = list(map(lambda tag: tag["tag"], tags))
+        references    = [reference["url"] for reference in references]
+        tags          = [tag["tag"] for tag in tags]
         funding_list  = rdf.uris_from_records (funding_list, "funding", "uuid")
         private_links = rdf.uris_from_records (private_links, "private_link", "uuid")
 

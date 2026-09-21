@@ -130,7 +130,7 @@ def format_codemeta_record (record, git_url, tags, authors, has_files, base_url)
         "identifier": conv.value_or_none(record, "doi"),
         "description": [conv.value_or (record, "title", ""), description],
         "keywords": list (map (format_tag_record, tags)),
-        "author": list (map (lambda author: format_codemeta_author_record (author, base_url), authors))
+        "author": [format_codemeta_author_record (author, base_url) for author in authors]
     }
 
     resource_doi = conv.value_or_none (record, "resource_doi")
@@ -209,8 +209,8 @@ def format_rocrate_record (base_url, site_name, record, ror_url, tags,
         "description": description,
         "keywords": list (map (format_tag_record, tags)),
         "license": { "@id": conv.value_or_none (record, "license_spdx") },
-        "author": list (map (lambda author: format_codemeta_author_record (author, base_url), authors)),
-        "hasPart": list (map (lambda item: { "@id": item["@id"] }, file_records))
+        "author": [format_codemeta_author_record (author, base_url) for author in authors],
+        "hasPart": [{ "@id": item["@id"] } for item in file_records]
     }
 
     if git_url:
@@ -724,7 +724,7 @@ def format_iiif_manifest_record (dataset, files, authors, version, base_url):
         metadata = [{
             "label": { "en": [ "Authors" ] },
             "value": {
-                "none": list (map (lambda author: conv.value_or_none (author, "full_name"), authors))
+                "none": [conv.value_or_none (author, "full_name") for author in authors]
             }
         }]
     description = conv.value_or_none (dataset, "description")
@@ -733,8 +733,8 @@ def format_iiif_manifest_record (dataset, files, authors, version, base_url):
             "label": { "en": [ "Description" ] },
             "value": { "en": [ conv.html_to_plaintext (description) ] }
         }]
-    items = list (map (lambda record: format_iiif_canvas_record (record, base_url), files))
-    thumbnails = list(map (lambda item: item["thumbnail"][0], items))
+    items = [format_iiif_canvas_record (record, base_url) for record in files]
+    thumbnails = [item["thumbnail"][0] for item in items]
     output = {
         "@context": "http://iiif.io/api/presentation/3/context.json",
         "id": f"{base_url}/iiif/v3/{dataset['container_uuid']}/{version}/manifest",

@@ -234,11 +234,9 @@ def uris_from_records (records, prefix, uuid_index=None):
         return records
 
     if records and isinstance(records[0], dict) and uuid_index is not None:
-        return list(map (lambda record: URIRef(uuid_to_uri (
-            record[uuid_index], prefix)), records))
+        return [URIRef(uuid_to_uri (record[uuid_index], prefix)) for record in records]
 
-    return list(map (lambda record: URIRef(
-        uuid_to_uri (record, prefix)), records))
+    return [URIRef(uuid_to_uri (record, prefix)) for record in records]
 
 def uuid_short_encode (uuid_object):
     """Returns a short string encoding the uuid_object."""

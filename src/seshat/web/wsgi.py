@@ -4991,8 +4991,8 @@ class WebServer:
                         is_published = False,
                         limit        = 10000)
 
-                    existing_authors = list(map (lambda item: URIRef(uuid_to_uri(item["uuid"], "author")),
-                                                 existing_authors))
+                    existing_authors = [URIRef(uuid_to_uri(item["uuid"], "author"))
+                                        for item in existing_authors]
 
                 authors = existing_authors + new_authors
                 if not self.db.update_item_list (item["uuid"], account_uuid,
@@ -5049,7 +5049,7 @@ class WebServer:
             else:
                 authors.remove (next (filter (lambda item: item['uuid'] == author_id, authors)))
 
-            authors = list(map (lambda item: URIRef(uuid_to_uri(item["uuid"], "author")), authors))
+            authors = [URIRef(uuid_to_uri(item["uuid"], "author")) for item in authors]
             if self.db.update_item_list (dataset["uuid"], account_uuid, authors, "authors"):
                 return self.respond_204()
 
@@ -5129,8 +5129,8 @@ class WebServer:
                         is_published = False,
                         limit        = 10000)
 
-                    existing_fundings = list(map (lambda item: URIRef(uuid_to_uri(item["uuid"],"funding")),
-                                                 existing_fundings))
+                    existing_fundings = [URIRef(uuid_to_uri(item["uuid"], "funding"))
+                                         for item in existing_fundings]
 
                 fundings = existing_fundings + new_fundings
                 if not self.db.update_item_list (item["uuid"], account_uuid,
@@ -5193,7 +5193,7 @@ class WebServer:
 
             fundings.remove (next (filter (lambda item: item['uuid'] == funding_id, fundings)))
 
-            fundings = list(map (lambda item: URIRef(uuid_to_uri(item["uuid"], "funding")), fundings))
+            fundings = [URIRef(uuid_to_uri(item["uuid"], "funding")) for item in fundings]
             if self.db.update_item_list (item["uuid"], account_uuid,
                                          fundings, "funding_list"):
                 return self.respond_204()
@@ -5244,8 +5244,7 @@ class WebServer:
             else:
                 authors.remove (next (filter (lambda item: item['uuid'] == author_id, authors)))
 
-            authors = list(map(lambda item: URIRef(uuid_to_uri(item["uuid"], "author")),
-                                authors))
+            authors = [URIRef(uuid_to_uri(item["uuid"], "author")) for item in authors]
 
             if self.db.update_item_list (collection["uuid"], account_uuid,
                                          authors, "authors"):
@@ -5346,7 +5345,7 @@ class WebServer:
                                                               is_published = False,
                                                               limit        = None)
 
-                    existing_categories = list(map(lambda category: category["uuid"], existing_categories))
+                    existing_categories = [category["uuid"] for category in existing_categories]
 
                     # Merge and remove duplicates
                     categories = list(dict.fromkeys(existing_categories + categories))
@@ -6422,8 +6421,7 @@ class WebServer:
                                                          is_latest=True,
                                                          limit=10000)
                     if existing_datasets:
-                        existing_datasets = list(map(lambda item: item["container_uuid"],
-                                                     existing_datasets))
+                        existing_datasets = [item["container_uuid"] for item in existing_datasets]
 
                 new_datasets = parameters["articles"]
                 datasets   = existing_datasets + new_datasets
@@ -6590,7 +6588,8 @@ class WebServer:
 
         if request.method in ("HEAD", "GET"):
             projects = self.db.projects (created_by = account_uuid, limit = 10000)
-            output = list(map (lambda project: formatter.format_project_record (project, config.ontology_url), projects))
+            output = [formatter.format_project_record (project, config.ontology_url)
+                      for project in projects]
             return self.response (json.dumps(output))
 
         if request.method == "POST":
@@ -8272,7 +8271,7 @@ class WebServer:
             if request.method in ("GET", "HEAD"):
                 return self.default_list_response (references, formatter.format_reference_record)
 
-            references     = list(map(lambda reference: reference["url"], references))
+            references     = [reference["url"] for reference in references]
 
             if request.method == 'DELETE':
                 url_encoded = validator.string_value (request.args, "url", 0, 1024, True)
@@ -8372,7 +8371,7 @@ class WebServer:
             if request.method in ("GET", "HEAD"):
                 return self.default_list_response (tags, formatter.format_tag_record)
 
-            tags     = list(map(lambda tag: tag["tag"], tags))
+            tags     = [tag["tag"] for tag in tags]
 
             if request.method == 'DELETE':
                 tag_encoded = validator.string_value (request.args, "tag", 0, 1024, True)
@@ -8402,7 +8401,7 @@ class WebServer:
                                               limit      = 10000)
 
                 # Drop the index field.
-                existing_tags = list (map (lambda item: item["tag"], existing_tags))
+                existing_tags = [item["tag"] for item in existing_tags]
 
                 # Remove duplicates.
                 tags = deduplicate_list(existing_tags + new_tags)
@@ -9038,7 +9037,7 @@ class WebServer:
             parameters = request.get_json()
             search = validator.string_value (parameters, "search_for", 0, 32, required=True, strip_html=False)
             tags = self.db.previously_used_tags (search)
-            tags = list(map (lambda item: item["tag"], tags))
+            tags = [item["tag"] for item in tags]
             return self.response (json.dumps (tags))
         except (validator.ValidationException, KeyError):
             pass
@@ -9054,7 +9053,7 @@ class WebServer:
             return handler
 
         types = self.db.types ()
-        types = list(map (lambda item: item["type"], types))
+        types = [item["type"] for item in types]
         return self.response (json.dumps(types))
 
     def api_v3_explore_properties (self, request):
@@ -9071,7 +9070,7 @@ class WebServer:
             uri        = validator.string_value (parameters, "uri", 0, 255)
             uri        = unquote(uri)
             properties = self.db.properties_for_type (uri)
-            properties = list(map (lambda item: item["predicate"], properties))
+            properties = [item["predicate"] for item in properties]
 
             return self.response (json.dumps(properties))
 
@@ -9096,7 +9095,7 @@ class WebServer:
             rdf_property = validator.string_value (parameters, "property", 0, 255)
             rdf_property = unquote(rdf_property)
             types        = self.db.types_for_property (rdf_type, rdf_property)
-            types        = list(map (lambda item: item["type"], types))
+            types        = [item["type"] for item in types]
 
             return self.response (json.dumps(types))
 
