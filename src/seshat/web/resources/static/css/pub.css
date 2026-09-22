@@ -6,7 +6,7 @@
 #wrapper #content #doi:hover #container_doi { display: block }
 #wrapper #content #type         { text-transform: uppercase; font-weight: bold }
 #wrapper #content #metadata #versions { margin-top: 0px }
-#wrapper #content #description  { margin-top: 1em; padding: .5em; background: #fff; border: solid 1pt #ccc; border-radius: .5em }
+#wrapper #content #description  { margin-top: 1em; padding: .5em; background: var(--surface-sunken); border: solid 1pt #ccc; border-radius: .5em }
 #wrapper #content #description p { margin-top: 0; margin-bottom:0 }
 #wrapper #content #authors img, #contributors img  { height: 15px }
 #wrapper #content #codecheck_certificate img  { height: 30px }

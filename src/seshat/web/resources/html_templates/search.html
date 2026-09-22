@@ -10,10 +10,10 @@
     width: 10.5em;
     border-radius: 10pt;
     cursor: pointer;
-    background: #f9f9f9;
+    background: var(--surface-sunken);
 }
-.tile-item:hover { background: #eeeeee; }
-.tile-item:active { background: #e9e9e9; }
+.tile-item:hover { background: var(--surface-highlight); }
+.tile-item:active { background: var(--surface); }
 .tile-title {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -82,14 +82,14 @@
     width: 9.5em;
     padding: 0.5em 3.2em 0.5em 3.2em;
     border-radius: 0.5em;
-    background: #eeeeee;
-    color: #cccccc;
+    background: var(--surface-sunken);
+    color: var(--text);
     text-decoration: none;
     border: none;
 }
-.search-filter-apply-button:hover { background: #eeeeee; }
+.search-filter-apply-button:hover { background: var(--surface-highlight); }
 .search-filter-reset-button { cursor: pointer; }
-.filter-button-reset:hover { background: #cccccc; color: #000000; }
+.filter-button-reset:hover { background: var(--surface-highlight); color: var(--text); }
 .search-results { clear: right; }
 .search-results-pager { display: flex; justify-content: center; flex-flow: row wrap; width: 100%; }
 .corporate-identity-table { width: auto !important; max-width: auto !important; }
