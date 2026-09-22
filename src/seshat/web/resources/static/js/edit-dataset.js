@@ -1323,7 +1323,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
                 fileUploader.removeFile(file);
             },
             error: function(file, message, xhr) {
-                if (xhr && xhr.status === 0 && file._fsEntry && !file._retried) {
+                if (xhr?.status === 0 && file._fsEntry && !file._retried) {
                     file._fsEntry.file(function (original) {
                         let reader = new FileReader();
                         reader.onload = function (evt) {
@@ -1345,7 +1345,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
                     });
                     return;
                 }
-                let text = (message && message.message) ? message.message : message;
+                let text = message?.message ? message.message : message;
                 show_message ("failure",
                               (`<p>Failed to upload ${file.upload.filename}: ${text}</p>`));
             }
@@ -1390,7 +1390,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             function (event) {
                 if (!permissions.data_edit) { return; }
 
-                let items = event.dataTransfer && event.dataTransfer.items;
+                let items = event.dataTransfer?.items;
                 if (!items) { return; }
                 let entries = Array.from(items).map(function (item) {
                     return item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;

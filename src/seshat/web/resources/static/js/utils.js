@@ -411,7 +411,7 @@ function submit_new_author_event (event) {
 
 function add_author_event (event) {
     stop_event_propagation (event);
-    if (event.data && event.data["uuid"]) {
+    if (event.data?.["uuid"]) {
         add_author (event.data["uuid"], event.data["item_id"]);
     } else {
         new_author (event.data["item_id"]);
@@ -659,7 +659,7 @@ function autocomplete_tags (event, item_id) {
       .then(data => {
 	  let element = document.getElementById("tag-ac");
 	  if (element) { element.remove(); }
-	  if (data && data.length) {
+	  if (data?.length) {
               const unordered_list = document.createElement("ul");
               for (const item of data) {
                   const anchor = document.createElement("a");
