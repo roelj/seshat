@@ -331,11 +331,11 @@ function render_collaborators_for_dataset (dataset_uuid, may_edit_metadata, call
             let column7 = document.createElement("td");
             let column8 = document.createElement("td");
 
-            let input1_settings = { ...input_settings, ...{ "class": "subitem-checkbox-metadata", "name": "read" } };
-            let input2_settings = { ...input_settings, ...{ "class": "subitem-checkbox-metadata", "name": "edit" } };
-            let input3_settings = { ...input_settings, ...{ "class": "subitem-checkbox-data", "name": "read" } };
-            let input4_settings = { ...input_settings, ...{ "class": "subitem-checkbox-data", "name": "edit" } };
-            let input5_settings = { ...input_settings, ...{ "class": "subitem-checkbox-data", "name": "remove" } };
+            let input1_settings = { ...input_settings, "class": "subitem-checkbox-metadata", "name": "read" };
+            let input2_settings = { ...input_settings, "class": "subitem-checkbox-metadata", "name": "edit" };
+            let input3_settings = { ...input_settings, "class": "subitem-checkbox-data", "name": "read" };
+            let input4_settings = { ...input_settings, "class": "subitem-checkbox-data", "name": "edit" };
+            let input5_settings = { ...input_settings, "class": "subitem-checkbox-data", "name": "remove" };
 
             if (collaborator.metadata_read) { input1_settings["checked"] = "checked"; }
             if (collaborator.metadata_edit) { input2_settings["checked"] = "checked"; }
