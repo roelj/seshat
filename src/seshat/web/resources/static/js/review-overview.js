@@ -119,17 +119,15 @@ function render_overview_table () {
         return response.json();
     }).then(function (reviews) {
         let published_date = null;
-        let version = "new";
         let status = "";
-        let reviewer_html = "";
         let title_html = "";
         let table_body = document.querySelector("#overview-table tbody");
         let copy_button = null;
         let row = null;
         for (let review of reviews) {
             published_date = null;
-            version = "new";
-            reviewer_html = "";
+            let version = "new";
+            let reviewer_html;
             if (review.status == "approved") {
                 status = review_approved;
                 published_date = review.published_date;

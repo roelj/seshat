@@ -840,7 +840,6 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
                 if ("is_incomplete" in file && file["is_incomplete"] == true) {
                     column1.append(create_element("span", { "class": "file-incomplete-warning" }, "The file upload was not complete!"));
                 }
-                let file_handle = "";
                 if ("handle" in file) {
                     let handle_anchor = create_element("a", { "href": `https://hdl.handle.net/${file.handle}` });
                     handle_anchor.append(create_element("img", {
