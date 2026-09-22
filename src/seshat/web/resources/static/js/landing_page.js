@@ -128,7 +128,7 @@ function render_draft_collections () {
 
 document.addEventListener("DOMContentLoaded", function (){
     if (document.getElementById ("access-request-reason") !== null) {
-        new Quill("#access-request-reason", { modules: quill_modules, theme: 'snow' });
+        attach_quill ("#access-request-reason");
     }
     document.getElementById("access-request")?.addEventListener("click", toggle_access_request);
     document.getElementById("submit-access-request")?.addEventListener("click", submit_access_request);

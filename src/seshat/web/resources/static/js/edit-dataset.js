@@ -1122,13 +1122,13 @@ function toggle_access_level () {
         show_elements ("#open_access_form");
     } else if (document.getElementById("embargoed_access").checked) {
         if (document.querySelector("#embargo_reason.ql-container") === null) {
-            new Quill('#embargo_reason', { modules: quill_modules, theme: 'snow' });
+            attach_quill ("#embargo_reason");
         }
         show_elements ("#embargoed_access_form", "block");
     } else if (document.getElementById("restricted_access").checked) {
         if (document.querySelector("#restricted_access_reason.ql-container") === null) {
-            new Quill('#restricted_access_reason', { modules: quill_modules, theme: 'snow' });
-            new Quill('#restricted_access_eula', { modules: quill_modules, theme: 'snow' });
+            attach_quill ("#restricted_access_reason");
+            attach_quill ("#restricted_access_eula");
         }
         show_elements ("#restricted_access_form", "block");
     }
@@ -1252,7 +1252,7 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
         }
         document.getElementById(`article_${dataset_uuid}`)?.classList.remove("loader");
         show_elements (`#article_${dataset_uuid}`);
-        new Quill('#description', { modules: quill_modules, theme: 'snow' });
+        attach_quill ("#description");
 
         const fileUploader = new Dropzone("#dropzone-field", {
             url:               `/v3/datasets/${dataset_uuid}/upload`,

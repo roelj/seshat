@@ -23,6 +23,10 @@ function on_click_with_data (element, data, handler) {
     return element;
 }
 
+function attach_quill (selector) {
+    return new Quill (selector, { modules: quill_modules, theme: 'snow' });
+}
+
 function add_event_listeners (selector, type, handler) {
     for (let element of document.querySelectorAll(selector)) {
         element.addEventListener(type, handler);

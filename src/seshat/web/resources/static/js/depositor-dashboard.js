@@ -52,7 +52,7 @@ function delete_session (event) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    new Quill("#quota-reason", { modules: quill_modules, theme: 'snow' });
+    attach_quill ("#quota-reason");
     document.getElementById("request-more-storage")?.addEventListener("click", toggle_storage_request);
     document.getElementById("submit-storage-request")?.addEventListener("click", submit_storage_request);
     for (let element of document.querySelectorAll(".delete-session")) {

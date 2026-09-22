@@ -604,7 +604,7 @@ function activate (collection_id) {
     document.getElementById("save")?.addEventListener("click", function (event)   { save_collection (collection_id, event); });
     document.getElementById("publish")?.addEventListener("click", function (event) { publish_collection (collection_id, event); });
     // Initialize Quill to provide the WYSIWYG editor.
-    new Quill('#description', { modules: quill_modules, theme: 'snow' });
+    attach_quill ("#description");
 
     document.getElementById("authors")?.addEventListener("input", function (event) {
         return autocomplete_author (event, collection_id);
