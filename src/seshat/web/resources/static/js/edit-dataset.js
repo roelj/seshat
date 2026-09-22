@@ -884,21 +884,20 @@ function render_files_for_dataset (dataset_uuid, fileUploader) {
     });
 }
 
+function html_for_thumbnail_tile (img_src, file_uuid, title) {
+    if (initial_thumbnail_file_uuid == null) { initial_thumbnail_file_uuid = ""; }
+    let active = " thumbnail-active";
+    if (file_uuid != initial_thumbnail_file_uuid) { active = " thumbnail-inactive"; }
+    let html = `<div class="thumbnail-item${active}"><label>`;
+    html += `<input type="radio" name="thumbnail" value="${file_uuid}" />`;
+    html += '<div class="thumbnail-item-img-wrapper">';
+    html += `<img src="${img_src}" aria-hidden="true"/></div>`;
+    html += `<div class="thumbnail-item-title"><p>${title}</p></div>`;
+    html += '</label></div>';
+    return html;
+}
+
 function render_files_for_thumbnail (dataset_uuid) {
-
-    function html_for_thumbnail_tile (img_src, file_uuid, title) {
-        if (initial_thumbnail_file_uuid == null) { initial_thumbnail_file_uuid = ""; }
-        let active = " thumbnail-active";
-        if (file_uuid != initial_thumbnail_file_uuid) { active = " thumbnail-inactive"; }
-        let html = `<div class="thumbnail-item${active}"><label>`;
-        html += `<input type="radio" name="thumbnail" value="${file_uuid}" />`;
-        html += '<div class="thumbnail-item-img-wrapper">';
-        html += `<img src="${img_src}" aria-hidden="true"/></div>`;
-        html += `<div class="thumbnail-item-title"><p>${title}</p></div>`;
-        html += '</label></div>';
-        return html;
-    }
-
     let parameters = build_query_parameters ({ "limit": 10000 });
     fetch(`/v3/datasets/${dataset_uuid}/image-files?${parameters}`, {
         method:  "GET",
@@ -1134,6 +1133,40 @@ function toggle_access_level () {
     }
 }
 
+function collect_files_from_entry (entry, path_prefix) {
+    if (entry.isFile) {
+        return new Promise(function (resolve, reject) {
+            entry.file(function (file) {
+                let rel_path = path_prefix ? path_prefix + "/" + file.name : file.name;
+                file._folderRelativePath = rel_path;
+                file._fsEntry            = entry;
+                resolve([file]);
+            }, reject);
+        });
+    }
+
+    return new Promise(function (resolve, reject) {
+        let reader  = entry.createReader();
+        let results = [];
+        function read_batch () {
+            reader.readEntries(function (entries) {
+                if (entries.length === 0) {
+                    let sub_path = path_prefix ? path_prefix + "/" + entry.name : entry.name;
+                    Promise.all(results.map(function (e) {
+                        return collect_files_from_entry(e, sub_path);
+                    })).then(function (arrays) {
+                        resolve(arrays.flat());
+                    }).catch(reject);
+                } else {
+                    results = results.concat(Array.from(entries));
+                    read_batch();
+                }
+            }, reject);
+        }
+        read_batch();
+    });
+}
+
 function activate (dataset_uuid, permissions=null, callback=function () {}) {
     install_sticky_header();
     install_touchable_help_icons();
@@ -1351,40 +1384,6 @@ function activate (dataset_uuid, permissions=null, callback=function () {}) {
             }
         });
         if (!permissions.data_edit) { fileUploader.disable(); }
-
-        function collect_files_from_entry (entry, path_prefix) {
-            if (entry.isFile) {
-                return new Promise(function (resolve, reject) {
-                    entry.file(function (file) {
-                        let rel_path = path_prefix ? path_prefix + "/" + file.name : file.name;
-                        file._folderRelativePath = rel_path;
-                        file._fsEntry            = entry;
-                        resolve([file]);
-                    }, reject);
-                });
-            }
-
-            return new Promise(function (resolve, reject) {
-                let reader  = entry.createReader();
-                let results = [];
-                function read_batch () {
-                    reader.readEntries(function (entries) {
-                        if (entries.length === 0) {
-                            let sub_path = path_prefix ? path_prefix + "/" + entry.name : entry.name;
-                            Promise.all(results.map(function (e) {
-                                return collect_files_from_entry(e, sub_path);
-                            })).then(function (arrays) {
-                                resolve(arrays.flat());
-                            }).catch(reject);
-                        } else {
-                            results = results.concat(Array.from(entries));
-                            read_batch();
-                        }
-                    }, reject);
-                }
-                read_batch();
-            });
-        }
 
         document.getElementById("dropzone-field").addEventListener("drop",
             function (event) {
