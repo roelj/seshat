@@ -97,26 +97,7 @@ function draw_node (row, column, value) {
         .attr("transform", "translate(10,21)")
         .attr("class", "node-group-item")
 
-    node_group
-        .on("mouseover", node_mouseover)
-        .on("mouseout",  node_mouseout)
-        .on("mousedown", node_mousedown)
-        .on("mouseup",   node_mouseup);
-}
-
-function node_mouseover () {
-    let group = d3.select(this);
-    let rect  = group.select("rect");
-}
-
-function node_mouseout () {
-    let group = d3.select(this);
-    let rect  = group.select("rect");
-}
-
-function node_mouseup () {
-    let group = d3.select(this);
-    let rect  = group.select("rect");
+    node_group.on("mousedown", node_mousedown);
 }
 
 function node_mousedown () {
