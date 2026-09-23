@@ -5894,8 +5894,7 @@ class WebServer:
 
         try:
             doi_type = "doi" if version else "container_doi"
-            more_parm = {doi_type: doi,
-                         "is_first_online": not "timeline_first_online" in item}
+            more_parm = {doi_type: doi, "is_first_online": "timeline_first_online" not in item}
             if item_type == "dataset":
                 if self.db.update_dataset (
                         item["uuid"],
@@ -7985,7 +7984,7 @@ class WebServer:
             boundary_scan  = input_stream.read (read_ahead_bytes)
             expected_begin = f"--{boundary}\r\n".encode("utf-8")
             expected_end   = f"\r\n--{boundary}--\r\n".encode("utf-8")
-            if not boundary_scan == expected_begin:
+            if boundary_scan != expected_begin:
                 self.log.error ("File upload failed due to unexpected read while parsing.")
                 self.log.error ("Scanned:  '%s'", boundary_scan)
                 self.log.error ("Expected: '%s'", expected_begin)
