@@ -5536,6 +5536,11 @@ class WebServer:
                     return self.error_403 (request, (f"account:{account_uuid} attempted to remove "
                                                      f"all files from dataset:{dataset_id}."))
 
+                _, error_response = self.__needs_collaborative_permissions (
+                    account_uuid, request, "dataset", dataset, "data_remove")
+                if error_response is not None:
+                    return error_response
+
                 if self.db.delete_items_all_from_list (dataset["uri"], "files"):
                     self.db.cache.invalidate_by_prefix (f"{account_uuid}_storage")
                     self.db.cache.invalidate_by_prefix (f"{dataset['uuid']}_dataset_storage")
