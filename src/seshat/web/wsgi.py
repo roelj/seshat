@@ -4106,6 +4106,20 @@ class WebServer:
 
         return file_path
 
+    def __published_dataset_versions (self, dataset_id, version=None):
+        """Returns the published versions of DATASET_ID (or only VERSION), newest first."""
+        if version is not None:
+            dataset = self.__dataset_by_id_or_uri (dataset_id, version=version, use_cache=False)
+            return [dataset] if dataset else []
+        if parses_to_int (dataset_id):
+            selector = { "dataset_id": int(dataset_id) }
+        elif validator.is_valid_uuid (dataset_id):
+            selector = { "container_uuid": dataset_id }
+        else:
+            return []
+        return self.db.datasets (**selector, is_published=True, use_cache=False, limit=10000,
+                                 order="version", order_direction="desc")
+
     def __accessible_files_for_dataset (self, request, dataset_id, file_id=None, version=None):
         """Implements /file/<id>/<fid>."""
 
@@ -4122,16 +4136,13 @@ class WebServer:
                                                       private_view=True)
             else:
                 self.log.info ("File %s accessed through private link.", file_id)
-                metadata = self.__file_by_id_or_uri (file_id, private_view=True)
+                metadata = self.__file_by_id_or_uri (file_id, private_view=True, dataset_uri=dataset["uri"])
 
             return dataset, metadata
 
-        # Published datasets
-        dataset = self.__dataset_by_id_or_uri (dataset_id,
-                                               is_published = True,
-                                               version      = version,
-                                               use_cache    = False)
-        if dataset is not None:
+        # Published datasets: serve the file through the newest version that
+        # contains it and is accessible to the requester.
+        for dataset in self.__published_dataset_versions (dataset_id, version):
             is_embargoed  = value_or (dataset, "is_embargoed", False)
             is_restricted = value_or (dataset, "is_restricted", False)
             if is_embargoed or is_restricted:
@@ -4145,16 +4156,22 @@ class WebServer:
                     else:
                         self.log.info ("File %s accessed by owner or reviewer.", file_id)
                         metadata = self.__file_by_id_or_uri (file_id,
-                                                             account_uuid = account_uuid)
+                                                             account_uuid = account_uuid,
+                                                             dataset_uri  = dataset["uri"])
             else:
                 if file_id is None:
                     self.log.info ("Files for %s accessed through published dataset.", dataset_id)
                     metadata = self.__files_by_id_or_uri (dataset_uri = dataset["uri"])
                 else:
                     self.log.info ("File %s accessed through published dataset.", file_id)
-                    metadata = self.__file_by_id_or_uri (file_id)
+                    metadata = self.__file_by_id_or_uri (file_id, dataset_uri = dataset["uri"])
 
-            return dataset, metadata
+            if metadata is not None:
+                return dataset, metadata
+
+        # Never fall back to the draft for a specific published version.
+        if parses_to_int (version):
+            return None, None
 
         # Draft datasets
         # The uploader of the dataset may download it.
@@ -4172,7 +4189,8 @@ class WebServer:
                                                       account_uuid = account_uuid)
             else:
                 self.log.info ("File %s for draft accessed by owner or reviewer.", file_id)
-                metadata = self.__file_by_id_or_uri (file_id, account_uuid = account_uuid)
+                metadata = self.__file_by_id_or_uri (file_id, account_uuid = account_uuid,
+                                                     dataset_uri  = dataset["uri"])
 
         return dataset, metadata
 
