@@ -49,7 +49,8 @@ table.corporate-identity-table { border-spacing: 0; }
 .corporate-identity-table thead tr th:last-child { text-align: right; }
 .corporate-identity-table tbody tr:nth-child(even) { background: var(--table-even-row-background); }
 .corporate-identity-table tbody tr:nth-child(odd) { background: var(--table-odd-row-background); }
-.corporate-identity-table tbody tr td:last-child { text-align: right; width: 130pt; }
+.corporate-identity-table tbody tr td:last-child { text-align: right; width: 130pt; border-radius: 0 0 .5em 0; }
+.corporate-identity-table tbody tr:last-child td:first-child { border-radius: 0 0 0 .5em; }
 .corporate-identity-table tbody tr td:nth-child(1) {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -408,7 +409,6 @@ a.far, a.fab, a.fas { text-decoration: none; }
 
 .latest-item { background: var(--latest-item-background); margin-bottom: .5em; padding: 1em; border-radius: 4pt; border: solid 1pt var(--latest-item-border); }
 #latest-datasets ul { list-style: none; margin-left: 0pt; padding: 0pt; font-size: 14pt; }
-table { border:none; border-spacing: 0pt; border-collapse: collapse; }
 #submenu-wrapper { width: 880pt; margin: 0 auto; padding: 0em; }
 #submenu {
     margin: 0em;
@@ -657,6 +657,7 @@ select { background: var(--select-background); border: solid 1pt var(--select-bo
 .dataTables_filter, .dataTables_paginate, .dataTables_info { grid-row: 2; padding: .5em; user-select: none; }
 .dataTables_filter { grid-column: 1; }
 .dataTables_filter input { margin-left: .5em; }
+.dataTables_filter > label { background: none !important; border: none !important; padding: 0 !important; }
 .dataTables_paginate { grid-column: 2; justify-self: center; color: var(--text); background: var(--brand-subtle); border: solid 1pt var(--primary-color); border-top: none; border-radius: 0 0 .5em .5em; }
 .dataTables_paginate > * { color: inherit; padding: 0 .25em; }
 .dataTables_paginate > .current { background: var(--primary-color); color: var(--on-brand); border-radius: .25em; }
