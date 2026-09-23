@@ -7249,7 +7249,7 @@ class WebServer:
     def __files_for_zipfly (self, filesystem_path, tree, path=""):
         file_paths = []
         for entry in tree:
-            if entry.is_dir():
+            if entry.is_dir(follow_symlinks=False):
                 file_paths += self.__files_for_zipfly (filesystem_path,
                                                        os.scandir (os.path.join (filesystem_path, path, entry.name)),
                                                        os.path.join (path, entry.name))

@@ -154,7 +154,11 @@ class ZipFly:
                 elif self.filesystem in path:
                     if not self.arcname in path:
                         path[self.arcname] = path[self.filesystem]
-                    z_info = zipfile.ZipInfo.from_file(path[self.filesystem], path[self.arcname])
+                    if os.path.islink (path[self.filesystem]):
+                        arcname = os.path.normpath (os.path.splitdrive (path[self.arcname])[1])
+                        z_info  = ZipInfo (arcname.lstrip (os.sep + (os.altsep or "")))
+                    else:
+                        z_info = zipfile.ZipInfo.from_file(path[self.filesystem], path[self.arcname])
                     if self.reproducible_timestamps:
                         z_info.date_time = (1980, 1, 1, 0, 0, 0)
                     # Zip files on prevalent *nix supports InfoZIP external attributes to encode file mode
