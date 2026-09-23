@@ -55,6 +55,15 @@ document.addEventListener("DOMContentLoaded", function () {
     attach_quill ("#quota-reason");
     document.getElementById("request-more-storage")?.addEventListener("click", toggle_storage_request);
     document.getElementById("submit-storage-request")?.addEventListener("click", submit_storage_request);
+    const table = document.getElementById("session-table");
+    if (table) {
+	new DataTable(table, {
+	    columnDefs: [{ orderable: false, targets: -1 }],
+	    order: [[2, "desc"]]
+        });
+        table.style.display = "block";
+    }
+
     for (let element of document.querySelectorAll(".delete-session")) {
         element.addEventListener("click", delete_session);
     }
