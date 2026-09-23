@@ -373,7 +373,7 @@ def format_file_details_record (record):
     details["viewer_type"]   = conv.value_or_none(record, "viewer_type")
     details["preview_state"] = conv.value_or_none(record, "preview_state")
     details["upload_url"]    = conv.value_or_none(record, "upload_url")
-    details["upload_token"]  = conv.value_or_none(record, "upload_token")
+    details["upload_token"]  = None # There is no safe way to disclose it.
     return details
 
 def format_custom_field_record (record):
