@@ -190,7 +190,6 @@ class WebServer:
             ## ----------------------------------------------------------------
             R("/v2/account/applications/authorize",                              self.api_authorize),
             R("/v2/token",                                                       self.api_token),
-            R("/v2/collections",                                                 self.api_collections),
 
             ## Private institutions
             ## ----------------------------------------------------------------
