@@ -34,7 +34,7 @@ from seshat.web import (
 )
 from seshat.utils.convenience import (
     decimal_coords, deduplicate_list, html_to_plaintext, is_opendap_url,
-    landing_page_url, limit_memory_for_subprocess, make_citation, normalize_doi,
+    landing_page_url, limit_memory_for_subprocess, make_citation, normalize_doi, normalize_filename,
     parses_to_int, pretty_print_size, self_or_value_or_none, split_author_name,
     split_string, value_or, value_or_none, decode_html
 )
@@ -4094,7 +4094,7 @@ class WebServer:
                                               bucket["key-id"],
                                               bucket["secret-key"],
                                               filename,
-                                              file_info["name"])
+                                              value_or_none (file_info, "name"))
 
         # Use primary-storage-root and secondary-storage-root -- the historical
         # way of configuring storage.
@@ -4270,8 +4270,14 @@ class WebServer:
                     self.log.error ("Excluding missing file %s in ZIP of %s.",
                                     file_info["name"], dataset_id)
                     continue
-                key = "s3" if isinstance (file_path, s3.S3DownloadStreamer) else "fs"
-                file_paths.append ({ key: file_path, "n": file_info["name"] })
+                # Fall back to the UUID when nothing remains of the name, as
+                # zipfly would otherwise use the server-side path.  S3 entries
+                # are named after 'original_filename' rather than "n".
+                key  = "s3" if isinstance (file_path, s3.S3DownloadStreamer) else "fs"
+                name = normalize_filename (value_or_none (file_info, "name")) or file_info["uuid"]
+                if key == "s3":
+                    file_path.original_filename = name
+                file_paths.append ({ key: file_path, "n": name })
 
             if not file_paths:
                 return self.error_404 (request, (f"Download-all for {dataset_id} failed: "
@@ -5593,7 +5599,7 @@ class WebServer:
                     is_link_only  = False,
                     upload_token  = self.token_from_request (request),
                     supplied_md5  = validator.string_value  (parameters, "md5",  32, 32),
-                    name          = validator.string_value  (parameters, "name", 0,  255,        True),
+                    name          = normalize_filename (validator.string_value (parameters, "name", 0, 255, True)),
                     size          = validator.integer_value (parameters, "size", 0,  pow(2, 63), True))
 
                 if file_id is None:
@@ -8039,6 +8045,7 @@ class WebServer:
                     filename = filename[1:-1]
             except IndexError:
                 pass
+            filename = normalize_filename (filename)
 
             headers_len        = len(part_headers.encode('utf-8'))
             computed_file_size = request.content_length - read_ahead_bytes - headers_len - len(expected_end)

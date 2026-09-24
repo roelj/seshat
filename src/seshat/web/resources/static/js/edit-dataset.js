@@ -918,7 +918,7 @@ function render_files_for_thumbnail (dataset_uuid) {
             for (let index in files) {
                 let file = files[index];
                 html += html_for_thumbnail_tile (`/file/${dataset_uuid}/${file.uuid}`,
-                                                 file.uuid, file.name);
+                                                 file.uuid, escape_html (file.name));
             }
 
             wrapper.insertAdjacentHTML("beforeend", html);

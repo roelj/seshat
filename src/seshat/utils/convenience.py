@@ -318,6 +318,19 @@ def split_author_name(name):
     parts = ([''] + parts)[-2:]
     return parts
 
+def normalize_filename (name):
+    """
+    Returns NAME as a relative path without control characters and without
+    empty, '.' or '..' components (both '/' and '\\' separate components),
+    or None when nothing remains.
+    """
+    if not isinstance (name, str):
+        return None
+
+    name  = "".join (character for character in name if character.isprintable ())
+    parts = [part for part in re.split (r"[/\\]", name) if part not in ("", ".", "..")]
+    return "/".join (parts) or None
+
 def split_string (input_string, delimiter=","):
     """Splits a string by a delimiter character and strips whitespace."""
     if not isinstance (input_string, str) or input_string == "":
