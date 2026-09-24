@@ -551,6 +551,7 @@ def read_privilege_configuration (xml_root, logger):
                 config.privileges[lowercase_email]["may_query"] or
                 config.privileges[lowercase_email]["may_impersonate"] or
                 config.privileges[lowercase_email]["may_review"] or
+                config.privileges[lowercase_email]["may_review_institution"] or
                 config.privileges[lowercase_email]["may_process_feedback"] or
                 config.privileges[lowercase_email]["may_recalculate_statistics"] or
                 config.privileges[lowercase_email]["may_review_quotas"]
