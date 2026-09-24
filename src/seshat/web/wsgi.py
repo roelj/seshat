@@ -1031,6 +1031,8 @@ class WebServer:
 
         output                   = Response(content, mimetype=mimetype)
         output.headers["Server"] = config.site_name
+        output.headers["Content-Security-Policy"] = "frame-ancestors 'self'"
+        output.headers["X-Frame-Options"] = "SAMEORIGIN"
         if allow_origin:
             output.headers["Access-Control-Allow-Origin"] = allow_origin
         return output
