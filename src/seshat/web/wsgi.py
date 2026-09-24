@@ -1377,7 +1377,7 @@ class WebServer:
         }
         try:
             response = requests.post(f"{config.orcid_endpoint}/token",
-                                     params  = url_parameters,
+                                     data    = url_parameters,
                                      headers = headers,
                                      timeout = 10)
 
@@ -1417,7 +1417,7 @@ class WebServer:
                 "Content-Type": "application/x-www-form-urlencoded"
             }
             response = requests.post(f"{config.orcid_endpoint}/token",
-                                     params  = url_parameters,
+                                     data    = url_parameters,
                                      headers = headers,
                                      timeout = 10)
 
