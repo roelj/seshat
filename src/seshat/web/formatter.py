@@ -148,7 +148,7 @@ def format_codemeta_record (record, git_url, tags, authors, has_files, base_url)
     if has_files and "version" in record and "container_uuid" in record:
         download_url = [f"{base_url}/ndownloader/items/{record['container_uuid']}/versions/{record['version']}"]
 
-    if git_url:
+    if git_url and not conv.value_or (record, "is_restricted", False):
         download_url.append (f"{git_url}/zip")
         output["codeRepository"] = git_url
 
@@ -213,7 +213,7 @@ def format_rocrate_record (base_url, site_name, record, ror_url, tags,
         "hasPart": [{ "@id": item["@id"] } for item in file_records]
     }
 
-    if git_url:
+    if git_url and not (is_embargoed or is_restricted):
         title = conv.value_or_none (record, "git_repository_name")
         if title is None or title == "":
             title = conv.value_or_none (record, "title")
