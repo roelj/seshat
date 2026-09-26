@@ -1955,6 +1955,8 @@ class WebServer:
         ## SAML 2.0 authentication
         ## --------------------------------------------------------------------
         elif config.identity_provider == "saml":
+            if request.method not in ("GET", "POST"):
+                return self.error_405 (["GET", "POST"])
 
             ## Initiate the login procedure.
             if request.method == "GET":
