@@ -10028,6 +10028,22 @@ class WebServer:
             return None
         return self.__oci_registry_contained_path ("uploads", upload_uuid)
 
+    def __oci_registry_claim (self, request, name):
+        """Return None when the requester owns repository NAME, 403 response otherwise."""
+        account_uuid = self.account_uuid_from_request (request, allow_impersonation=False)
+        owner_path   = self.__oci_registry_contained_path ("owners", name, ".owner")
+        os.makedirs (os.path.dirname (owner_path), mode=0o700, exist_ok=True)
+        try:
+            with open (owner_path, "x", encoding="utf-8") as stream:
+                stream.write (account_uuid)
+            return None
+        except FileExistsError:
+            with open (owner_path, encoding="utf-8") as stream:
+                if stream.read ().strip () == account_uuid:
+                    return None
+        return self.__oci_registry_error ("DENIED",
+            f"You are not the owner of repository '{name}'.", 403)
+
     def __oci_registry_compute_sha256 (self, path):
         """Stream PATH through sha256 in 4 KiB chunks and return the digest."""
         digester = hashlib.sha256 ()
@@ -10240,6 +10256,12 @@ class WebServer:
                                      "application/vnd.docker.distribution.manifest.v2+json")
             data = request.get_data ()
             digest = f"sha256:{hashlib.sha256(data).hexdigest()}"
+            if ":" in reference and reference != digest:
+                return self.__oci_registry_error ("DIGEST_INVALID",
+                    f"Digest mismatch: computed {digest}, got {reference}.", 400)
+            auth_failure = self.__oci_registry_claim (request, name)
+            if auth_failure is not None:
+                return auth_failure
 
             self.locks.lock (locks.LockTypes.OCI_REGISTRY)
             try:
@@ -10272,6 +10294,9 @@ class WebServer:
             if not os.path.isfile (manifest_path):
                 return self.__oci_registry_error ("MANIFEST_UNKNOWN",
                                                   f"No such manifest: {reference}.", 404)
+            auth_failure = self.__oci_registry_claim (request, name)
+            if auth_failure is not None:
+                return auth_failure
 
             # Delete every reference that resolves to the same content so
             # clients cannot fetch a tag after its digest has been removed.
@@ -10326,20 +10351,7 @@ class WebServer:
             response.headers["Content-Type"] = "application/octet-stream"
             return response
 
-        if request.method == "DELETE":
-            auth_failure = self.__registry_require_auth (request)
-            if auth_failure is not None:
-                return auth_failure
-
-            try:
-                os.remove (blob_path)
-            except OSError:
-                return self.__oci_registry_error ("BLOB_UNKNOWN", f"No such blob: {digest}.", 404)
-            response = self.respond_204 ()
-            response.status_code = 202
-            return response
-
-        return self.error_405 (["GET", "HEAD", "DELETE"])
+        return self.error_405 (["GET", "HEAD"])
 
     def api_oci_registry_blob_upload_start (self, request, name):
         """Implements /v2/<name>/blobs/uploads/."""
@@ -10357,18 +10369,21 @@ class WebServer:
         supplied_digest = request.args.get ("digest")
 
         if supplied_digest:
-            # Monolithic upload -- stream directly to the content-addressed
-            # blob path, then verify the digest.
+            # Stream to a temporary file, verify the digest, then move it to
+            # the content-addressed blob path.
             blob_path = self.__oci_registry_blob_path (supplied_digest)
             if blob_path is None:
                 return self.__oci_registry_error ("DIGEST_INVALID", "Invalid blob digest.", 400)
-            self.__oci_registry_stream_to_file (request, blob_path)
-            computed_digest = self.__oci_registry_compute_sha256 (blob_path)
+            upload_path = self.__oci_registry_upload_path (str (uuid.uuid4 ()))
+            self.__oci_registry_stream_to_file (request, upload_path)
+            computed_digest = self.__oci_registry_compute_sha256 (upload_path)
             if computed_digest != supplied_digest:
-                os.remove (blob_path)
+                os.remove (upload_path)
                 return self.__oci_registry_error ("DIGEST_INVALID",
                     (f"Digest mismatch: computed {computed_digest}, "
                      f"got {supplied_digest}."), 400)
+            os.makedirs (os.path.dirname (blob_path), mode=0o700, exist_ok=True)
+            os.replace (upload_path, blob_path)
             response = self.respond_204 ()
             response.status_code = 201
             response.headers["Location"] = f"/v2/{name}/blobs/{supplied_digest}"
