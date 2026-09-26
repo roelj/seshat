@@ -6649,7 +6649,7 @@ class WebServer:
 
         project = None
         try:
-            project = self.db.projects (project_uuid = project_uuid)[0]
+            project = self.db.projects (project_uuid = project_uuid, created_by = account_uuid)[0]
         except (TypeError, IndexError):
             return self.error_404 (request)
 

@@ -6,8 +6,6 @@ DELETE {
     ?project          shst:name                  ?name .
     {%- endif %}{% if namespace is not none %}
     ?project          shst:namespace             ?namespace .
-    {%- endif %}{% if account_uuid is not none %}
-    ?project          shst:account               ?account .
     {%- endif %}
   }
 }
@@ -17,15 +15,13 @@ INSERT {
     ?project          shst:name                  {{name | safe}} .
     {%- endif %}{% if namespace is not none %}
     ?project          shst:namespace             {{namespace | safe}} .
-    {%- endif %}{% if account_uuid is not none %}
-    ?project          shst:account               <account:{{account_uuid}}> .
     {%- endif %}
   }
 }
 WHERE {
   GRAPH <{{state_graph}}> {
     ?project              rdf:type                  shst:Project .
-    OPTIONAL { ?project   shst:account              ?account . }
+    ?project              shst:created_by           <account:{{account_uuid}}> .
     OPTIONAL { ?project   shst:name                 ?name . }
     OPTIONAL { ?project   shst:namespace            ?namespace . }
   }
