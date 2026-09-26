@@ -1006,7 +1006,7 @@ def read_configuration_file (server, config_file, logger, config_files, parents=
             return config
 
         resources_root = config_value (static_pages, "resources-root", None, None)
-        if not os.path.isabs(resources_root):
+        if resources_root is not None and not os.path.isabs(resources_root):
             # take resources_root relative to config_dir and turn into absolute path
             resources_root = os.path.abspath(os.path.join(config_dir, resources_root))
         if (server.add_static_root ("/s", resources_root) and not inside_reload):
