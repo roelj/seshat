@@ -701,7 +701,7 @@ def read_email_configuration (server, xml_root, logger):
             logger.error ("Could not configure the email subsystem:")
             logger.error ("The email port should be a numeric value.")
 
-def read_configuration_file (server, config_file, logger, config_files):
+def read_configuration_file (server, config_file, logger, config_files, parents=()):
     """Procedure to parse a configuration file."""
 
     inside_reload = os.environ.get('WERKZEUG_RUN_MAIN')
@@ -971,6 +971,7 @@ def read_configuration_file (server, config_file, logger, config_files):
         read_quotas_configuration (xml_root)
         read_colors_configuration (xml_root)
 
+        parents = parents + (os.path.realpath (config_file),)
         for include_element in xml_root.iter('include'):
             include    = include_element.text
 
@@ -980,7 +981,11 @@ def read_configuration_file (server, config_file, logger, config_files):
             if not os.path.isabs(include):
                 include = os.path.join(config_dir, include)
 
-            read_configuration_file (server, include, logger, config_files)
+            if os.path.realpath (include) in parents:
+                logger.error ("'%s' includes itself (via '%s').", include, config_file)
+                raise SystemExit
+
+            read_configuration_file (server, include, logger, config_files, parents)
 
         read_menu_configuration (xml_root)
 
