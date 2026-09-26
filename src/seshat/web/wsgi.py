@@ -1812,7 +1812,7 @@ class WebServer:
     def ui_maintenance (self, request):
         """Implements a maintenance page."""
         if not config.maintenance_mode:
-            self.error_404 (request)
+            return self.error_404 (request)
 
         if self.accepts_html (request):
             return self.__render_template (request, "maintenance.html",
