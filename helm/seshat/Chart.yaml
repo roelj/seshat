@@ -2,7 +2,7 @@ apiVersion: v2
 type: application
 name: seshat
 version: 1.0.0
-appVersion: "26.5.0"
+appVersion: "26.9.0"
 description: A Helm chart for deploying a Seshat instance on Kubernetes.
 maintainers:
   - name: Roel Janssen

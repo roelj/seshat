@@ -2,6 +2,134 @@
 #let chapter_text = [
 #silent-chapter[News] <news>
 
+#silent-section[Release notes for `v26.9` (2026-09-28).] <release-26-09>
+
+The September release of 2026 consists of 104 commits made by 4 authors.
+We recommend upgrading to `v26.9` due to various security fixes and
+a lot of bug fixes.
+
+Furthermore, this release takes important steps towards reducing the
+dependency footprint for Seshat by the removal of `jQuery` and `DataTables`.
+
+#silent-subsection[New features]
+
+- Add support for binding on Unix sockets
+  (#commitLink("7030264ff89da7e616bd344f0e2e97c2de9889aa")).
+
+#silent-subsection[Bugfixes]
+
+- Fix TemplateNotFound error in `record_uri`
+  (#commitLink("3fcbc6b2043aa080c20aac4cbfc01544204a5dea")).
+- Fix dark-mode color theme (
+  #commitLink("f8c6a3e64509e92232b2f97f6de685235de7da0d"),
+  #commitLink("647dd7e38e42f282b9dea24562533a77c891f12a"),
+  #commitLink("9d516875f2e83759f605bf8e22b6b9081619248b"),
+  #commitLink("e23861a8613d0fd7d54f819b4e3669d1a572076e")).
+- Fix returning a HTTP 500 error in `api_v3_dataset_publish`
+  (#commitLink("66916be83bca8459b1fef8c130332cf28165bdd4")).
+- Fix erroring when logging an error in `api_v3_dataset_upload_file`
+  (#commitLink("338b324fc17ddb5f0eb2288ca1d1991c9bd18755")).
+- Fix 'api_dataset_version_update_thumb' when using numeric IDs
+  (#commitLink("671b747370abafb7f3497b66f289d6ddf86334e7"))
+- Fix returning a HTTP 500 error in `api_v3_datasets_search`
+  (#commitLink("0251cef4796902a261a4e959ce7e5feeef00690f")).
+- Fix start-up crash when not specifying an e-mail port
+  (#commitLink("1885559198146a0f66ad723b473a33ad41b2a8f9")).
+- Avoid stringifying None into names in `refresh_group_configuration`
+  (#commitLink("8daa2c1aa565fe25b08ff037a53b69b7a3190a49")).
+- Fix collapsed menu state on narrow to wide resize in the documentation
+  (#commitLink("0518fbef2871df68602c7d57c508b0f44cb7c1bb")).
+- Implement form feedback on the "request access" form
+  (#commitLink("f9555b886d3ba174cae86180eca8edff95090c24")).
+- Detect circular inclusion of config files
+  (#commitLink("5ebf7de2ad77d6c0d4a03b1d0169f09232d9d26d").
+- Don't crash on startup  when "static-pages" has no "resources-root"
+  (#commitLink("84ea854721908c4597db7334bc1a017efaa9b4bd")).
+
+#silent-subsection[Security]
+
+- Fix privilege escalation through `/v3/profile`
+  (#commitLink("244c22ff7a0b8a70259e8d884968d8a7e4512b0b")).
+- Fix privilege escalation through upload tokens
+  (#commitLink("a0549ff9c2a67117a18383f27b4d47f48e08222f")).
+- Normalize paths in zip files and disable following symbolic links
+  (#commitLink("ca5e77b8c2d0f8f4d2bce7d586a61e201abe7549")).
+- Don't disclose authors in full-content embargo publications
+  in the latest datasets overview
+  (#commitLink("dbee94d317c1604188b8695eb6424116be766b19")).
+- Disallow downloading of non-public files through version ambiguity
+  (#commitLink("299e5af3c45a8e440f736b40cc4d4072e1d0e026")).
+- Fix leaking a restricted or embargoed Git repository through CodeMeta
+  (#commitLink("f115d5e6e880d2764d7171a07c43b95cfd439dcf")).
+- Fix leaking e-mail addresses through `/v3/accounts/search`
+  (#commitLink("68f20b362280f1b46726e2758c204565d29bb012")).
+- Tighten validation of "collection_id" in `api_collection_versions`
+  (#commitLink("f43ca5cc2a9328c4737a10bfe9ebbebb3d5f3825")).
+- Tighten validation of licenses in `api_v3_datasets_search`
+  (#commitLink("4c25ffcdd46153b8e0c35ebcd7d55d2c2a9fa3d3")).
+- Validate "version" as numeric value in `ui_export_citation`
+  (#commitLink("0deb85e4550b99b3beabaeaac145daef31a06dfb")).
+- Fix SPARQL injection via datetime values
+  (#commitLink("3f347a77016e2531a3dda0b03c27130b8d150a78")).
+- Fix HTML injection through image filenames
+  (#commitLink("d710c3866a9e1c10111e2936abe77cc596329292")).
+- Fix checking for the right privileges when deleting a file
+  (#commitLink("5caa15962f7db234b0e2d901534fc731770787b2")).
+- Require 2-factor authentication for institutional reviewers
+  (#commitLink("0d5c80959292145423084185144d72d0c81e1efa")).
+- Fix arbitrary overwriting of OCI images
+  (#commitLink("a4a521102859acc37f0d1fa507e4222e1d70d829")).
+- Set `HttpOnly` flag for cookies
+  (#commitLink("11eedb42edeaaea13aaa8871d599a0fadb0bf051")).
+- Only trust forwarded HTTP headers from a pre-configured proxy server
+  (#commitLink("7ecda429e81f9f43f5a4f98145a15386a14e07cf")).
+
+#silent-subsection[Incremental improvements]
+
+- Eliminate code duplication
+  (#commitLink("f00f13422e0a84012d05884a23bac48d121621e3"),
+   #commitLink("44c62fa6d44b9412968d4b87212918f88b8e91de")).
+- Remove `jQuery` dependency
+  (#commitLink("ff9201e2b4f541dabc3d79600adcb9345f17856a"),
+   #commitLink("0136eb6903c93d9d050750cd8d1a331c846a9a76"),
+   #commitLink("c806bfecbb2e5f769c0fbec3583d1fc10d3386fb"),
+   #commitLink("545e38f9cca91c4497891bffe0773c07f0943f7e"),
+   #commitLink("6708d73b732c4ad053b34764dd02dddaa5baeb58"),
+   #commitLink("698d2e8ae13d3b392a20ef6febe5fbc06fab006e"),
+   #commitLink("112579689c84224831502c08016e6d11d588ae0a"),
+   #commitLink("abb5d8b905c15849a13ea01bba8bff9a1289f6f0"),
+   #commitLink("2cf5d98322381a914ac5e2376b6bc29508acf8cc"),
+   #commitLink("ed217ae4cfb21284ce9849524ca8dd34756e57cf"),
+   #commitLink("8d723c830f797eb390bdcb9a848df959e32f992b"),
+   #commitLink("f5d117c31f87f444a0423db68f717a810e284580"),
+   #commitLink("ddad31dd07607753f179b35b2a555fbf3a41d826"),
+   #commitLink("9c22cf3340de27c93aa9e2b04015c4600b3381f8"),
+   #commitLink("92c9f802697ac55938083bced68a5b2545987c4a"),
+   #commitLink("51cf0db6380a8174a7e96bdc0f9e8264b4d10135"),
+   #commitLink("8c4a215abe7165cca8f17d5277a62d1e00afb021"),
+   #commitLink("d09cf8e846cd9801043fb2f1eab65b9d2be83777"),
+   #commitLink("4be93e627589d38db8e55a5dae7ada7c0e3e0ee9"),
+   #commitLink("4d57d0754809f65092c2fb3dc91525a484f5af85"),
+   #commitLink("9f056b88eab56d30f084778ab6eb0ab0de6aaf12"),
+   #commitLink("9f9f96e231b6ae162e0a20fa54af077a141305f8"),
+   #commitLink("d55b89d93040935b87c86856a9a14712c8c6d908"),
+   #commitLink("815ecbf84e68ee2fd14a8dd630a27e214ba9bbec")).
+- Remove `DataTables` dependency
+  (#commitLink("0f77e2d92295d86ace4310f223140197a63c87be")).
+- Replace references graph with SBOM graph in the documentation
+  (#commitLink("51e1b4039259d645063f0a50497cbaa50bac07b7")).
+- Improve start-up time when waiting for SPARQL endpoint to come up
+  (#commitLink("99bad61484a4f430cfd46fb49da3778d537e05b6")).
+- Move cache invalidation to after state changes
+  (#commitLink("7feafae228b41eacf4d73e325b7db5b528bb4280"),
+   #commitLink("17613433908f048301054e9dfed7f36a098b69b6")).
+- Reduce HTML output size of the documentation
+  (#commitLink("2fb8d693208e267f5cffc1220812dedd6160c888"),
+   #commitLink("7046630b2f62eed5abb21ba22ac4406a07a1240d"),
+   #commitLink("1b4da288b0ab7937725397c40fabceb00634fcee")).
+- Improve readability on mobile devices
+  (#commitLink("7e97565c8853cebefdf39562867dd37a530caee3")).
+
 #silent-section[Release notes for `v26.8` (2026-09-03).] <release-26-08>
 
 The August release of 2026 consists of 74 commits made by 4 authors.
