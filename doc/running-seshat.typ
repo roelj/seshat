@@ -186,6 +186,12 @@ configuration file, for which an example is available at `etc/seshat.xml`.
   [`port`],                   [The port to bind a TCP socket on.],
   [`alternative-port`],       [A fall-back port to bind on when `port` is already in use.],
   [`unix-socket`],            [The Unix socket to bind to. When this is set, the `bind-address` and `port` are ignored. This element takes an attribute `permissions` which should be a number between 600 and 777.],
+  [`trusted-proxy`],          [When using Waitress this configuration item should
+                               be set to the address of the proxy server reaching
+                               `seshat` to trust forwarded headers from.  This
+                               only affects a TCP `bind-address`. Unix sockets
+                               trust anything that reaches the socket.  Default
+                               is set to `127.0.0.1`.],
   [`base-url`],               [The URL on which the instance will be available to the outside world.],
   [`documentation-url`],      [The URL on which the documentation will be available to the outside world.],
   [`ontology-url`],           [The URL for the internal ontology.],

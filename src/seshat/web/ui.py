@@ -747,6 +747,7 @@ def read_configuration_file (server, config_file, logger, config_files, parents=
 
         config.address      = config_value (xml_root, "bind-address", config.address, "127.0.0.1")
         config.port         = int(config_value (xml_root, "port", config.port, 8080))
+        config.trusted_proxy = config_value (xml_root, "trusted-proxy", None, config.trusted_proxy)
         config.alternative_port = config_value (xml_root, "alternative-port",
                                                 config.alternative_port, None)
         if config.alternative_port is not None:
@@ -1465,15 +1466,20 @@ def main (config_file=None, run_internal_server=True, initialize=True,
             else:
                 run_simple (**{"hostname": config.address, "port": config.port, **run_settings})
         else:
+            trusted_proxy_headers = { "x-forwarded-for", "x-forwarded-proto", "x-forwarded-host" }
             if config.unix_socket is not None:
                 waitress_serve (server,
                                 unix_socket = config.unix_socket,
                                 unix_socket_perms = config.unix_socket_permissions,
+                                trusted_proxy="*",  # Trust whoever can reach the socket.
+                                trusted_proxy_headers = trusted_proxy_headers,
                                 threads = max(config.maximum_workers, 8))
             else:
                 waitress_serve (server,
                                 host    = config.address,
                                 port    = config.port,
+                                trusted_proxy = config.trusted_proxy,
+                                trusted_proxy_headers = trusted_proxy_headers,
                                 threads = max(config.maximum_workers, 8))
 
     except (FileNotFoundError, DependencyNotAvailable, MissingConfigurationError) as error:

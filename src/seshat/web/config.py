@@ -16,6 +16,7 @@ class RuntimeConfiguration:  # pylint: disable=too-few-public-methods
         self.address                     = None
         self.port                        = None
         self.alternative_port            = None
+        self.trusted_proxy               = "127.0.0.1"
         self.base_url                    = None
         self.documentation_url           = "/doc"
         self.ontology_url                = "https://seshat.software/ontology/latest/"
