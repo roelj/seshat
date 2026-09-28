@@ -2960,10 +2960,11 @@ class WebServer:
             search_for = validator.string_value (parameters, "search_for", 0, 32, required=True, strip_html=False)
             exclude = validator.array_value (parameters, "exclude", required=False)
             accounts   = self.db.accounts (search_for=search_for, limit=5)
-            for index,_ in enumerate(accounts):
-                account = accounts[index]
-                if account["uuid"] in exclude:
-                    accounts.pop(index)
+            if exclude is not None:
+                for index,_ in enumerate(accounts):
+                    account = accounts[index]
+                    if account["uuid"] in exclude:
+                        accounts.pop(index)
             return self.default_list_response (accounts, formatter.format_account_details_record)
         except (validator.ValidationException, KeyError) as error:
             return self.error_400(request, error.message, error.code)
