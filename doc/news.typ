@@ -2,7 +2,7 @@
 #let chapter_text = [
 #silent-chapter[News] <news>
 
-#silent-section[Release notes for `v26.8`.] <release-26-08>
+#silent-section[Release notes for `v26.8` (2026-09-03).] <release-26-08>
 
 The August release of 2026 consists of 74 commits made by 4 authors.
 We recommend upgrading to `v26.8` due to various security fixes and
@@ -116,7 +116,7 @@ More eyes and perspectives are always appreciated.
 - Send e-mail as UTF-8 instead of ISO-8859-1
   (#commitLink("0aeb0d6df0e143f3c524bd57b8cb1c9769882091")).
 
-#silent-section[Release notes for `v26.7`.] <release-26-07>
+#silent-section[Release notes for `v26.7` (2026-08-02).] <release-26-07>
 
 The July release of 2026 consists of 40 commits made by 3 authors.
 It primarily contains bugfixes and clean-ups.
@@ -174,7 +174,7 @@ enabling us to publish Seshat on PyPI!
   (#commitLink("baccd4d8717c5021878173dbe18407ceb8693df6")).
 - Avoid divide-by-zero in `api_v3_admin_files_integrity_statistics`
   (#commitLink("a5b96d36585c7fdf55818c9a825c2c86a95525fd")).
-    
+
 #silent-subsection[Security]
 
 - Check permissions returned by database for `__needs_collaborative_permissions`
@@ -203,7 +203,7 @@ enabling us to publish Seshat on PyPI!
 - Ensure `obtain_orcid_read_public_token` always returns
   (#commitLink("ea4edd3d32e2381744744d942dee7f847fab58d0")).
 
-#silent-section[Release notes for `v26.6`.] <release-26-06>
+#silent-section[Release notes for `v26.6` (2026-07-05).] <release-26-06>
 
 Due to holidays and hand injuries the release slipped by a week.
 It is nevertheless a solid incremental improvement over `26.5`.
@@ -253,7 +253,7 @@ The June release of 2026 consists of 40 commits made by 3 authors.
   #commitLink("9113dbd21e17b1ed78bdedf347591c975e9dd963"),
   #commitLink("7d8132ea7ccb6e8f6a612fc96b13e879c4140156")).
 
-#silent-section[Release notes for `v26.5`.] <release-26-05>
+#silent-section[Release notes for `v26.5` (2026-05-30).] <release-26-05>
 
 The May release of 2026 consists of 39 commits made by 3 authors.
 
@@ -319,7 +319,7 @@ The May release of 2026 consists of 39 commits made by 3 authors.
 - Remove a legacy license from the license list
   (#commitLink("8f72508d17cfbbcdc53fcdf80f9f29b34902999e")).
 
-#silent-section[Release notes for `v26.4`.] <release-26-04>
+#silent-section[Release notes for `v26.4` (2026-04-30).] <release-26-04>
 
 After a delay of 10 months, we are delighted to announce the
 April release of 2026. It consists of 167 commits made by 4 authors.
