@@ -24,8 +24,8 @@ def format_collaborator_record (record):
         "is_inferred":    conv.value_or(record, "is_inferred", False)
     }
 
-def _format_account_base(record):
-    """ Base formatter for accounts """
+def format_account_record (record):
+    """Record formatter for accounts."""
     return {
         "id":             conv.value_or_none(record, "account_id"),
         "uuid":           conv.value_or_none(record, "uuid"),
@@ -37,16 +37,6 @@ def _format_account_base(record):
         "job_title":      conv.value_or_none(record, "job_title"),
         "orcid_id":       conv.value_or (record, "orcid_id", ""),
     }
-
-def format_account_record (record):
-    """Record formatter for accounts."""
-    return _format_account_base(record)
-
-def format_account_details_record (record):
-    """Record formatter for accounts."""
-    details          = _format_account_base(record)
-    details["email"] = conv.value_or_none(record, "email")
-    return details
 
 def _object_urls (record, api_type, html_type):
     """Returns generated variants of public-facing URLs."""
